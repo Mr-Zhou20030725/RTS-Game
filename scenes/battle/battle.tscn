@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="1_battle"]
 [ext_resource type="PackedScene" path="res://ui/battle_hud/battle_hud.tscn" id="2_hud"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/input/unit_selection_manager.gd" id="4_selection"]
 [ext_resource type="PackedScene" path="res://scenes/units/t04_test_squad.tscn" id="5_squad"]
 [ext_resource type="PackedScene" path="res://scenes/units/t06_monster_demo.tscn" id="6_monsters"]
+[ext_resource type="PackedScene" path="res://scenes/units/t07_archer_demo.tscn" id="7_archer"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_battle")
@@ -24,5 +25,7 @@ script = ExtResource("4_selection")
 [node name="T04TestSquad" parent="." instance=ExtResource("5_squad")]
 
 [node name="T06MonsterDemo" parent="." instance=ExtResource("6_monsters")]
+
+[node name="T07ArcherDemo" parent="." instance=ExtResource("7_archer")]
 
 [node name="BattleHUD" parent="." instance=ExtResource("2_hud")]

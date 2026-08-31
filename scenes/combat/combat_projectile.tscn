@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/combat_projectile.gd" id="1_projectile"]
+
+[node name="CombatProjectile" type="Node2D" groups=["combat_projectiles"]]
+z_index = 20
+script = ExtResource("1_projectile")
+
+[node name="Trail" type="Line2D" parent="."]
+points = PackedVector2Array(-12, 0, 4, 0)
+width = 3.0
+default_color = Color(1, 0.823529, 0.270588, 1)
+
+[node name="Tip" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(8, 0, 1, -4, 1, 4)
+color = Color(1, 0.960784, 0.686275, 1)

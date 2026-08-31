@@ -18,6 +18,7 @@ extends CharacterBody2D
 @onready var melee_component := get_node_or_null(
 	"MeleeAttackComponent"
 ) as MeleeAttackComponent
+@onready var ranged_component := get_node_or_null("RangedAttackComponent")
 
 var is_selected := false
 var _has_move_target := false
@@ -123,6 +124,8 @@ func _on_died(_source: Node) -> void:
 	set_physics_process(false)
 	if melee_component != null:
 		melee_component.combat_enabled = false
+	if ranged_component != null:
+		ranged_component.set("combat_enabled", false)
 	if collision_shape != null:
 		collision_shape.set_deferred("disabled", true)
 	modulate = Color(0.35, 0.35, 0.35, 0.65)

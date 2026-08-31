@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/human_economy.gd" id="1_economy"]
+
+[node name="HumanEconomy" type="Node" groups=["human_economy"]]
+script = ExtResource("1_economy")
+starting_gold = 100
+passive_income_amount = 5
+passive_income_interval = 2.0
+monster_kill_reward = 25

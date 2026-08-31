@@ -30,6 +30,48 @@ offset_bottom = 47.0
 theme_override_font_sizes/font_size = 20
 text = "BATTLE — T01 SKELETON"
 
+[node name="GoldLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 330.0
+offset_top = 10.0
+offset_right = 455.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(1, 0.835294, 0.309804, 1)
+theme_override_font_sizes/font_size = 18
+text = "GOLD: 0"
+
+[node name="IncomeLabel" type="Label" parent="TopBar"]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 36.0
+offset_right = 455.0
+offset_bottom = 56.0
+theme_override_colors/font_color = Color(0.694118, 0.752941, 0.611765, 1)
+theme_override_font_sizes/font_size = 11
+text = "+5 every 2s"
+
+[node name="SpendTestButton" type="Button" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 490.0
+offset_top = 10.0
+offset_right = 650.0
+offset_bottom = 54.0
+mouse_filter = 0
+text = "T09 TEST: SPEND 50"
+
+[node name="EconomyStatusLabel" type="Label" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 670.0
+offset_top = 20.0
+offset_right = 1065.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.752941, 0.819608, 0.87451, 1)
+text = "Economy ready"
+horizontal_alignment = 1
+
 [node name="ReturnButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
 layout_mode = 0

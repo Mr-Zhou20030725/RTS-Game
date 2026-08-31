@@ -1,4 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 
 [node name="MonsterNest" type="Node2D" groups=["monster_nest_placeholder"]]
 
@@ -20,3 +22,7 @@ theme_override_font_sizes/font_size = 13
 text = "NEST"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("1_health")]
+position = Vector2(0, -72)
+max_health = 600.0

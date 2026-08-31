@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/components/health_component.gd" id="1_health"]
+
+[node name="HealthComponent" type="Node2D"]
+script = ExtResource("1_health")
+
+[node name="DebugHealthBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+z_index = 20
+offset_left = -45.0
+offset_top = -6.0
+offset_right = 45.0
+offset_bottom = 6.0
+mouse_filter = 2
+show_percentage = false

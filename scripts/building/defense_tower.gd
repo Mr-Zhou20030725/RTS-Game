@@ -3,15 +3,20 @@ extends Node2D
 
 ## One tower implementation configured entirely by TowerData.
 
+signal upgraded(tower: DefenseTower)
+
 @export var tower_data: TowerData
 
 @onready var foundation: Polygon2D = %Foundation
 @onready var turret: Polygon2D = %Turret
 @onready var tower_label: Label = %TowerLabel
+@onready var selection_indicator: Line2D = %SelectionIndicator
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var ranged_component := $RangedAttackComponent
 
 var _is_preview := false
+var _is_upgraded := false
+var _is_selected := false
 
 
 func _ready() -> void:
@@ -36,6 +41,39 @@ func get_tower_data() -> TowerData:
 	return tower_data
 
 
+func can_upgrade() -> bool:
+	return (
+		tower_data != null
+		and not _is_preview
+		and not _is_upgraded
+		and not health_component.is_dead
+	)
+
+
+func get_upgrade_cost() -> int:
+	return 0 if tower_data == null else tower_data.upgrade_cost
+
+
+func is_upgraded() -> bool:
+	return _is_upgraded
+
+
+func apply_upgrade() -> bool:
+	if not can_upgrade():
+		return false
+	_is_upgraded = true
+	_apply_combat_stats()
+	turret.scale = Vector2(1.18, 1.18)
+	tower_label.text = "%s II" % tower_data.display_name.to_upper()
+	upgraded.emit(self)
+	return true
+
+
+func set_selected(value: bool) -> void:
+	_is_selected = value and not _is_preview and not health_component.is_dead
+	selection_indicator.visible = _is_selected
+
+
 func _apply_tower_data() -> void:
 	if tower_data == null:
 		return
@@ -44,6 +82,12 @@ func _apply_tower_data() -> void:
 	foundation.color = tower_data.foundation_color
 	turret.color = tower_data.tower_color
 	tower_label.text = tower_data.display_name.to_upper()
+	_apply_combat_stats()
+
+
+func _apply_combat_stats() -> void:
+	if tower_data == null:
+		return
 	ranged_component.attack_damage = tower_data.damage
 	ranged_component.attack_interval = tower_data.attack_interval
 	ranged_component.attack_range = tower_data.attack_range
@@ -52,10 +96,18 @@ func _apply_tower_data() -> void:
 	ranged_component.slow_multiplier = tower_data.slow_multiplier
 	ranged_component.slow_duration = tower_data.slow_duration
 	ranged_component.projectile_modulate = tower_data.projectile_color
+	if _is_upgraded:
+		ranged_component.attack_damage *= tower_data.upgrade_damage_multiplier
+		ranged_component.attack_range += tower_data.upgrade_range_bonus
+		ranged_component.attack_interval *= (
+			tower_data.upgrade_attack_interval_multiplier
+		)
 
 
 func _apply_preview_state() -> void:
 	ranged_component.combat_enabled = not _is_preview
+	if _is_preview:
+		set_selected(false)
 	if _is_preview:
 		if is_in_group(&"combat_targets"):
 			remove_from_group(&"combat_targets")
@@ -66,6 +118,7 @@ func _apply_preview_state() -> void:
 
 func _on_died(_source: Node) -> void:
 	ranged_component.combat_enabled = false
+	set_selected(false)
 	for group_name in [&"combat_targets", &"placement_blockers", &"placed_towers"]:
 		if is_in_group(group_name):
 			remove_from_group(group_name)

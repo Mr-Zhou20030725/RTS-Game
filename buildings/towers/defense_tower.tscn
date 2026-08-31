@@ -31,6 +31,14 @@ theme_override_font_sizes/font_size = 9
 text = "ARROW TOWER"
 horizontal_alignment = 1
 
+[node name="SelectionIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = -1
+points = PackedVector2Array(42, 0, 38.803, 16.073, 29.698, 29.698, 16.073, 38.803, 0, 42, -16.073, 38.803, -29.698, 29.698, -38.803, 16.073, -42, 0, -38.803, -16.073, -29.698, -29.698, -16.073, -38.803, 0, -42, 16.073, -38.803, 29.698, -29.698, 38.803, -16.073, 42, 0)
+width = 3.0
+default_color = Color(1, 0.862745, 0.313726, 1)
+
 [node name="HealthComponent" parent="." instance=ExtResource("3_health")]
 position = Vector2(0, -46)
 max_health = 250.0

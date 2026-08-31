@@ -165,3 +165,26 @@ offset_right = 995.0
 offset_bottom = 57.0
 mouse_filter = 0
 text = "ARCANE HEAVY\n100 GOLD"
+
+[node name="SelectedTowerLabel" type="Label" parent="TowerBuildBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1010.0
+offset_top = 5.0
+offset_right = 1262.0
+offset_bottom = 25.0
+theme_override_colors/font_color = Color(1, 0.862745, 0.313726, 1)
+theme_override_font_sizes/font_size = 11
+text = "SELECT A TOWER"
+horizontal_alignment = 1
+
+[node name="UpgradeTowerButton" type="Button" parent="TowerBuildBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1010.0
+offset_top = 28.0
+offset_right = 1262.0
+offset_bottom = 59.0
+mouse_filter = 0
+disabled = true
+text = "UPGRADE"

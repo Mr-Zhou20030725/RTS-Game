@@ -7,6 +7,9 @@ signal build_mode_changed(active: bool)
 signal preview_validity_changed(is_valid: bool)
 signal building_placed(building: Node2D, cost: int)
 signal placement_failed(reason: StringName)
+signal tower_selection_changed(tower: Node2D)
+signal tower_upgraded(tower: Node2D, cost: int)
+signal tower_upgrade_failed(reason: StringName)
 
 @export var default_building_scene: PackedScene
 @export var tower_building_scene: PackedScene
@@ -24,6 +27,7 @@ var _preview_is_valid := false
 var _active_cost := 0
 var _placed_buildings: Array[Node2D] = []
 var _building_serial := 0
+var _selected_tower: Node2D
 
 
 func _ready() -> void:
@@ -32,6 +36,12 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_build_mode_active():
+		if (
+			event is InputEventMouseButton
+			and event.pressed
+			and event.button_index == MOUSE_BUTTON_LEFT
+		):
+			select_tower_at(_screen_to_world(event.position))
 		return
 
 	if event is InputEventMouseMotion:
@@ -204,6 +214,61 @@ func get_placed_buildings() -> Array[Node2D]:
 		if not is_instance_valid(_placed_buildings[index]):
 			_placed_buildings.remove_at(index)
 	return _placed_buildings.duplicate()
+
+
+func select_tower_at(world_position: Vector2) -> bool:
+	var nearest_tower: Node2D
+	var nearest_distance := INF
+	for tower in get_placed_buildings():
+		if not tower.has_method("can_upgrade"):
+			continue
+		var distance := tower.global_position.distance_to(world_position)
+		if distance <= _get_footprint_radius(tower) and distance < nearest_distance:
+			nearest_tower = tower
+			nearest_distance = distance
+	return select_tower(nearest_tower)
+
+
+func select_tower(tower: Node2D) -> bool:
+	if tower != null and tower not in get_placed_buildings():
+		return false
+	if _selected_tower != null and is_instance_valid(_selected_tower):
+		if _selected_tower.has_method("set_selected"):
+			_selected_tower.call("set_selected", false)
+	_selected_tower = tower
+	if _selected_tower != null and _selected_tower.has_method("set_selected"):
+		_selected_tower.call("set_selected", true)
+	tower_selection_changed.emit(_selected_tower)
+	return _selected_tower != null
+
+
+func get_selected_tower() -> Node2D:
+	if _selected_tower != null and not is_instance_valid(_selected_tower):
+		_selected_tower = null
+	return _selected_tower
+
+
+func upgrade_selected_tower() -> bool:
+	var tower := get_selected_tower()
+	if tower == null or not tower.has_method("can_upgrade"):
+		tower_upgrade_failed.emit(&"no_tower_selected")
+		return false
+	if not tower.call("can_upgrade"):
+		tower_upgrade_failed.emit(&"already_upgraded")
+		return false
+	var cost := int(tower.call("get_upgrade_cost"))
+	_bind_human_economy()
+	if (
+		human_economy == null
+		or not human_economy.call("try_spend", cost, &"tower_upgrade")
+	):
+		tower_upgrade_failed.emit(&"not_enough_gold")
+		return false
+	if not tower.call("apply_upgrade"):
+		push_error("Tower upgrade became invalid after payment.")
+		return false
+	tower_upgraded.emit(tower, cost)
+	return true
 
 
 func _bind_human_economy() -> void:

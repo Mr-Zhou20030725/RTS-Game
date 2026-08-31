@@ -21,6 +21,13 @@ enum AttackStyle {
 @export_range(0.0, 1000.0, 1.0) var splash_radius := 0.0
 @export_range(0.1, 1.0, 0.05) var slow_multiplier := 1.0
 @export_range(0.0, 60.0, 0.1) var slow_duration := 0.0
+@export_group("Level 2 Upgrade")
+@export_range(0, 1000000, 1) var upgrade_cost := 75
+@export_range(1.0, 10.0, 0.05) var upgrade_damage_multiplier := 1.0
+@export_range(0.0, 2000.0, 1.0) var upgrade_range_bonus := 0.0
+@export_range(0.1, 1.0, 0.05) var upgrade_attack_interval_multiplier := 1.0
+@export var upgrade_description := "Damage upgrade"
+@export_group("")
 @export var foundation_color := Color(0.18, 0.36, 0.47, 1.0)
 @export var tower_color := Color(0.36, 0.70, 0.81, 1.0)
 @export var projectile_color := Color(1.0, 0.82, 0.27, 1.0)

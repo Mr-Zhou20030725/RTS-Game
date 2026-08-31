@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
+[ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="3_footprint"]
+
+[node name="TestTower" type="Node2D" groups=["combat_buildings", "placement_blockers"]]
+
+[node name="Foundation" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-30, -30, 30, -30, 30, 30, -30, 30)
+color = Color(0.180392, 0.364706, 0.470588, 1)
+
+[node name="Turret" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -25, 22, -8, 18, 20, -18, 20, -22, -8)
+color = Color(0.360784, 0.701961, 0.807843, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -44.0
+offset_top = -8.0
+offset_right = 44.0
+offset_bottom = 16.0
+theme_override_font_sizes/font_size = 10
+text = "TEST TOWER"
+horizontal_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("1_health")]
+position = Vector2(0, -45)
+max_health = 250.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("2_faction")]
+faction = 1
+
+[node name="BuildingFootprint" type="Node" parent="."]
+script = ExtResource("3_footprint")
+radius = 32.0

@@ -53,6 +53,7 @@ text = "+5 every 2s"
 
 [node name="SpendTestButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 offset_left = 490.0
 offset_top = 10.0
@@ -60,6 +61,16 @@ offset_right = 650.0
 offset_bottom = 54.0
 mouse_filter = 0
 text = "T09 TEST: SPEND 50"
+
+[node name="BuildTowerButton" type="Button" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 475.0
+offset_top = 10.0
+offset_right = 665.0
+offset_bottom = 54.0
+mouse_filter = 0
+text = "BUILD TEST TOWER — 50"
 
 [node name="EconomyStatusLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true

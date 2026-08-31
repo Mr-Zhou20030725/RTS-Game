@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/building/building_placement_manager.gd" id="1_manager"]
+[ext_resource type="PackedScene" path="res://buildings/placeholders/test_tower_placeholder.tscn" id="2_tower"]
+
+[node name="BuildingPlacementManager" type="Node2D" groups=["building_placement_manager"]]
+z_index = 8
+script = ExtResource("1_manager")
+default_building_scene = ExtResource("2_tower")
+default_building_cost = 50
+buildable_bounds = Rect2(80, 96, 1120, 576)
+overlap_padding = 8.0
+grid_size = 16.0

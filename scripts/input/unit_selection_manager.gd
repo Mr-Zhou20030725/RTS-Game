@@ -13,6 +13,12 @@ var _is_dragging := false
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _is_build_mode_active():
+		if _is_dragging:
+			_is_dragging = false
+			queue_redraw()
+		return
+
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		var world_position := _screen_to_world(mouse_event.position)
@@ -149,3 +155,13 @@ func _get_drag_rect() -> Rect2:
 
 func _screen_to_world(screen_position: Vector2) -> Vector2:
 	return get_canvas_transform().affine_inverse() * screen_position
+
+
+func _is_build_mode_active() -> bool:
+	var placement_manager := get_tree().get_first_node_in_group(
+		&"building_placement_manager"
+	)
+	return (
+		placement_manager != null
+		and placement_manager.call("is_build_mode_active")
+	)

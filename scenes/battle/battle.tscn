@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="1_battle"]
 [ext_resource type="PackedScene" path="res://ui/battle_hud/battle_hud.tscn" id="2_hud"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/units/t06_monster_demo.tscn" id="6_monsters"]
 [ext_resource type="PackedScene" path="res://scenes/units/t07_archer_demo.tscn" id="7_archer"]
 [ext_resource type="PackedScene" path="res://scenes/economy/human_economy.tscn" id="8_economy"]
+[ext_resource type="PackedScene" path="res://scenes/building/building_placement_manager.tscn" id="9_placement"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_battle")
@@ -19,6 +20,8 @@ mouse_filter = 2
 color = Color(0.054902, 0.0823529, 0.109804, 1)
 
 [node name="HumanEconomy" parent="." instance=ExtResource("8_economy")]
+
+[node name="BuildingPlacementManager" parent="." instance=ExtResource("9_placement")]
 
 [node name="MVPMap" parent="." instance=ExtResource("3_map")]
 

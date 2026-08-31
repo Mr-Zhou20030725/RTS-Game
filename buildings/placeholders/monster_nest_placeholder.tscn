@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
+[ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="3_footprint"]
 
-[node name="MonsterNest" type="Node2D" groups=["combat_buildings", "monster_nest_placeholder"]]
+[node name="MonsterNest" type="Node2D" groups=["combat_buildings", "monster_nest_placeholder", "placement_blockers"]]
 
 [node name="OuterGround" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-52, -30, -28, -54, 18, -58, 50, -34, 58, 12, 32, 50, -12, 58, -50, 30)
@@ -30,3 +31,7 @@ max_health = 600.0
 
 [node name="FactionComponent" parent="." instance=ExtResource("2_faction")]
 faction = 2
+
+[node name="BuildingFootprint" type="Node" parent="."]
+script = ExtResource("3_footprint")
+radius = 60.0

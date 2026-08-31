@@ -1,0 +1,108 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/mvp_map.gd" id="1_map"]
+[ext_resource type="PackedScene" path="res://buildings/placeholders/human_base_placeholder.tscn" id="2_base"]
+[ext_resource type="PackedScene" path="res://buildings/placeholders/monster_nest_placeholder.tscn" id="3_nest"]
+
+[node name="MVPMap" type="Node2D"]
+script = ExtResource("1_map")
+human_base_scene = ExtResource("2_base")
+monster_nest_scene = ExtResource("3_nest")
+
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(64, 80, 1216, 80, 1216, 688, 64, 688)
+color = Color(0.0901961, 0.137255, 0.129412, 1)
+
+[node name="NorthRegion" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(64, 80, 1216, 80, 1060, 230, 220, 230)
+color = Color(0.117647, 0.176471, 0.160784, 1)
+
+[node name="SouthRegion" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(220, 538, 1060, 538, 1216, 688, 64, 688)
+color = Color(0.14902, 0.121569, 0.101961, 1)
+
+[node name="CenterZone" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(640, 270, 735, 310, 775, 384, 735, 458, 640, 498, 545, 458, 505, 384, 545, 310)
+color = Color(0.12549, 0.2, 0.223529, 1)
+
+[node name="HorizontalRoute" type="Line2D" parent="."]
+points = PackedVector2Array(90, 384, 1190, 384)
+width = 16.0
+default_color = Color(0.180392, 0.223529, 0.2, 1)
+
+[node name="VerticalRoute" type="Line2D" parent="."]
+points = PackedVector2Array(640, 98, 640, 670)
+width = 16.0
+default_color = Color(0.180392, 0.223529, 0.2, 1)
+
+[node name="RegionLabels" type="Node2D" parent="."]
+
+[node name="North" type="Label" parent="RegionLabels"]
+offset_left = 570.0
+offset_top = 88.0
+offset_right = 710.0
+offset_bottom = 118.0
+theme_override_colors/font_color = Color(0.501961, 0.619608, 0.552941, 1)
+text = "NORTH RIDGE"
+horizontal_alignment = 1
+
+[node name="East" type="Label" parent="RegionLabels"]
+offset_left = 1060.0
+offset_top = 366.0
+offset_right = 1194.0
+offset_bottom = 396.0
+theme_override_colors/font_color = Color(0.501961, 0.619608, 0.552941, 1)
+text = "EAST WOODS"
+horizontal_alignment = 1
+
+[node name="South" type="Label" parent="RegionLabels"]
+offset_left = 566.0
+offset_top = 642.0
+offset_right = 714.0
+offset_bottom = 672.0
+theme_override_colors/font_color = Color(0.619608, 0.517647, 0.427451, 1)
+text = "SOUTH RUINS"
+horizontal_alignment = 1
+
+[node name="West" type="Label" parent="RegionLabels"]
+offset_left = 82.0
+offset_top = 366.0
+offset_right = 220.0
+offset_bottom = 396.0
+theme_override_colors/font_color = Color(0.501961, 0.619608, 0.552941, 1)
+text = "WEST WASTES"
+horizontal_alignment = 1
+
+[node name="HumanBaseSpawn" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(640, 384)
+
+[node name="NestCandidates" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="NorthWest" type="Marker2D" parent="NestCandidates"]
+position = Vector2(400, 112)
+
+[node name="NorthEast" type="Marker2D" parent="NestCandidates"]
+position = Vector2(880, 112)
+
+[node name="EastNorth" type="Marker2D" parent="NestCandidates"]
+position = Vector2(1160, 240)
+
+[node name="EastSouth" type="Marker2D" parent="NestCandidates"]
+position = Vector2(1160, 528)
+
+[node name="SouthEast" type="Marker2D" parent="NestCandidates"]
+position = Vector2(880, 648)
+
+[node name="SouthWest" type="Marker2D" parent="NestCandidates"]
+position = Vector2(400, 648)
+
+[node name="WestSouth" type="Marker2D" parent="NestCandidates"]
+position = Vector2(120, 528)
+
+[node name="WestNorth" type="Marker2D" parent="NestCandidates"]
+position = Vector2(120, 240)
+
+[node name="SpawnedBuildings" type="Node2D" parent="."]
+unique_name_in_owner = true

@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[node name="HumanBase" type="Node2D" groups=["human_base_placeholder"]]
+
+[node name="OuterGround" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-78, -62, -52, -82, 52, -82, 78, -62, 78, 62, 52, 82, -52, 82, -78, 62)
+color = Color(0.117647, 0.254902, 0.360784, 1)
+
+[node name="Core" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -60, 60, 0, 0, 60, -60, 0)
+color = Color(0.227451, 0.568627, 0.760784, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -60.0
+offset_top = -24.0
+offset_right = 60.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0.929412, 0.968627, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "HUMAN\nBASE"
+horizontal_alignment = 1
+vertical_alignment = 1

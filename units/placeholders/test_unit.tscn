@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
+[ext_resource type="Script" path="res://scripts/units/rts_unit.gd" id="2_unit"]
 
-[node name="TestUnit" type="Node2D" groups=["test_unit_placeholder"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_unit"]
+radius = 14.0
+
+[node name="TestUnit" type="CharacterBody2D" groups=["selectable_units", "test_unit_placeholder"]]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("2_unit")
 
 [node name="Body" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, -24, 22, -8, 18, 20, -18, 20, -22, -8)
@@ -20,3 +27,21 @@ horizontal_alignment = 1
 [node name="HealthComponent" parent="." instance=ExtResource("1_health")]
 position = Vector2(0, -38)
 max_health = 100.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_unit")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 6.0
+target_desired_distance = 10.0
+radius = 16.0
+neighbor_distance = 72.0
+
+[node name="SelectionIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+points = PackedVector2Array(24, 0, 22.1731, 9.1844, 16.9706, 16.9706, 9.1844, 22.1731, 0, 24, -9.1844, 22.1731, -16.9706, 16.9706, -22.1731, 9.1844, -24, 0, -22.1731, -9.1844, -16.9706, -16.9706, -9.1844, -22.1731, 0, -24, 9.1844, -22.1731, 16.9706, -16.9706, 22.1731, -9.1844, 24, 0)
+width = 3.0
+default_color = Color(0.917647, 0.819608, 0.313726, 1)

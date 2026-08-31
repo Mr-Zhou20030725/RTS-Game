@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://units/placeholders/test_unit.tscn" id="1_unit"]
+
+[node name="T04TestSquad" type="Node2D"]
+
+[node name="Unit01" parent="." instance=ExtResource("1_unit")]
+position = Vector2(470, 320)
+
+[node name="Unit02" parent="." instance=ExtResource("1_unit")]
+position = Vector2(520, 320)
+
+[node name="Unit03" parent="." instance=ExtResource("1_unit")]
+position = Vector2(470, 370)
+
+[node name="Unit04" parent="." instance=ExtResource("1_unit")]
+position = Vector2(520, 370)
+
+[node name="Unit05" parent="." instance=ExtResource("1_unit")]
+position = Vector2(470, 420)
+
+[node name="Unit06" parent="." instance=ExtResource("1_unit")]
+position = Vector2(520, 420)

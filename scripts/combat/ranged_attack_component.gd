@@ -17,6 +17,10 @@ const DEFAULT_PROJECTILE_SCENE := preload(
 @export_range(0.05, 60.0, 0.05) var attack_interval := 0.8
 @export_range(1.0, 2000.0, 1.0) var attack_range := 340.0
 @export_range(1.0, 5000.0, 1.0) var projectile_speed := 450.0
+@export_range(0.0, 1000.0, 1.0) var splash_radius := 0.0
+@export_range(0.1, 1.0, 0.05) var slow_multiplier := 1.0
+@export_range(0.0, 60.0, 0.1) var slow_duration := 0.0
+@export var projectile_modulate := Color.WHITE
 @export var projectile_spawn_offset := Vector2.ZERO
 @export var projectile_scene: PackedScene = DEFAULT_PROJECTILE_SCENE
 @export var target_group: StringName = &"combat_targets"
@@ -74,9 +78,20 @@ func fire_at(target: Node2D) -> Node2D:
 		projectile.queue_free()
 		return null
 
-	projectile.call("configure", actor, target, attack_damage, projectile_speed)
+	projectile.call(
+		"configure",
+		actor,
+		target,
+		attack_damage,
+		projectile_speed,
+		splash_radius,
+		slow_multiplier,
+		slow_duration,
+		target_group
+	)
 	projectile_parent.add_child(projectile)
 	projectile.global_position = actor.global_position + projectile_spawn_offset
+	projectile.modulate = projectile_modulate
 	_attack_cooldown = attack_interval
 	projectile_fired.emit(projectile, target)
 	return projectile

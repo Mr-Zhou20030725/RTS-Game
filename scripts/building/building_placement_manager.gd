@@ -9,6 +9,8 @@ signal building_placed(building: Node2D, cost: int)
 signal placement_failed(reason: StringName)
 
 @export var default_building_scene: PackedScene
+@export var tower_building_scene: PackedScene
+@export var tower_data_catalog: Array[Resource] = []
 @export_range(0, 1000000, 1) var default_building_cost := 50
 @export var buildable_bounds := Rect2(80.0, 96.0, 1120.0, 576.0)
 @export_range(0.0, 100.0, 1.0) var overlap_padding := 8.0
@@ -61,8 +63,50 @@ func begin_default_placement() -> bool:
 	)
 
 
+func begin_tower_placement(
+	tower_index: int, world_position: Vector2 = Vector2.INF
+) -> bool:
+	if (
+		tower_index < 0
+		or tower_index >= tower_data_catalog.size()
+		or tower_building_scene == null
+	):
+		placement_failed.emit(&"invalid_configuration")
+		return false
+	var tower_data := tower_data_catalog[tower_index]
+	if tower_data == null:
+		placement_failed.emit(&"invalid_configuration")
+		return false
+	var placement_position := (
+		get_global_mouse_position()
+		if world_position == Vector2.INF
+		else world_position
+	)
+	return _begin_configured_placement(
+		tower_building_scene,
+		int(tower_data.get("cost")),
+		placement_position,
+		tower_data
+	)
+
+
+func get_tower_data_catalog() -> Array[Resource]:
+	return tower_data_catalog.duplicate()
+
+
 func begin_placement(
 	building_scene: PackedScene, cost: int, world_position: Vector2
+) -> bool:
+	return _begin_configured_placement(
+		building_scene, cost, world_position, null
+	)
+
+
+func _begin_configured_placement(
+	building_scene: PackedScene,
+	cost: int,
+	world_position: Vector2,
+	tower_data: Resource
 ) -> bool:
 	if building_scene == null or cost < 0:
 		placement_failed.emit(&"invalid_configuration")
@@ -79,6 +123,10 @@ func begin_placement(
 		placement_failed.emit(&"invalid_building_scene")
 		return false
 
+	if tower_data != null and _preview.has_method("configure_tower"):
+		_preview.call("configure_tower", tower_data)
+	if _preview.has_method("set_build_preview"):
+		_preview.call("set_build_preview", true)
 	_active_cost = cost
 	add_child(_preview)
 	update_preview_position(world_position)
@@ -111,6 +159,8 @@ func confirm_placement() -> bool:
 		return false
 
 	var placed_building := _preview
+	if placed_building.has_method("set_build_preview"):
+		placed_building.call("set_build_preview", false)
 	_preview = null
 	_preview_is_valid = false
 	_building_serial += 1

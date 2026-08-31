@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/building/tower_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+tower_id = &"flame"
+display_name = "Flame Tower"
+cost = 80
+max_health = 280.0
+attack_style = 1
+damage = 15.0
+attack_interval = 1.0
+attack_range = 260.0
+projectile_speed = 360.0
+splash_radius = 82.0
+foundation_color = Color(0.42, 0.18, 0.10, 1)
+tower_color = Color(0.95, 0.31, 0.10, 1)
+projectile_color = Color(1, 0.32, 0.08, 1)

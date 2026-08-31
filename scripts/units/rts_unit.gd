@@ -23,6 +23,8 @@ extends CharacterBody2D
 var is_selected := false
 var _has_move_target := false
 var _move_target := Vector2.ZERO
+var _movement_slow_multiplier := 1.0
+var _movement_slow_remaining := 0.0
 
 
 func _ready() -> void:
@@ -31,7 +33,8 @@ func _ready() -> void:
 		health_component.died.connect(_on_died)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	_update_movement_slow(delta)
 	if not _has_move_target:
 		velocity = Vector2.ZERO
 		return
@@ -54,9 +57,10 @@ func _physics_process(_delta: float) -> void:
 	if movement_direction.is_zero_approx():
 		movement_direction = global_position.direction_to(_move_target)
 
-	var desired_velocity := movement_direction * move_speed
+	var effective_speed := get_effective_move_speed()
+	var desired_velocity := movement_direction * effective_speed
 	var separation_velocity := _calculate_separation_velocity()
-	velocity = (desired_velocity + separation_velocity).limit_length(move_speed)
+	velocity = (desired_velocity + separation_velocity).limit_length(effective_speed)
 	move_and_slide()
 
 
@@ -86,6 +90,34 @@ func get_selection_radius() -> float:
 func stop_moving() -> void:
 	_has_move_target = false
 	velocity = Vector2.ZERO
+
+
+func apply_movement_slow(multiplier: float, duration: float) -> bool:
+	if multiplier >= 1.0 or multiplier <= 0.0 or duration <= 0.0:
+		return false
+	if health_component != null and health_component.is_dead:
+		return false
+	_movement_slow_multiplier = minf(
+		_movement_slow_multiplier, clampf(multiplier, 0.1, 1.0)
+	)
+	_movement_slow_remaining = maxf(_movement_slow_remaining, duration)
+	return true
+
+
+func get_effective_move_speed() -> float:
+	return move_speed * _movement_slow_multiplier
+
+
+func get_movement_slow_remaining() -> float:
+	return _movement_slow_remaining
+
+
+func _update_movement_slow(delta: float) -> void:
+	if _movement_slow_remaining <= 0.0:
+		return
+	_movement_slow_remaining = maxf(_movement_slow_remaining - delta, 0.0)
+	if is_zero_approx(_movement_slow_remaining):
+		_movement_slow_multiplier = 1.0
 
 
 func _calculate_separation_velocity() -> Vector2:

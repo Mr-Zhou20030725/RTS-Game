@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="TowerData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/building/tower_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+tower_id = &"arcane"
+display_name = "Arcane Tower"
+cost = 100
+max_health = 240.0
+attack_style = 0
+damage = 90.0
+attack_interval = 2.2
+attack_range = 390.0
+projectile_speed = 620.0
+foundation_color = Color(0.27, 0.12, 0.43, 1)
+tower_color = Color(0.68, 0.30, 0.95, 1)
+projectile_color = Color(0.89, 0.47, 1, 1)

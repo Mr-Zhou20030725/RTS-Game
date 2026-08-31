@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/building/defense_tower.gd" id="1_tower"]
+[ext_resource type="Resource" path="res://resources/towers/arrow_tower.tres" id="2_data"]
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="3_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="4_faction"]
+[ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="5_ranged"]
+[ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="6_footprint"]
+
+[node name="DefenseTower" type="Node2D" groups=["combat_buildings", "combat_targets", "placement_blockers"]]
+script = ExtResource("1_tower")
+tower_data = ExtResource("2_data")
+
+[node name="Foundation" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+polygon = PackedVector2Array(-30, -30, 30, -30, 30, 30, -30, 30)
+color = Color(0.18, 0.36, 0.47, 1)
+
+[node name="Turret" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+polygon = PackedVector2Array(0, -26, 23, -8, 18, 21, -18, 21, -23, -8)
+color = Color(0.36, 0.70, 0.81, 1)
+
+[node name="TowerLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -52.0
+offset_top = -8.0
+offset_right = 52.0
+offset_bottom = 16.0
+theme_override_font_sizes/font_size = 9
+text = "ARROW TOWER"
+horizontal_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("3_health")]
+position = Vector2(0, -46)
+max_health = 250.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("4_faction")]
+faction = 1
+
+[node name="RangedAttackComponent" parent="." instance=ExtResource("5_ranged")]
+attack_damage = 18.0
+attack_interval = 0.55
+attack_range = 300.0
+projectile_speed = 520.0
+
+[node name="BuildingFootprint" type="Node" parent="."]
+script = ExtResource("6_footprint")
+radius = 32.0

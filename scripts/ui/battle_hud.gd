@@ -7,6 +7,10 @@ signal return_to_main_requested
 @onready var economy_status_label: Label = %EconomyStatusLabel
 @onready var spend_test_button: Button = %SpendTestButton
 @onready var build_tower_button: Button = %BuildTowerButton
+@onready var arrow_tower_button: Button = %ArrowTowerButton
+@onready var flame_tower_button: Button = %FlameTowerButton
+@onready var frost_tower_button: Button = %FrostTowerButton
+@onready var arcane_tower_button: Button = %ArcaneTowerButton
 
 var human_economy: Node
 var building_placement_manager: Node
@@ -16,6 +20,10 @@ func _ready() -> void:
 	return_button.pressed.connect(_on_return_button_pressed)
 	spend_test_button.pressed.connect(_on_spend_test_button_pressed)
 	build_tower_button.pressed.connect(_on_build_tower_button_pressed)
+	arrow_tower_button.pressed.connect(_on_tower_button_pressed.bind(0))
+	flame_tower_button.pressed.connect(_on_tower_button_pressed.bind(1))
+	frost_tower_button.pressed.connect(_on_tower_button_pressed.bind(2))
+	arcane_tower_button.pressed.connect(_on_tower_button_pressed.bind(3))
 	call_deferred("_bind_human_economy")
 	call_deferred("_bind_building_placement_manager")
 
@@ -49,12 +57,20 @@ func _on_build_tower_button_pressed() -> void:
 	building_placement_manager.call("begin_default_placement")
 
 
+func _on_tower_button_pressed(tower_index: int) -> void:
+	if building_placement_manager == null:
+		return
+	building_placement_manager.call("begin_tower_placement", tower_index)
+
+
 func _bind_building_placement_manager() -> void:
 	building_placement_manager = get_tree().get_first_node_in_group(
 		&"building_placement_manager"
 	)
 	if building_placement_manager == null:
 		build_tower_button.disabled = true
+		for tower_button in _get_tower_buttons():
+			tower_button.disabled = true
 		economy_status_label.text = "Placement manager unavailable"
 		return
 
@@ -119,3 +135,12 @@ func _on_placement_failed(reason: StringName) -> void:
 			economy_status_label.text = "Red position cannot be built"
 		_:
 			economy_status_label.text = "Unable to enter build mode"
+
+
+func _get_tower_buttons() -> Array[Button]:
+	return [
+		arrow_tower_button,
+		flame_tower_button,
+		frost_tower_button,
+		arcane_tower_button,
+	]

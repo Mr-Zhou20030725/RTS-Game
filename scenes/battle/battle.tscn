@@ -34,4 +34,7 @@ script = ExtResource("4_selection")
 
 [node name="T07ArcherDemo" parent="." instance=ExtResource("7_archer")]
 
-[node name="BattleHUD" parent="." instance=ExtResource("2_hud")]
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="BattleHUD" parent="HUDLayer" instance=ExtResource("2_hud")]

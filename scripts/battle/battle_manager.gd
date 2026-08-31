@@ -4,7 +4,7 @@ extends Node2D
 
 signal battle_initialized
 
-@onready var battle_hud: Control = $BattleHUD
+@onready var battle_hud: Control = $HUDLayer/BattleHUD
 
 var is_initialized := false
 

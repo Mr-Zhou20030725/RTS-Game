@@ -11,6 +11,13 @@ extends CharacterBody2D
 
 @onready var navigation_agent: NavigationAgent2D = %NavigationAgent2D
 @onready var selection_indicator: Line2D = %SelectionIndicator
+@onready var collision_shape := get_node_or_null("CollisionShape2D") as CollisionShape2D
+@onready var health_component := get_node_or_null(
+	"HealthComponent"
+) as HealthComponent
+@onready var melee_component := get_node_or_null(
+	"MeleeAttackComponent"
+) as MeleeAttackComponent
 
 var is_selected := false
 var _has_move_target := false
@@ -19,6 +26,8 @@ var _move_target := Vector2.ZERO
 
 func _ready() -> void:
 	selection_indicator.visible = is_selected
+	if health_component != null:
+		health_component.died.connect(_on_died)
 
 
 func _physics_process(_delta: float) -> void:
@@ -36,7 +45,7 @@ func _physics_process(_delta: float) -> void:
 		return
 
 	if global_position.distance_to(_move_target) <= arrival_distance:
-		_stop_moving()
+		stop_moving()
 		return
 
 	var next_path_position := navigation_agent.get_next_path_position()
@@ -65,18 +74,22 @@ func get_move_target() -> Vector2:
 	return _move_target
 
 
+func has_move_target() -> bool:
+	return _has_move_target
+
+
 func get_selection_radius() -> float:
 	return selection_radius
 
 
-func _stop_moving() -> void:
+func stop_moving() -> void:
 	_has_move_target = false
 	velocity = Vector2.ZERO
 
 
 func _calculate_separation_velocity() -> Vector2:
 	var separation := Vector2.ZERO
-	for other_node in get_tree().get_nodes_in_group("selectable_units"):
+	for other_node in get_tree().get_nodes_in_group("moving_units"):
 		if other_node == self or not other_node is Node2D:
 			continue
 
@@ -93,3 +106,23 @@ func _calculate_separation_velocity() -> Vector2:
 		var strength: float = 1.0 - (distance / separation_distance)
 		separation += offset.normalized() * separation_strength * strength
 	return separation
+
+
+func _on_died(_source: Node) -> void:
+	stop_moving()
+	set_selected(false)
+	for group_name in [
+		&"combat_targets",
+		&"moving_units",
+		&"selectable_units",
+	]:
+		if is_in_group(group_name):
+			remove_from_group(group_name)
+	collision_layer = 0
+	collision_mask = 0
+	set_physics_process(false)
+	if melee_component != null:
+		melee_component.combat_enabled = false
+	if collision_shape != null:
+		collision_shape.set_deferred("disabled", true)
+	modulate = Color(0.35, 0.35, 0.35, 0.65)

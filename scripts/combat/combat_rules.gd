@@ -20,6 +20,16 @@ static func can_damage(attacker: Node, target: Node) -> bool:
 	var target_faction := FactionComponent.find_on(target)
 	if attacker_faction == null or target_faction == null:
 		return false
+	var attacker_health := attacker.get_node_or_null(
+		"HealthComponent"
+	) as HealthComponent
+	var target_health := target.get_node_or_null(
+		"HealthComponent"
+	) as HealthComponent
+	if attacker_health != null and attacker_health.is_dead:
+		return false
+	if target_health != null and target_health.is_dead:
+		return false
 	return attacker_faction.is_hostile_to(target_faction)
 
 

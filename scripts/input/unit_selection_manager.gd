@@ -136,7 +136,10 @@ func _get_selectable_units() -> Array[Node2D]:
 
 func _remove_invalid_selected_units() -> void:
 	for unit_index in range(selected_units.size() - 1, -1, -1):
-		if not is_instance_valid(selected_units[unit_index]):
+		if (
+			not is_instance_valid(selected_units[unit_index])
+			or not selected_units[unit_index].is_in_group("selectable_units")
+		):
 			selected_units.remove_at(unit_index)
 
 

@@ -1,9 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
+[ext_resource type="Script" path="res://scripts/units/rts_unit.gd" id="3_unit"]
+[ext_resource type="PackedScene" path="res://scenes/components/melee_attack_component.tscn" id="4_melee"]
 
-[node name="TestMonster" type="Node2D" groups=["test_monster_placeholder"]]
+[sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
+radius = 15.0
+
+[node name="TestMonster" type="CharacterBody2D" groups=["combat_targets", "moving_units", "test_monster_placeholder"]]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("3_unit")
+move_speed = 125.0
 
 [node name="Body" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(0, -26, 24, -10, 20, 22, 0, 14, -20, 22, -24, -10)
@@ -24,3 +33,27 @@ max_health = 120.0
 
 [node name="FactionComponent" parent="." instance=ExtResource("2_faction")]
 faction = 2
+
+[node name="MeleeAttackComponent" parent="." instance=ExtResource("4_melee")]
+attack_damage = 12.0
+attack_interval = 0.8
+attack_range = 42.0
+acquisition_range = 260.0
+chase_range = 380.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 6.0
+target_desired_distance = 10.0
+radius = 17.0
+neighbor_distance = 72.0
+
+[node name="SelectionIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+points = PackedVector2Array(24, 0, 16.9706, 16.9706, 0, 24, -16.9706, 16.9706, -24, 0, -16.9706, -16.9706, 0, -24, 16.9706, -16.9706, 24, 0)
+width = 3.0
+default_color = Color(0.917647, 0.819608, 0.313726, 1)

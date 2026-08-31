@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://units/placeholders/test_monster.tscn" id="1_monster"]
+
+[node name="T06MonsterDemo" type="Node2D"]
+
+[node name="Monster01" parent="." instance=ExtResource("1_monster")]
+position = Vector2(1080, 150)
+
+[node name="Monster02" parent="." instance=ExtResource("1_monster")]
+position = Vector2(1140, 210)

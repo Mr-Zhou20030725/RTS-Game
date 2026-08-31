@@ -1,13 +1,14 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="Script" path="res://scripts/units/rts_unit.gd" id="2_unit"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
+[ext_resource type="PackedScene" path="res://scenes/components/melee_attack_component.tscn" id="4_melee"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_unit"]
 radius = 14.0
 
-[node name="TestUnit" type="CharacterBody2D" groups=["selectable_units", "test_unit_placeholder"]]
+[node name="TestUnit" type="CharacterBody2D" groups=["combat_targets", "moving_units", "selectable_units", "test_unit_placeholder"]]
 collision_layer = 1
 collision_mask = 1
 script = ExtResource("2_unit")
@@ -22,7 +23,7 @@ offset_top = -10.0
 offset_right = 34.0
 offset_bottom = 14.0
 theme_override_font_sizes/font_size = 11
-text = "UNIT"
+text = "SWORD"
 horizontal_alignment = 1
 
 [node name="HealthComponent" parent="." instance=ExtResource("1_health")]
@@ -31,6 +32,13 @@ max_health = 100.0
 
 [node name="FactionComponent" parent="." instance=ExtResource("3_faction")]
 faction = 1
+
+[node name="MeleeAttackComponent" parent="." instance=ExtResource("4_melee")]
+attack_damage = 20.0
+attack_interval = 0.6
+attack_range = 42.0
+acquisition_range = 260.0
+chase_range = 380.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_unit")

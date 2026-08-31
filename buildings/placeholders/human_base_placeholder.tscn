@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
 
-[node name="HumanBase" type="Node2D" groups=["human_base_placeholder"]]
+[node name="HumanBase" type="Node2D" groups=["combat_buildings", "human_base_placeholder"]]
 
 [node name="OuterGround" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-78, -62, -52, -82, 52, -82, 78, -62, 78, 62, 52, 82, -52, 82, -78, 62)

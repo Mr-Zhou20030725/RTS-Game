@@ -1,7 +1,9 @@
 class_name RangedAttackComponent
 extends Node
 
-## Reusable ranged attack behavior. Formal targeting priorities arrive in T08.
+## Reusable ranged attack behavior with shared target prioritization.
+
+const TargetSelector := preload("res://scripts/combat/targeting_service.gd")
 
 signal target_changed(target: Node2D)
 signal projectile_fired(projectile: Node2D, target: Node2D)
@@ -18,6 +20,7 @@ const DEFAULT_PROJECTILE_SCENE := preload(
 @export var projectile_spawn_offset := Vector2.ZERO
 @export var projectile_scene: PackedScene = DEFAULT_PROJECTILE_SCENE
 @export var target_group: StringName = &"combat_targets"
+@export_enum("Nearest", "Units First", "Buildings First") var target_priority := 0
 
 var current_target: Node2D
 var _attack_cooldown := 0.0
@@ -35,7 +38,7 @@ func _physics_process(delta: float) -> void:
 
 	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
 	if not _is_target_in_range(current_target):
-		_set_target(_find_nearest_hostile_target())
+		_set_target(_find_best_hostile_target())
 	if current_target == null or not is_zero_approx(_attack_cooldown):
 		return
 
@@ -79,28 +82,14 @@ func fire_at(target: Node2D) -> Node2D:
 	return projectile
 
 
-func _find_nearest_hostile_target() -> Node2D:
-	var nearest_target: Node2D
-	var nearest_distance := INF
-	for candidate_node in get_tree().get_nodes_in_group(target_group):
-		if candidate_node == actor or not candidate_node is Node2D:
-			continue
-		var candidate := candidate_node as Node2D
-		if not _is_target_in_range(candidate):
-			continue
-		var distance := actor.global_position.distance_to(candidate.global_position)
-		if distance < nearest_distance:
-			nearest_target = candidate
-			nearest_distance = distance
-	return nearest_target
+func _find_best_hostile_target() -> Node2D:
+	return TargetSelector.find_best_target_in_group(
+		actor, target_group, attack_range, target_priority
+	)
 
 
 func _is_target_in_range(target: Node2D) -> bool:
-	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
-		return false
-	if not CombatRules.can_damage(actor, target):
-		return false
-	return actor.global_position.distance_to(target.global_position) <= attack_range
+	return TargetSelector.is_valid_target(actor, target, attack_range)
 
 
 func _set_target(target: Node2D) -> void:

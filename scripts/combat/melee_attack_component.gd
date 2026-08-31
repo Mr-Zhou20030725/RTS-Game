@@ -3,6 +3,8 @@ extends Node
 
 ## Reusable melee attack, chase, and reacquisition behavior.
 
+const TargetSelector := preload("res://scripts/combat/targeting_service.gd")
+
 signal target_changed(target: Node2D)
 signal attack_performed(target: Node2D, applied_damage: float)
 
@@ -14,6 +16,7 @@ signal attack_performed(target: Node2D, applied_damage: float)
 @export_range(1.0, 3000.0, 1.0) var chase_range := 380.0
 @export_range(0.05, 2.0, 0.05) var repath_interval := 0.2
 @export var target_group: StringName = &"combat_targets"
+@export_enum("Nearest", "Units First", "Buildings First") var target_priority := 0
 
 var current_target: Node2D
 var _attack_cooldown := 0.0
@@ -36,7 +39,7 @@ func _physics_process(delta: float) -> void:
 	_repath_cooldown = maxf(_repath_cooldown - delta, 0.0)
 
 	if not _is_target_valid(current_target):
-		_set_target(_find_nearest_hostile_target())
+		_set_target(_find_best_hostile_target())
 
 	if current_target == null:
 		return
@@ -66,23 +69,10 @@ func clear_target() -> void:
 	_clear_target(true)
 
 
-func _find_nearest_hostile_target() -> Node2D:
-	var nearest_target: Node2D
-	var nearest_distance := INF
-
-	for candidate_node in get_tree().get_nodes_in_group(target_group):
-		if candidate_node == actor or not candidate_node is Node2D:
-			continue
-
-		var candidate := candidate_node as Node2D
-		if not _is_target_valid(candidate):
-			continue
-
-		var distance := actor.global_position.distance_to(candidate.global_position)
-		if distance <= acquisition_range and distance < nearest_distance:
-			nearest_target = candidate
-			nearest_distance = distance
-	return nearest_target
+func _find_best_hostile_target() -> Node2D:
+	return TargetSelector.find_best_target_in_group(
+		actor, target_group, acquisition_range, target_priority
+	)
 
 
 func _chase_current_target() -> void:
@@ -121,13 +111,7 @@ func _perform_attack() -> void:
 
 
 func _is_target_valid(target: Node2D) -> bool:
-	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
-		return false
-	if not CombatRules.can_damage(actor, target):
-		return false
-
-	var health := target.get_node_or_null("HealthComponent") as HealthComponent
-	return health != null and not health.is_dead
+	return TargetSelector.is_valid_target(actor, target)
 
 
 func _set_target(target: Node2D) -> void:

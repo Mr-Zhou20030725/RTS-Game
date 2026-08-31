@@ -1,0 +1,35 @@
+class_name CombatRules
+extends RefCounted
+
+## Central gate for all faction-aware targeting and damage.
+
+
+static func are_allies(first_actor: Node, second_actor: Node) -> bool:
+	var first_faction := FactionComponent.find_on(first_actor)
+	var second_faction := FactionComponent.find_on(second_actor)
+	if first_faction == null or second_faction == null:
+		return false
+	return first_faction.is_same_faction(second_faction)
+
+
+static func can_damage(attacker: Node, target: Node) -> bool:
+	if attacker == null or target == null or attacker == target:
+		return false
+
+	var attacker_faction := FactionComponent.find_on(attacker)
+	var target_faction := FactionComponent.find_on(target)
+	if attacker_faction == null or target_faction == null:
+		return false
+	return attacker_faction.is_hostile_to(target_faction)
+
+
+static func try_apply_damage(
+	attacker: Node, target: Node, amount: float
+) -> float:
+	if amount <= 0.0 or not can_damage(attacker, target):
+		return 0.0
+
+	var health_component := target.get_node_or_null("HealthComponent") as HealthComponent
+	if health_component == null:
+		return 0.0
+	return health_component.take_damage(amount, attacker)

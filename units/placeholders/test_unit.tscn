@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="Script" path="res://scripts/units/rts_unit.gd" id="2_unit"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_unit"]
 radius = 14.0
@@ -27,6 +28,9 @@ horizontal_alignment = 1
 [node name="HealthComponent" parent="." instance=ExtResource("1_health")]
 position = Vector2(0, -38)
 max_health = 100.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("3_faction")]
+faction = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_unit")

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
 
 [node name="MonsterNest" type="Node2D" groups=["monster_nest_placeholder"]]
 
@@ -26,3 +27,6 @@ vertical_alignment = 1
 [node name="HealthComponent" parent="." instance=ExtResource("1_health")]
 position = Vector2(0, -72)
 max_health = 600.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("2_faction")]
+faction = 2

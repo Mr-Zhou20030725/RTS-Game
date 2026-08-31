@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
+
+[node name="TestMonster" type="Node2D" groups=["test_monster_placeholder"]]
+
+[node name="Body" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -26, 24, -10, 20, 22, 0, 14, -20, 22, -24, -10)
+color = Color(0.713726, 0.211765, 0.25098, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_left = -42.0
+offset_top = -10.0
+offset_right = 42.0
+offset_bottom = 14.0
+theme_override_font_sizes/font_size = 11
+text = "MONSTER"
+horizontal_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("1_health")]
+position = Vector2(0, -40)
+max_health = 120.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("2_faction")]
+faction = 2

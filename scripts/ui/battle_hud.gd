@@ -13,9 +13,14 @@ signal return_to_main_requested
 @onready var arcane_tower_button: Button = %ArcaneTowerButton
 @onready var selected_tower_label: Label = %SelectedTowerLabel
 @onready var upgrade_tower_button: Button = %UpgradeTowerButton
+@onready var swordsman_squad_button: Button = %SwordsmanSquadButton
+@onready var archer_squad_button: Button = %ArcherSquadButton
+@onready var knight_squad_button: Button = %KnightSquadButton
+@onready var mage_squad_button: Button = %MageSquadButton
 
 var human_economy: Node
 var building_placement_manager: Node
+var human_squad_manager: Node
 
 
 func _ready() -> void:
@@ -27,8 +32,13 @@ func _ready() -> void:
 	frost_tower_button.pressed.connect(_on_tower_button_pressed.bind(2))
 	arcane_tower_button.pressed.connect(_on_tower_button_pressed.bind(3))
 	upgrade_tower_button.pressed.connect(_on_upgrade_tower_button_pressed)
+	swordsman_squad_button.pressed.connect(_on_squad_button_pressed.bind(0))
+	archer_squad_button.pressed.connect(_on_squad_button_pressed.bind(1))
+	knight_squad_button.pressed.connect(_on_squad_button_pressed.bind(2))
+	mage_squad_button.pressed.connect(_on_squad_button_pressed.bind(3))
 	call_deferred("_bind_human_economy")
 	call_deferred("_bind_building_placement_manager")
+	call_deferred("_bind_human_squad_manager")
 
 
 func _on_return_button_pressed() -> void:
@@ -69,6 +79,23 @@ func _on_tower_button_pressed(tower_index: int) -> void:
 func _on_upgrade_tower_button_pressed() -> void:
 	if building_placement_manager != null:
 		building_placement_manager.call("upgrade_selected_tower")
+
+
+func _on_squad_button_pressed(squad_index: int) -> void:
+	if human_squad_manager != null:
+		human_squad_manager.call("recruit_squad", squad_index)
+
+
+func _bind_human_squad_manager() -> void:
+	human_squad_manager = get_tree().get_first_node_in_group(
+		&"human_squad_manager"
+	)
+	if human_squad_manager == null:
+		for squad_button in _get_squad_buttons():
+			squad_button.disabled = true
+		return
+	human_squad_manager.squad_recruited.connect(_on_squad_recruited)
+	human_squad_manager.recruitment_failed.connect(_on_recruitment_failed)
 
 
 func _bind_building_placement_manager() -> void:
@@ -114,6 +141,8 @@ func _on_gold_changed(
 			economy_status_label.text = "%d tower construction" % change
 		&"tower_upgrade":
 			economy_status_label.text = "%d tower upgrade" % change
+		&"squad_recruitment":
+			economy_status_label.text = "%d squad recruitment" % change
 		&"starting_gold":
 			economy_status_label.text = "Economy ready"
 
@@ -187,10 +216,34 @@ func _on_tower_upgrade_failed(reason: StringName) -> void:
 			economy_status_label.text = "Select a placed tower first"
 
 
+func _on_squad_recruited(
+	_squad: Node2D, data: HumanSquadData, cost: int
+) -> void:
+	economy_status_label.text = "%s recruited for %d gold" % [
+		data.display_name, cost
+	]
+
+
+func _on_recruitment_failed(reason: StringName) -> void:
+	if reason == &"not_enough_gold":
+		economy_status_label.text = "Not enough gold to recruit squad"
+	else:
+		economy_status_label.text = "Unable to recruit squad"
+
+
 func _get_tower_buttons() -> Array[Button]:
 	return [
 		arrow_tower_button,
 		flame_tower_button,
 		frost_tower_button,
 		arcane_tower_button,
+	]
+
+
+func _get_squad_buttons() -> Array[Button]:
+	return [
+		swordsman_squad_button,
+		archer_squad_button,
+		knight_squad_button,
+		mage_squad_button,
 	]

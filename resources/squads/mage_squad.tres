@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="HumanSquadData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/human_squad_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+squad_id = &"mage"
+display_name = "Mage Squad"
+cost = 130
+member_count = 3
+formation_spacing = 46.0
+max_health = 70.0
+move_speed = 120.0
+attack_style = 2
+damage = 28.0
+attack_interval = 1.3
+attack_range = 300.0
+acquisition_range = 300.0
+chase_range = 410.0
+projectile_speed = 420.0
+splash_radius = 72.0
+body_color = Color(0.58, 0.31, 0.84, 1)
+accent_color = Color(0.93, 0.51, 1, 1)
+

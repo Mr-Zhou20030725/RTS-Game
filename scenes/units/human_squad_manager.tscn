@@ -1,0 +1,14 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/human_squad_manager.gd" id="1_manager"]
+[ext_resource type="PackedScene" path="res://units/human/human_squad_member.tscn" id="2_member"]
+[ext_resource type="Resource" path="res://resources/squads/swordsman_squad.tres" id="3_sword"]
+[ext_resource type="Resource" path="res://resources/squads/archer_squad.tres" id="4_archer"]
+[ext_resource type="Resource" path="res://resources/squads/knight_squad.tres" id="5_knight"]
+[ext_resource type="Resource" path="res://resources/squads/mage_squad.tres" id="6_mage"]
+
+[node name="HumanSquadManager" type="Node2D" groups=["human_squad_manager"]]
+z_index = 10
+script = ExtResource("1_manager")
+member_scene = ExtResource("2_member")
+squad_catalog = Array[Resource]([ExtResource("3_sword"), ExtResource("4_archer"), ExtResource("5_knight"), ExtResource("6_mage")])

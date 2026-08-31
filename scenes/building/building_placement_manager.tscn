@@ -9,7 +9,7 @@
 [ext_resource type="Resource" path="res://resources/towers/arcane_tower.tres" id="7_arcane"]
 
 [node name="BuildingPlacementManager" type="Node2D" groups=["building_placement_manager"]]
-z_index = 8
+z_index = 5
 script = ExtResource("1_manager")
 default_building_scene = ExtResource("2_tower")
 tower_building_scene = ExtResource("3_defense")

@@ -1,0 +1,68 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/human_squad_member.gd" id="1_member"]
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="2_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
+[ext_resource type="PackedScene" path="res://scenes/components/melee_attack_component.tscn" id="4_melee"]
+[ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="5_ranged"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_member"]
+radius = 14.0
+
+[node name="HumanSquadMember" type="CharacterBody2D" groups=["combat_targets", "combat_units", "moving_units", "selectable_units", "human_squad_members"]]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_member")
+
+[node name="Body" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+polygon = PackedVector2Array(0, -24, 22, -8, 18, 20, -18, 20, -22, -8)
+color = Color(0.31, 0.65, 0.79, 1)
+
+[node name="Accent" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(-14, 8, 0, -14, 14, 8)
+width = 3.0
+default_color = Color(0.85, 0.68, 0.32, 1)
+
+[node name="UnitLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -42.0
+offset_top = -9.0
+offset_right = 42.0
+offset_bottom = 13.0
+theme_override_font_sizes/font_size = 9
+text = "SWORDSMAN"
+horizontal_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_health")]
+position = Vector2(0, -38)
+max_health = 140.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("3_faction")]
+faction = 1
+
+[node name="MeleeAttackComponent" parent="." instance=ExtResource("4_melee")]
+combat_enabled = false
+
+[node name="RangedAttackComponent" parent="." instance=ExtResource("5_ranged")]
+combat_enabled = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_member")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 6.0
+target_desired_distance = 10.0
+radius = 16.0
+neighbor_distance = 72.0
+
+[node name="SelectionIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+points = PackedVector2Array(24, 0, 16.9706, 16.9706, 0, 24, -16.9706, 16.9706, -24, 0, -16.9706, -16.9706, 0, -24, 16.9706, -16.9706, 24, 0)
+width = 3.0
+default_color = Color(0.92, 0.82, 0.31, 1)
+

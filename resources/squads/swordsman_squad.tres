@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="HumanSquadData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/human_squad_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+squad_id = &"swordsman"
+display_name = "Swordsman Squad"
+cost = 60
+member_count = 4
+formation_spacing = 42.0
+max_health = 140.0
+move_speed = 125.0
+attack_style = 0
+damage = 24.0
+attack_interval = 0.65
+attack_range = 42.0
+acquisition_range = 280.0
+chase_range = 420.0
+body_color = Color(0.31, 0.65, 0.79, 1)
+accent_color = Color(0.84, 0.87, 0.91, 1)
+

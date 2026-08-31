@@ -125,11 +125,34 @@ func get_selected_units() -> Array[Node2D]:
 
 func _set_selection(units: Array[Node2D]) -> void:
 	clear_selection()
-	for unit in units:
+	for unit in _expand_squad_members(units):
 		if not is_instance_valid(unit):
 			continue
 		unit.call("set_selected", true)
 		selected_units.append(unit)
+
+
+func _expand_squad_members(units: Array[Node2D]) -> Array[Node2D]:
+	var expanded: Array[Node2D] = []
+	var squad_ids: Dictionary[StringName, bool] = {}
+	for unit in units:
+		if not expanded.has(unit):
+			expanded.append(unit)
+		if unit.has_method("get_squad_instance_id"):
+			var squad_id: StringName = unit.call("get_squad_instance_id")
+			if not squad_id.is_empty():
+				squad_ids[squad_id] = true
+	if squad_ids.is_empty():
+		return expanded
+	for candidate in _get_selectable_units():
+		if not candidate.has_method("get_squad_instance_id"):
+			continue
+		var candidate_squad_id: StringName = candidate.call(
+			"get_squad_instance_id"
+		)
+		if squad_ids.has(candidate_squad_id) and not expanded.has(candidate):
+			expanded.append(candidate)
+	return expanded
 
 
 func _get_selectable_units() -> Array[Node2D]:

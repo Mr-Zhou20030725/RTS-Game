@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="HumanSquadData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/human_squad_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+squad_id = &"knight"
+display_name = "Knight Squad"
+cost = 110
+member_count = 3
+formation_spacing = 48.0
+max_health = 220.0
+move_speed = 210.0
+attack_style = 0
+damage = 34.0
+attack_interval = 0.85
+attack_range = 46.0
+acquisition_range = 320.0
+chase_range = 520.0
+body_color = Color(0.37, 0.48, 0.78, 1)
+accent_color = Color(0.95, 0.82, 0.32, 1)
+

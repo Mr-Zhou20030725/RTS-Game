@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/economy/monster_economy.gd" id="1_economy"]
+
+[node name="MonsterEconomy" type="Node" groups=["monster_economy"]]
+script = ExtResource("1_economy")
+starting_dark_energy = 40
+energy_per_nest = 2
+income_interval = 2.0
+human_unit_kill_reward = 10
+human_tower_kill_reward = 15

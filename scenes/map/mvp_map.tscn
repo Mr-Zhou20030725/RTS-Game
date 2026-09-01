@@ -8,7 +8,7 @@
 vertices = PackedVector2Array(80, 96, 1200, 96, 1200, 672, 80, 672)
 polygons = [PackedInt32Array(0, 1, 2, 3)]
 
-[node name="MVPMap" type="Node2D"]
+[node name="MVPMap" type="Node2D" groups=["mvp_map"]]
 script = ExtResource("1_map")
 human_base_scene = ExtResource("2_base")
 monster_nest_scene = ExtResource("3_nest")

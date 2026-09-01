@@ -4,6 +4,8 @@ signal return_to_main_requested
 
 @onready var return_button: Button = %ReturnButton
 @onready var gold_label: Label = %GoldLabel
+@onready var dark_energy_label: Label = %DarkEnergyLabel
+@onready var dark_energy_rate_label: Label = %DarkEnergyRateLabel
 @onready var economy_status_label: Label = %EconomyStatusLabel
 @onready var spend_test_button: Button = %SpendTestButton
 @onready var build_tower_button: Button = %BuildTowerButton
@@ -20,6 +22,7 @@ signal return_to_main_requested
 @onready var mage_squad_button: Button = %MageSquadButton
 
 var human_economy: Node
+var monster_economy: Node
 var building_placement_manager: Node
 var human_squad_manager: Node
 
@@ -39,6 +42,7 @@ func _ready() -> void:
 	knight_squad_button.pressed.connect(_on_squad_button_pressed.bind(2))
 	mage_squad_button.pressed.connect(_on_squad_button_pressed.bind(3))
 	call_deferred("_bind_human_economy")
+	call_deferred("_bind_monster_economy")
 	call_deferred("_bind_building_placement_manager")
 	call_deferred("_bind_human_squad_manager")
 
@@ -64,6 +68,40 @@ func _on_spend_test_button_pressed() -> void:
 	if human_economy == null:
 		return
 	human_economy.call("try_spend", 50, &"t09_test_spend")
+
+
+func _bind_monster_economy() -> void:
+	monster_economy = get_tree().get_first_node_in_group(&"monster_economy")
+	if monster_economy == null:
+		dark_energy_label.text = "DARK: --"
+		dark_energy_rate_label.text = "MonsterEconomy unavailable"
+		return
+	monster_economy.dark_energy_changed.connect(_on_dark_energy_changed)
+	monster_economy.income_rate_changed.connect(
+		_on_monster_income_rate_changed
+	)
+	_on_dark_energy_changed(
+		monster_economy.call("get_dark_energy"), 0, &"hud_sync"
+	)
+	_on_monster_income_rate_changed(
+		monster_economy.call("get_active_nest_count"),
+		monster_economy.call("get_income_per_interval")
+	)
+
+
+func _on_dark_energy_changed(
+	current_energy: int, _change: int, _reason: StringName
+) -> void:
+	dark_energy_label.text = "DARK: %d" % current_energy
+
+
+func _on_monster_income_rate_changed(
+	active_nests: int, energy_per_interval: int
+) -> void:
+	var interval := float(monster_economy.get("income_interval"))
+	dark_energy_rate_label.text = "+%d every %.1fs · %d nests" % [
+		energy_per_interval, interval, active_nests
+	]
 
 
 func _on_build_tower_button_pressed() -> void:

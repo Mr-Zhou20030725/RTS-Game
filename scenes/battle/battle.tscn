@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="1_battle"]
 [ext_resource type="PackedScene" path="res://ui/battle_hud/battle_hud.tscn" id="2_hud"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/building/building_placement_manager.tscn" id="9_placement"]
 [ext_resource type="PackedScene" path="res://scenes/units/human_squad_manager.tscn" id="10_squads"]
 [ext_resource type="PackedScene" path="res://scenes/visibility/fog_of_war_manager.tscn" id="11_fog"]
+[ext_resource type="PackedScene" path="res://scenes/economy/monster_economy.tscn" id="12_monster_economy"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_battle")
@@ -23,6 +24,8 @@ mouse_filter = 2
 color = Color(0.054902, 0.0823529, 0.109804, 1)
 
 [node name="HumanEconomy" parent="." instance=ExtResource("8_economy")]
+
+[node name="MonsterEconomy" parent="." instance=ExtResource("12_monster_economy")]
 
 [node name="BuildingPlacementManager" parent="." instance=ExtResource("9_placement")]
 

@@ -56,7 +56,7 @@ RTS-Game/
 │  ├─ building/                  # 建筑放置管理器
 │  ├─ combat/                    # 弹射物场景
 │  ├─ components/                # 生命、阵营、攻击与视野源组件
-│  ├─ economy/                   # 人类金币经济场景
+│  ├─ economy/                   # 人类金币与怪物暗黑能量场景
 │  └─ units/                     # 测试编队、战斗演示、小队管理器
 ├─ scripts/                      # 按职责拆分的 GDScript
 │  ├─ core/                      # GameManager 与统一绘制层级
@@ -66,7 +66,7 @@ RTS-Game/
 │  ├─ components/                # 通用生命与阵营逻辑
 │  ├─ combat/                    # 伤害规则、索敌、近战、远程、弹射物
 │  ├─ building/                  # 建塔、塔数据、塔升级
-│  ├─ economy/                   # 金币收入、消费和击杀奖励
+│  ├─ economy/                   # 双阵营资源收入、消费和击杀奖励
 │  ├─ input/                     # 单选、框选、编队移动
 │  ├─ units/                     # RTS 单位与人类小队数据/招募逻辑
 │  ├─ visibility/                # 人类战争迷雾和局部视野
@@ -75,7 +75,7 @@ RTS-Game/
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T16 无界面自动回归脚本
+└─ tests/                        # T01–T17 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -115,6 +115,7 @@ RTS-Game/
 ### 经济、建造与升级
 
 - `HumanEconomy` 统一处理初始金币、被动收入、击杀奖励和安全消费。
+- `MonsterEconomy` 按有效巢穴数量产出暗黑能量，处理怪物击杀奖励与安全消费。
 - `BuildingPlacementManager` 处理建造预览、合法性检测、扣费、取消、塔选择和升级。
 - 塔可进行一次数据化基础升级；重复升级和余额不足都会被拒绝且不会扣费。
 - `HumanSquadManager` 负责验证金币、生成小队并发出招募结果事件。
@@ -146,10 +147,10 @@ RTS-Game/
 
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T16：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T17：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t16.gd
+godot --headless --path . --script res://tests/validate_t17.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
@@ -157,4 +158,4 @@ godot --headless --path . --script res://tests/validate_t16.gd
 ## 当前状态
 
 - T01–T13：已验收并推送至 `main`。
-- T01–T16：已验收。
+- T01–T17：已验收。

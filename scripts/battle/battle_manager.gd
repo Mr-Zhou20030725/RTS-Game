@@ -19,6 +19,7 @@ func _enforce_render_layers() -> void:
 	$Background.z_index = RenderLayers.BACKGROUND
 	$BuildingPlacementManager.z_index = RenderLayers.BUILDINGS
 	$HumanSquadManager.z_index = RenderLayers.UNITS
+	$MonsterProductionManager.z_index = RenderLayers.UNITS
 	$SelectionManager.z_index = RenderLayers.WORLD_OVERLAY
 	$T04TestSquad.z_index = RenderLayers.UNITS
 	$T06MonsterDemo.z_index = RenderLayers.UNITS

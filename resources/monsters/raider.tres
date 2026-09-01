@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MonsterProductionData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_production_data.gd" id="1_data"]
+[ext_resource type="PackedScene" path="res://units/placeholders/test_monster.tscn" id="2_monster"]
+
+[resource]
+script = ExtResource("1_data")
+monster_id = &"raider"
+display_name = "Raider"
+cost = 35
+monster_scene = ExtResource("2_monster")
+body_color = Color(0.537255, 0.25098, 0.713726, 1)

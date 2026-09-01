@@ -20,11 +20,17 @@ signal return_to_main_requested
 @onready var archer_squad_button: Button = %ArcherSquadButton
 @onready var knight_squad_button: Button = %KnightSquadButton
 @onready var mage_squad_button: Button = %MageSquadButton
+@onready var monster_production_panel: ColorRect = %MonsterProductionPanel
+@onready var selected_nest_label: Label = %SelectedNestLabel
+@onready var monster_type_zero_button: Button = %MonsterTypeZeroButton
+@onready var monster_type_one_button: Button = %MonsterTypeOneButton
+@onready var monster_production_status_label: Label = %MonsterProductionStatusLabel
 
 var human_economy: Node
 var monster_economy: Node
 var building_placement_manager: Node
 var human_squad_manager: Node
+var monster_production_manager: MonsterProductionManager
 
 
 func _ready() -> void:
@@ -41,10 +47,17 @@ func _ready() -> void:
 	archer_squad_button.pressed.connect(_on_squad_button_pressed.bind(1))
 	knight_squad_button.pressed.connect(_on_squad_button_pressed.bind(2))
 	mage_squad_button.pressed.connect(_on_squad_button_pressed.bind(3))
+	monster_type_zero_button.pressed.connect(
+		_on_monster_production_button_pressed.bind(0)
+	)
+	monster_type_one_button.pressed.connect(
+		_on_monster_production_button_pressed.bind(1)
+	)
 	call_deferred("_bind_human_economy")
 	call_deferred("_bind_monster_economy")
 	call_deferred("_bind_building_placement_manager")
 	call_deferred("_bind_human_squad_manager")
+	call_deferred("_bind_monster_production_manager")
 
 
 func _on_return_button_pressed() -> void:
@@ -93,6 +106,7 @@ func _on_dark_energy_changed(
 	current_energy: int, _change: int, _reason: StringName
 ) -> void:
 	dark_energy_label.text = "DARK: %d" % current_energy
+	_refresh_monster_production_buttons()
 
 
 func _on_monster_income_rate_changed(
@@ -124,6 +138,93 @@ func _on_upgrade_tower_button_pressed() -> void:
 func _on_squad_button_pressed(squad_index: int) -> void:
 	if human_squad_manager != null:
 		human_squad_manager.call("recruit_squad", squad_index)
+
+
+func _on_monster_production_button_pressed(catalog_index: int) -> void:
+	if monster_production_manager != null:
+		monster_production_manager.produce(catalog_index)
+
+
+func _bind_monster_production_manager() -> void:
+	monster_production_manager = get_tree().get_first_node_in_group(
+		&"monster_production_manager"
+	) as MonsterProductionManager
+	if monster_production_manager == null:
+		monster_production_panel.visible = false
+		return
+	monster_production_manager.nest_selected.connect(
+		_on_monster_nest_selected
+	)
+	monster_production_manager.selection_cleared.connect(
+		_on_monster_nest_selection_cleared
+	)
+	monster_production_manager.monster_produced.connect(
+		_on_monster_produced
+	)
+	monster_production_manager.production_failed.connect(
+		_on_monster_production_failed
+	)
+	_refresh_monster_production_buttons()
+
+
+func _on_monster_nest_selected(nest: Node2D) -> void:
+	monster_production_panel.visible = true
+	selected_nest_label.text = str(nest.name).replace(
+		"MonsterNest_", "NEST · "
+	).to_upper()
+	monster_production_status_label.text = "Choose a monster to produce"
+	_refresh_monster_production_buttons()
+
+
+func _on_monster_nest_selection_cleared() -> void:
+	monster_production_panel.visible = false
+
+
+func _on_monster_produced(
+	_monster: Node2D,
+	_nest: Node2D,
+	data: MonsterProductionData,
+	cost: int
+) -> void:
+	monster_production_status_label.text = "%s produced · %d dark" % [
+		data.display_name, cost
+	]
+	_refresh_monster_production_buttons()
+
+
+func _on_monster_production_failed(reason: StringName) -> void:
+	match reason:
+		&"not_enough_dark_energy":
+			monster_production_status_label.text = "Not enough dark energy"
+		&"no_safe_spawn_position":
+			monster_production_status_label.text = "Nest exit is blocked"
+		&"no_nest_selected":
+			monster_production_status_label.text = "Select an active nest"
+		_:
+			monster_production_status_label.text = "Unable to produce monster"
+
+
+func _refresh_monster_production_buttons() -> void:
+	var buttons := [monster_type_zero_button, monster_type_one_button]
+	if monster_production_manager == null:
+		for button in buttons:
+			button.disabled = true
+		return
+	var catalog := monster_production_manager.get_production_catalog()
+	var has_nest := monster_production_manager.get_selected_nest() != null
+	for index in buttons.size():
+		var button: Button = buttons[index]
+		if index >= catalog.size():
+			button.visible = false
+			continue
+		var data := catalog[index] as MonsterProductionData
+		button.visible = true
+		button.text = "%s\n%d DARK" % [data.display_name.to_upper(), data.cost]
+		button.disabled = (
+			not has_nest
+			or monster_economy == null
+			or not monster_economy.can_afford(data.cost)
+		)
 
 
 func _bind_human_squad_manager() -> void:

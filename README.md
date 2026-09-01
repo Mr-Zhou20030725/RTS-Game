@@ -48,7 +48,8 @@ RTS-Game/
 │  └─ towers/                    # 数据驱动的通用防御塔场景
 ├─ resources/                    # 可在 Inspector 中调整的平衡数据
 │  ├─ towers/                    # 四种输出塔与独立侦察塔配置
-│  └─ squads/                    # 剑士、弓箭手、骑士、法师小队
+│  ├─ squads/                    # 剑士、弓箭手、骑士、法师小队
+│  └─ monsters/                  # T18 怪物生产类型与暗能量费用
 ├─ scenes/                       # 游戏流程与可复用场景
 │  ├─ main/                      # 主菜单入口场景
 │  ├─ battle/                    # 战斗场景及系统装配
@@ -57,7 +58,7 @@ RTS-Game/
 │  ├─ combat/                    # 弹射物场景
 │  ├─ components/                # 生命、阵营、攻击与视野源组件
 │  ├─ economy/                   # 人类金币与怪物暗黑能量场景
-│  └─ units/                     # 测试编队、战斗演示、小队管理器
+│  └─ units/                     # 测试编队、双阵营单位生产管理器
 ├─ scripts/                      # 按职责拆分的 GDScript
 │  ├─ core/                      # GameManager 与统一绘制层级
 │  ├─ main/                      # 主菜单流程
@@ -68,14 +69,14 @@ RTS-Game/
 │  ├─ building/                  # 建塔、塔数据、塔升级
 │  ├─ economy/                   # 双阵营资源收入、消费和击杀奖励
 │  ├─ input/                     # 单选、框选、编队移动
-│  ├─ units/                     # RTS 单位与人类小队数据/招募逻辑
+│  ├─ units/                     # RTS 单位、双阵营数据与生产/招募逻辑
 │  ├─ visibility/                # 人类战争迷雾和局部视野
 │  └─ ui/                        # 主菜单和战斗 HUD
 ├─ ui/                           # Control/CanvasLayer 界面场景
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T17 无界面自动回归脚本
+└─ tests/                        # T01–T18 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -119,6 +120,10 @@ RTS-Game/
 - `BuildingPlacementManager` 处理建造预览、合法性检测、扣费、取消、塔选择和升级。
 - 塔可进行一次数据化基础升级；重复升级和余额不足都会被拒绝且不会扣费。
 - `HumanSquadManager` 负责验证金币、生成小队并发出招募结果事件。
+- `MonsterProductionManager` 负责巢穴选择、暗能量消费与安全出生点搜索；
+  普通地图点击只能操作当前视野内的存活巢穴。
+
+T18 暂提供 Grunt 与 Raider 两种生产占位数据，用于验证类型选择、费用和巢穴出生链路；六种正式怪物及其属性、能力由 T20 接入。
 
 ## 绘制层级
 
@@ -147,15 +152,14 @@ RTS-Game/
 
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T17：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T18：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t17.gd
+godot --headless --path . --script res://tests/validate_t18.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
 
 ## 当前状态
 
-- T01–T13：已验收并推送至 `main`。
-- T01–T17：已验收。
+- T01–T18：已验收并推送至 `main`。

@@ -23,6 +23,7 @@ extends CharacterBody2D
 var is_selected := false
 var _has_move_target := false
 var _move_target := Vector2.ZERO
+var _manual_move_order_active := false
 var _movement_slow_multiplier := 1.0
 var _movement_slow_remaining := 0.0
 
@@ -70,6 +71,21 @@ func set_selected(value: bool) -> void:
 
 
 func move_to(world_position: Vector2) -> void:
+	_clear_combat_targets()
+	_manual_move_order_active = true
+	_set_move_target(world_position)
+
+
+func move_to_combat_target(world_position: Vector2) -> void:
+	_manual_move_order_active = false
+	_set_move_target(world_position)
+
+
+func is_manual_move_order_active() -> bool:
+	return _manual_move_order_active
+
+
+func _set_move_target(world_position: Vector2) -> void:
 	_move_target = world_position
 	_has_move_target = true
 	navigation_agent.target_position = world_position
@@ -89,7 +105,15 @@ func get_selection_radius() -> float:
 
 func stop_moving() -> void:
 	_has_move_target = false
+	_manual_move_order_active = false
 	velocity = Vector2.ZERO
+
+
+func _clear_combat_targets() -> void:
+	if melee_component != null:
+		melee_component.clear_target()
+	if ranged_component != null and ranged_component.has_method("clear_target"):
+		ranged_component.call("clear_target")
 
 
 func apply_movement_slow(multiplier: float, duration: float) -> bool:

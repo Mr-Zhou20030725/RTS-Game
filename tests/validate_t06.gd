@@ -18,6 +18,9 @@ func _run_validation() -> void:
 	await process_frame
 	await physics_frame
 	await physics_frame
+	# T06 isolates unit-to-unit melee; T16 makes live map nests valid targets.
+	for nest in map.get_active_nests():
+		nest.remove_from_group(&"combat_targets")
 
 	if not await _validate_human_chase_attack_and_retarget():
 		return

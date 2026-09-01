@@ -75,7 +75,7 @@ RTS-Game/
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T15 无界面自动回归脚本
+└─ tests/                        # T01–T16 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -94,6 +94,7 @@ RTS-Game/
 - `MeleeAttackComponent`：近战索敌、追击、攻击和目标重选。
 - `RangedAttackComponent`：射程、攻速、弹速、伤害及弹射物生成。
 - `CombatProjectile`：命中、目标失效处理、范围伤害和临时减速。
+- 玩家移动命令优先于自动追击；抵达后恢复索敌，攻击检查前会清除已释放目标。
 - `VisionSourceComponent`：基地、单位和塔共用的数据化局部视野源。
 
 ### 数据驱动内容
@@ -140,14 +141,15 @@ RTS-Game/
 - 人类基地、部队和防御塔提供不同半径的局部视野；侦察塔以极低输出换取显著更大的探索范围。
 - 怪物单位、巢穴、血条和弹射物只有进入人类当前视野后才显示。
 - 人类不能锁定视野外目标，也不能在黑暗区域使用建造预览探测隐藏巢穴。
+- 进入视野的巢穴会加入人类单位的合法目标；摧毁后立即退出有效巢穴列表，并广播剩余数量。
 - 当前采用实时迷雾：视野源离开后区域重新变暗；怪物逻辑仍保留全图行动能力。
 
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T15：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T16：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t15.gd
+godot --headless --path . --script res://tests/validate_t16.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
@@ -155,5 +157,4 @@ godot --headless --path . --script res://tests/validate_t15.gd
 ## 当前状态
 
 - T01–T13：已验收并推送至 `main`。
-- T01–T14：已验收。
-- T15：侦察塔正在本地开发，等待完成后验收。
+- T01–T16：已验收。

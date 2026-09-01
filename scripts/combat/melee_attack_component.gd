@@ -34,6 +34,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not combat_enabled or actor == null:
 		return
+	_clear_freed_target()
+	if _has_manual_move_order():
+		if current_target != null:
+			_clear_target(false)
+		return
 
 	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
 	_repath_cooldown = maxf(_repath_cooldown - delta, 0.0)
@@ -76,7 +81,7 @@ func _find_best_hostile_target() -> Node2D:
 
 
 func _chase_current_target() -> void:
-	if not actor.has_method("move_to"):
+	if not actor.has_method("move_to_combat_target"):
 		_clear_target(false)
 		return
 
@@ -87,7 +92,7 @@ func _chase_current_target() -> void:
 	):
 		return
 
-	actor.call("move_to", target_position)
+	actor.call("move_to_combat_target", target_position)
 	_last_chase_position = target_position
 	_repath_cooldown = repath_interval
 	_was_chasing = true
@@ -133,3 +138,19 @@ func _clear_target(stop_actor: bool) -> void:
 func _stop_actor() -> void:
 	if actor.has_method("stop_moving"):
 		actor.call("stop_moving")
+
+
+func _has_manual_move_order() -> bool:
+	return (
+		actor.has_method("is_manual_move_order_active")
+		and actor.call("is_manual_move_order_active")
+	)
+
+
+func _clear_freed_target() -> void:
+	if is_instance_valid(current_target):
+		return
+	current_target = null
+	_last_chase_position = Vector2.INF
+	_repath_cooldown = 0.0
+	_was_chasing = false

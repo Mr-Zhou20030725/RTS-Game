@@ -3,6 +3,8 @@ extends Node2D
 ## Builds the fixed MVP map layout and chooses active nest spawn points.
 
 signal layout_generated(selected_candidates: Array[StringName])
+signal active_nest_count_changed(current_count: int)
+signal nest_destroyed(nest: Node2D, remaining_count: int)
 
 @export var human_base_scene: PackedScene
 @export var monster_nest_scene: PackedScene
@@ -61,10 +63,16 @@ func generate_layout() -> void:
 		_spawn_monster_nest(candidate)
 
 	layout_generated.emit(selected_candidate_names.duplicate())
+	active_nest_count_changed.emit(active_nests.size())
 
 
 func get_active_nests() -> Array[Node2D]:
+	_prune_inactive_nests()
 	return active_nests.duplicate()
+
+
+func get_active_nest_count() -> int:
+	return get_active_nests().size()
 
 
 func get_selected_candidate_names() -> Array[StringName]:
@@ -96,6 +104,38 @@ func _spawn_monster_nest(candidate: Marker2D) -> void:
 	nest.position = spawned_buildings.to_local(candidate.global_position)
 	active_nests.append(nest)
 	selected_candidate_names.append(candidate.name)
+	var health := nest.get_node_or_null("HealthComponent") as HealthComponent
+	if health == null:
+		push_error("Monster nest requires a HealthComponent.")
+		return
+	health.died.connect(_on_nest_died.bind(nest))
+
+
+func _on_nest_died(_source: Node, nest: Node2D) -> void:
+	if nest == null or not active_nests.has(nest):
+		return
+	active_nests.erase(nest)
+	for group_name in [
+		&"combat_targets",
+		&"combat_buildings",
+		&"fog_revealables",
+		&"monster_nest_placeholder",
+		&"placement_blockers",
+	]:
+		if nest.is_in_group(group_name):
+			nest.remove_from_group(group_name)
+	nest.visible = false
+	var remaining_count := active_nests.size()
+	nest_destroyed.emit(nest, remaining_count)
+	active_nest_count_changed.emit(remaining_count)
+	nest.queue_free()
+
+
+func _prune_inactive_nests() -> void:
+	for index in range(active_nests.size() - 1, -1, -1):
+		var nest := active_nests[index]
+		if not is_instance_valid(nest):
+			active_nests.remove_at(index)
 
 
 func _clear_spawned_buildings() -> void:

@@ -39,6 +39,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not combat_enabled or actor == null:
 		return
+	_clear_freed_target()
+	if _has_manual_move_order():
+		if current_target != null:
+			_set_target(null)
+		return
 
 	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
 	if not _is_target_in_range(current_target):
@@ -112,3 +117,16 @@ func _set_target(target: Node2D) -> void:
 		return
 	current_target = target
 	target_changed.emit(current_target)
+
+
+func _has_manual_move_order() -> bool:
+	return (
+		actor.has_method("is_manual_move_order_active")
+		and actor.call("is_manual_move_order_active")
+	)
+
+
+func _clear_freed_target() -> void:
+	if is_instance_valid(current_target):
+		return
+	current_target = null

@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/units/human_squad_member.gd" id="1_member"]
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="2_health"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
 [ext_resource type="PackedScene" path="res://scenes/components/melee_attack_component.tscn" id="4_melee"]
 [ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="5_ranged"]
+[ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="6_vision"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_member"]
 radius = 14.0
@@ -48,6 +49,9 @@ combat_enabled = false
 [node name="RangedAttackComponent" parent="." instance=ExtResource("5_ranged")]
 combat_enabled = false
 
+[node name="VisionSourceComponent" parent="." instance=ExtResource("6_vision")]
+vision_radius = 155.0
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_member")
 
@@ -65,4 +69,3 @@ z_index = 10
 points = PackedVector2Array(24, 0, 16.9706, 16.9706, 0, 24, -16.9706, 16.9706, -24, 0, -16.9706, -16.9706, 0, -24, 16.9706, -16.9706, 24, 0)
 width = 3.0
 default_color = Color(0.92, 0.82, 0.31, 1)
-

@@ -282,6 +282,17 @@ func _is_position_valid(world_position: Vector2) -> bool:
 	var inner_bounds := buildable_bounds.grow(-preview_radius)
 	if not inner_bounds.has_point(world_position):
 		return false
+	var fog_manager := get_tree().get_first_node_in_group(
+		&"human_fog_manager"
+	)
+	if (
+		fog_manager != null
+		and fog_manager.call("is_human_fog_enabled")
+		and not fog_manager.call(
+			"is_position_visible_to_human", world_position
+		)
+	):
+		return false
 
 	for blocker_node in get_tree().get_nodes_in_group(&"placement_blockers"):
 		if blocker_node == _preview or not blocker_node is Node2D:

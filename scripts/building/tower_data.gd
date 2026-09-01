@@ -18,6 +18,7 @@ enum AttackStyle {
 @export_range(0.05, 60.0, 0.05) var attack_interval := 0.55
 @export_range(1.0, 2000.0, 1.0) var attack_range := 300.0
 @export_range(1.0, 5000.0, 1.0) var projectile_speed := 520.0
+@export_range(16.0, 2000.0, 1.0) var vision_radius := 220.0
 @export_range(0.0, 1000.0, 1.0) var splash_radius := 0.0
 @export_range(0.1, 1.0, 0.05) var slow_multiplier := 1.0
 @export_range(0.0, 60.0, 0.1) var slow_duration := 0.0

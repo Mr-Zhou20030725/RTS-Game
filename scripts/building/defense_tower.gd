@@ -13,6 +13,7 @@ signal upgraded(tower: DefenseTower)
 @onready var selection_indicator: Line2D = %SelectionIndicator
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var ranged_component := $RangedAttackComponent
+@onready var vision_source: VisionSourceComponent = $VisionSourceComponent
 
 var _is_preview := false
 var _is_upgraded := false
@@ -96,6 +97,7 @@ func _apply_combat_stats() -> void:
 	ranged_component.slow_multiplier = tower_data.slow_multiplier
 	ranged_component.slow_duration = tower_data.slow_duration
 	ranged_component.projectile_modulate = tower_data.projectile_color
+	vision_source.set_vision_radius(tower_data.vision_radius)
 	if _is_upgraded:
 		ranged_component.attack_damage *= tower_data.upgrade_damage_multiplier
 		ranged_component.attack_range += tower_data.upgrade_range_bonus
@@ -106,6 +108,7 @@ func _apply_combat_stats() -> void:
 
 func _apply_preview_state() -> void:
 	ranged_component.combat_enabled = not _is_preview
+	vision_source.enabled = not _is_preview
 	if _is_preview:
 		set_selected(false)
 	if _is_preview:

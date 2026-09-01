@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/visibility/vision_source_component.gd" id="1_vision"]
+
+[sub_resource type="Gradient" id="Gradient_vision"]
+offsets = PackedFloat32Array(0, 0.72, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.9, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vision"]
+gradient = SubResource("Gradient_vision")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="VisionSourceComponent" type="PointLight2D"]
+texture = SubResource("GradientTexture2D_vision")
+blend_mode = 2
+energy = 1.0
+texture_scale = 1.25
+script = ExtResource("1_vision")

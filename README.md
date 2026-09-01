@@ -55,7 +55,7 @@ RTS-Game/
 │  ├─ map/                       # 固定 MVP 地图和巢穴候选点
 │  ├─ building/                  # 建筑放置管理器
 │  ├─ combat/                    # 弹射物场景
-│  ├─ components/                # 生命、阵营、近战、远程组件
+│  ├─ components/                # 生命、阵营、攻击与视野源组件
 │  ├─ economy/                   # 人类金币经济场景
 │  └─ units/                     # 测试编队、战斗演示、小队管理器
 ├─ scripts/                      # 按职责拆分的 GDScript
@@ -69,12 +69,13 @@ RTS-Game/
 │  ├─ economy/                   # 金币收入、消费和击杀奖励
 │  ├─ input/                     # 单选、框选、编队移动
 │  ├─ units/                     # RTS 单位与人类小队数据/招募逻辑
+│  ├─ visibility/                # 人类战争迷雾和局部视野
 │  └─ ui/                        # 主菜单和战斗 HUD
 ├─ ui/                           # Control/CanvasLayer 界面场景
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T13 无界面自动回归脚本
+└─ tests/                        # T01–T14 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -93,6 +94,7 @@ RTS-Game/
 - `MeleeAttackComponent`：近战索敌、追击、攻击和目标重选。
 - `RangedAttackComponent`：射程、攻速、弹速、伤害及弹射物生成。
 - `CombatProjectile`：命中、目标失效处理、范围伤害和临时减速。
+- `VisionSourceComponent`：基地、单位和塔共用的数据化局部视野源。
 
 ### 数据驱动内容
 
@@ -132,18 +134,25 @@ RTS-Game/
 
 地图可玩区域与底部命令区相互独立，动态生成单位不会被地表或 HUD 覆盖。
 
+## 人类战争迷雾
+
+- `FogOfWarManager` 使用暗色 `CanvasModulate` 和柔边 `PointLight2D` 视野源表现实时迷雾。
+- 人类基地、部队和四种防御塔提供不同半径的局部视野。
+- 怪物单位、巢穴、血条和弹射物只有进入人类当前视野后才显示。
+- 人类不能锁定视野外目标，也不能在黑暗区域使用建造预览探测隐藏巢穴。
+- 当前采用实时迷雾：视野源离开后区域重新变暗；怪物逻辑仍保留全图行动能力。
+
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T13：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T14：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t13.gd
+godot --headless --path . --script res://tests/validate_t14.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
 
 ## 当前状态
 
-- T01–T12：已验收并推送至 `main`。
-- T13：四种人类小队、招募界面、编组选择与集中移动已完成，本地等待验收。
-- 下一任务：T14 战争迷雾；在 T13 验收通过前不会开始。
+- T01–T13：已验收并推送至 `main`。
+- T14：人类战争迷雾正在本地开发，等待完成后验收。

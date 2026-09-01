@@ -13,6 +13,7 @@ damage = 10.0
 attack_interval = 0.9
 attack_range = 285.0
 projectile_speed = 420.0
+vision_radius = 215.0
 slow_multiplier = 0.45
 slow_duration = 1.5
 upgrade_cost = 100

@@ -8,6 +8,7 @@ extends RTSUnit
 @onready var body: Polygon2D = %Body
 @onready var accent: Line2D = %Accent
 @onready var unit_label: Label = %UnitLabel
+@onready var vision_source: VisionSourceComponent = $VisionSourceComponent
 
 var squad_instance_id: StringName
 var squad_member_index := -1
@@ -44,6 +45,7 @@ func _apply_squad_data() -> void:
 	if squad_data == null:
 		return
 	move_speed = squad_data.move_speed
+	vision_source.set_vision_radius(squad_data.vision_radius)
 	health_component.max_health = squad_data.max_health
 	health_component.current_health = squad_data.max_health
 	body.color = squad_data.body_color
@@ -68,4 +70,3 @@ func _apply_squad_data() -> void:
 	ranged_component.projectile_speed = squad_data.projectile_speed
 	ranged_component.splash_radius = squad_data.splash_radius
 	ranged_component.projectile_modulate = squad_data.accent_color
-

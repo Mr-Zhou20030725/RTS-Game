@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="Script" path="res://scripts/units/rts_unit.gd" id="2_unit"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
 [ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="4_ranged"]
+[ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="5_vision"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_archer"]
 radius = 14.0
@@ -45,6 +46,9 @@ attack_interval = 0.8
 attack_range = 340.0
 projectile_speed = 450.0
 projectile_spawn_offset = Vector2(18, 0)
+
+[node name="VisionSourceComponent" parent="." instance=ExtResource("5_vision")]
+vision_radius = 165.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_archer")

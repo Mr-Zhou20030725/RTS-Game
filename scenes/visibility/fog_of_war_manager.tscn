@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/visibility/fog_of_war_manager.gd" id="1_fog"]
+
+[node name="FogOfWarManager" type="Node" groups=["human_fog_manager"]]
+script = ExtResource("1_fog")
+
+[node name="FogCanvasModulate" type="CanvasModulate" parent="."]
+unique_name_in_owner = true
+color = Color(0.025, 0.035, 0.055, 1)

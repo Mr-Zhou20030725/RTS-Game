@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="1_health"]
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="2_faction"]
 [ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="3_footprint"]
+[ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="4_vision"]
 
 [node name="HumanBase" type="Node2D" groups=["combat_buildings", "human_base_placeholder", "placement_blockers"]]
 
@@ -35,3 +36,6 @@ faction = 1
 [node name="BuildingFootprint" type="Node" parent="."]
 script = ExtResource("3_footprint")
 radius = 86.0
+
+[node name="VisionSourceComponent" parent="." instance=ExtResource("4_vision")]
+vision_radius = 260.0

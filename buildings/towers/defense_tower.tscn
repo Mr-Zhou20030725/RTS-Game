@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/building/defense_tower.gd" id="1_tower"]
 [ext_resource type="Resource" path="res://resources/towers/arrow_tower.tres" id="2_data"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="4_faction"]
 [ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="5_ranged"]
 [ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="6_footprint"]
+[ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="7_vision"]
 
 [node name="DefenseTower" type="Node2D" groups=["combat_buildings", "combat_targets", "placement_blockers"]]
 script = ExtResource("1_tower")
@@ -55,3 +56,6 @@ projectile_speed = 520.0
 [node name="BuildingFootprint" type="Node" parent="."]
 script = ExtResource("6_footprint")
 radius = 32.0
+
+[node name="VisionSourceComponent" parent="." instance=ExtResource("7_vision")]
+vision_radius = 220.0

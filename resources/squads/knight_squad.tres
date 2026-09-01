@@ -11,6 +11,7 @@ member_count = 3
 formation_spacing = 48.0
 max_health = 220.0
 move_speed = 210.0
+vision_radius = 175.0
 attack_style = 0
 damage = 34.0
 attack_interval = 0.85
@@ -19,4 +20,3 @@ acquisition_range = 320.0
 chase_range = 520.0
 body_color = Color(0.37, 0.48, 0.78, 1)
 accent_color = Color(0.95, 0.82, 0.32, 1)
-

@@ -204,7 +204,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_left = 170.0
 offset_top = 9.0
-offset_right = 365.0
+offset_right = 326.0
 offset_bottom = 57.0
 mouse_filter = 0
 text = "ARROW\n50 GOLD"
@@ -212,9 +212,9 @@ text = "ARROW\n50 GOLD"
 [node name="FlameTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 380.0
+offset_left = 336.0
 offset_top = 9.0
-offset_right = 575.0
+offset_right = 492.0
 offset_bottom = 57.0
 mouse_filter = 0
 text = "FLAME AOE\n80 GOLD"
@@ -222,9 +222,9 @@ text = "FLAME AOE\n80 GOLD"
 [node name="FrostTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 590.0
+offset_left = 502.0
 offset_top = 9.0
-offset_right = 785.0
+offset_right = 658.0
 offset_bottom = 57.0
 mouse_filter = 0
 text = "FROST SLOW\n70 GOLD"
@@ -232,12 +232,22 @@ text = "FROST SLOW\n70 GOLD"
 [node name="ArcaneTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 800.0
+offset_left = 668.0
 offset_top = 9.0
-offset_right = 995.0
+offset_right = 824.0
 offset_bottom = 57.0
 mouse_filter = 0
 text = "ARCANE HEAVY\n100 GOLD"
+
+[node name="ScoutTowerButton" type="Button" parent="TowerBuildBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 834.0
+offset_top = 9.0
+offset_right = 990.0
+offset_bottom = 57.0
+mouse_filter = 0
+text = "SCOUT VISION\n65 GOLD"
 
 [node name="SelectedTowerLabel" type="Label" parent="TowerBuildBar"]
 unique_name_in_owner = true

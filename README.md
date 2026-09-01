@@ -47,7 +47,7 @@ RTS-Game/
 │  ├─ placeholders/              # 人类基地、怪物巢穴、测试塔
 │  └─ towers/                    # 数据驱动的通用防御塔场景
 ├─ resources/                    # 可在 Inspector 中调整的平衡数据
-│  ├─ towers/                    # 箭塔、火焰塔、冰霜塔、奥术塔
+│  ├─ towers/                    # 四种输出塔与独立侦察塔配置
 │  └─ squads/                    # 剑士、弓箭手、骑士、法师小队
 ├─ scenes/                       # 游戏流程与可复用场景
 │  ├─ main/                      # 主菜单入口场景
@@ -75,7 +75,7 @@ RTS-Game/
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T14 无界面自动回归脚本
+└─ tests/                        # T01–T15 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -98,7 +98,7 @@ RTS-Game/
 
 ### 数据驱动内容
 
-四种防御塔共用 `DefenseTower`，差异由 `resources/towers/*.tres` 配置，包括价格、生命、伤害、射程、攻速、弹速、范围伤害、减速和一次升级参数。
+四种输出塔与侦察塔共用 `DefenseTower`，差异由 `resources/towers/*.tres` 配置，包括价格、生命、伤害、射程、攻速、弹速、视野、范围伤害、减速和一次升级参数。
 
 四种人类小队共用 `HumanSquadMember`，差异由 `resources/squads/*.tres` 配置：
 
@@ -137,17 +137,17 @@ RTS-Game/
 ## 人类战争迷雾
 
 - `FogOfWarManager` 使用暗色 `CanvasModulate` 和柔边 `PointLight2D` 视野源表现实时迷雾。
-- 人类基地、部队和四种防御塔提供不同半径的局部视野。
+- 人类基地、部队和防御塔提供不同半径的局部视野；侦察塔以极低输出换取显著更大的探索范围。
 - 怪物单位、巢穴、血条和弹射物只有进入人类当前视野后才显示。
 - 人类不能锁定视野外目标，也不能在黑暗区域使用建造预览探测隐藏巢穴。
 - 当前采用实时迷雾：视野源离开后区域重新变暗；怪物逻辑仍保留全图行动能力。
 
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T14：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T15：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t14.gd
+godot --headless --path . --script res://tests/validate_t15.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
@@ -155,4 +155,5 @@ godot --headless --path . --script res://tests/validate_t14.gd
 ## 当前状态
 
 - T01–T13：已验收并推送至 `main`。
-- T14：人类战争迷雾正在本地开发，等待完成后验收。
+- T01–T14：已验收。
+- T15：侦察塔正在本地开发，等待完成后验收。

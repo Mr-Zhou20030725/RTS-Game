@@ -77,8 +77,8 @@ func _validate_data_driven_placement() -> bool:
 	await process_frame
 
 	var catalog: Array[Resource] = placement.get_tower_data_catalog()
-	if catalog.size() != 4:
-		_fail("The placement catalog does not contain all four towers.")
+	if catalog.size() < 4:
+		_fail("The placement catalog does not retain all four core towers.")
 		return false
 	var expected_ids := [&"arrow", &"flame", &"frost", &"arcane"]
 	var positions := [

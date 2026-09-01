@@ -11,6 +11,7 @@ signal return_to_main_requested
 @onready var flame_tower_button: Button = %FlameTowerButton
 @onready var frost_tower_button: Button = %FrostTowerButton
 @onready var arcane_tower_button: Button = %ArcaneTowerButton
+@onready var scout_tower_button: Button = %ScoutTowerButton
 @onready var selected_tower_label: Label = %SelectedTowerLabel
 @onready var upgrade_tower_button: Button = %UpgradeTowerButton
 @onready var swordsman_squad_button: Button = %SwordsmanSquadButton
@@ -31,6 +32,7 @@ func _ready() -> void:
 	flame_tower_button.pressed.connect(_on_tower_button_pressed.bind(1))
 	frost_tower_button.pressed.connect(_on_tower_button_pressed.bind(2))
 	arcane_tower_button.pressed.connect(_on_tower_button_pressed.bind(3))
+	scout_tower_button.pressed.connect(_on_tower_button_pressed.bind(4))
 	upgrade_tower_button.pressed.connect(_on_upgrade_tower_button_pressed)
 	swordsman_squad_button.pressed.connect(_on_squad_button_pressed.bind(0))
 	archer_squad_button.pressed.connect(_on_squad_button_pressed.bind(1))
@@ -237,6 +239,7 @@ func _get_tower_buttons() -> Array[Button]:
 		flame_tower_button,
 		frost_tower_button,
 		arcane_tower_button,
+		scout_tower_button,
 	]
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/building/building_placement_manager.gd" id="1_manager"]
 [ext_resource type="PackedScene" path="res://buildings/placeholders/test_tower_placeholder.tscn" id="2_tower"]
@@ -7,13 +7,14 @@
 [ext_resource type="Resource" path="res://resources/towers/flame_tower.tres" id="5_flame"]
 [ext_resource type="Resource" path="res://resources/towers/frost_tower.tres" id="6_frost"]
 [ext_resource type="Resource" path="res://resources/towers/arcane_tower.tres" id="7_arcane"]
+[ext_resource type="Resource" path="res://resources/towers/scout_tower.tres" id="8_scout"]
 
 [node name="BuildingPlacementManager" type="Node2D" groups=["building_placement_manager"]]
 z_index = 5
 script = ExtResource("1_manager")
 default_building_scene = ExtResource("2_tower")
 tower_building_scene = ExtResource("3_defense")
-tower_data_catalog = Array[Resource]([ExtResource("4_arrow"), ExtResource("5_flame"), ExtResource("6_frost"), ExtResource("7_arcane")])
+tower_data_catalog = Array[Resource]([ExtResource("4_arrow"), ExtResource("5_flame"), ExtResource("6_frost"), ExtResource("7_arcane"), ExtResource("8_scout")])
 default_building_cost = 50
 buildable_bounds = Rect2(80, 96, 1120, 576)
 overlap_padding = 8.0

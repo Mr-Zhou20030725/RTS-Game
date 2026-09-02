@@ -3,6 +3,11 @@ extends Node2D
 
 ## Handles mouse selection and formation-based movement commands.
 
+signal selection_changed(units: Array[Node2D])
+signal command_issued(
+	command_type: StringName, units: Array[Node2D], target: Variant
+)
+
 @export var drag_threshold := 8.0
 @export var formation_spacing := 48.0
 
@@ -10,6 +15,12 @@ var selected_units: Array[Node2D] = []
 var _drag_start := Vector2.ZERO
 var _drag_current := Vector2.ZERO
 var _is_dragging := false
+var _fog_of_war_manager: FogOfWarManager
+
+
+func _ready() -> void:
+	add_to_group(&"unit_selection_manager")
+	call_deferred("_bind_view_manager")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -40,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				queue_redraw()
 
 		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
-			issue_move_command(world_position)
+			issue_context_command(world_position)
 
 	elif event is InputEventMouseMotion and _is_dragging:
 		var motion_event := event as InputEventMouseMotion
@@ -82,17 +93,42 @@ func select_in_rect(selection_rect: Rect2) -> void:
 
 
 func select_single(unit: Node2D) -> void:
-	if unit == null or not unit.is_in_group("selectable_units"):
+	if not _is_selectable_for_current_view(unit):
 		clear_selection()
 		return
 	_set_selection([unit])
 
 
+func select_units(units: Array[Node2D]) -> void:
+	var allowed_units: Array[Node2D] = []
+	for unit in units:
+		if _is_selectable_for_current_view(unit) and not allowed_units.has(unit):
+			allowed_units.append(unit)
+	_set_selection(allowed_units)
+
+
 func clear_selection() -> void:
+	_clear_selection_state()
+	selection_changed.emit([])
+
+
+func _clear_selection_state() -> void:
 	for unit in selected_units:
 		if is_instance_valid(unit):
 			unit.call("set_selected", false)
 	selected_units.clear()
+
+
+func issue_context_command(world_position: Vector2) -> void:
+	_remove_invalid_selected_units()
+	if selected_units.is_empty():
+		return
+	if _get_selected_faction() == FactionComponent.Faction.MONSTER:
+		var target := _find_hostile_command_target(world_position)
+		if target != null:
+			issue_attack_command(target)
+			return
+	issue_move_command(world_position)
 
 
 func issue_move_command(world_position: Vector2) -> void:
@@ -116,6 +152,26 @@ func issue_move_command(world_position: Vector2) -> void:
 			float(row) * formation_spacing
 		) - formation_size * 0.5
 		selected_units[unit_index].call("move_to", world_position + offset)
+	command_issued.emit(&"move", selected_units.duplicate(), world_position)
+
+
+func issue_rally_command(world_position: Vector2) -> void:
+	issue_move_command(world_position)
+
+
+func issue_attack_command(target: Node2D) -> bool:
+	_remove_invalid_selected_units()
+	if selected_units.is_empty() or target == null:
+		return false
+	var commanded_units: Array[Node2D] = []
+	for unit in selected_units:
+		if CombatRules.can_damage(unit, target) and unit.has_method("attack_target"):
+			unit.call("attack_target", target)
+			commanded_units.append(unit)
+	if commanded_units.is_empty():
+		return false
+	command_issued.emit(&"attack", commanded_units, target)
+	return true
 
 
 func get_selected_units() -> Array[Node2D]:
@@ -124,12 +180,13 @@ func get_selected_units() -> Array[Node2D]:
 
 
 func _set_selection(units: Array[Node2D]) -> void:
-	clear_selection()
+	_clear_selection_state()
 	for unit in _expand_squad_members(units):
-		if not is_instance_valid(unit):
+		if not _is_selectable_for_current_view(unit):
 			continue
 		unit.call("set_selected", true)
 		selected_units.append(unit)
+	selection_changed.emit(selected_units.duplicate())
 
 
 func _expand_squad_members(units: Array[Node2D]) -> Array[Node2D]:
@@ -158,8 +215,9 @@ func _expand_squad_members(units: Array[Node2D]) -> Array[Node2D]:
 func _get_selectable_units() -> Array[Node2D]:
 	var units: Array[Node2D] = []
 	for node in get_tree().get_nodes_in_group("selectable_units"):
-		if node is Node2D and is_instance_valid(node):
-			units.append(node)
+		var unit := node as Node2D
+		if _is_selectable_for_current_view(unit):
+			units.append(unit)
 	return units
 
 
@@ -188,3 +246,88 @@ func _is_build_mode_active() -> bool:
 		placement_manager != null
 		and placement_manager.call("is_build_mode_active")
 	)
+
+
+func _is_selectable_for_current_view(unit: Node2D) -> bool:
+	if (
+		unit == null
+		or not is_instance_valid(unit)
+		or not unit.is_in_group(&"selectable_units")
+		or not unit.visible
+	):
+		return false
+	var faction := FactionComponent.find_on(unit)
+	return faction != null and faction.faction == _get_controlled_faction()
+
+
+func _get_controlled_faction() -> FactionComponent.Faction:
+	var fog_manager := _fog_of_war_manager
+	if fog_manager == null or not is_instance_valid(fog_manager):
+		fog_manager = get_tree().get_first_node_in_group(&"human_fog_manager")
+	if (
+		fog_manager != null
+		and fog_manager.call("get_viewer_faction")
+		== FogOfWarManager.ViewerFaction.MONSTER
+	):
+		return FactionComponent.Faction.MONSTER
+	return FactionComponent.Faction.HUMAN
+
+
+func _bind_view_manager() -> void:
+	_fog_of_war_manager = get_tree().get_first_node_in_group(
+		&"human_fog_manager"
+	) as FogOfWarManager
+	if (
+		_fog_of_war_manager != null
+		and not _fog_of_war_manager.viewer_faction_changed.is_connected(
+			_on_viewer_faction_changed
+		)
+	):
+		_fog_of_war_manager.viewer_faction_changed.connect(
+			_on_viewer_faction_changed
+		)
+
+
+func _on_viewer_faction_changed(
+	_viewer_faction: FogOfWarManager.ViewerFaction
+) -> void:
+	clear_selection()
+
+
+func _get_selected_faction() -> FactionComponent.Faction:
+	if selected_units.is_empty():
+		return FactionComponent.Faction.NEUTRAL
+	var faction := FactionComponent.find_on(selected_units[0])
+	return (
+		FactionComponent.Faction.NEUTRAL
+		if faction == null
+		else faction.faction
+	)
+
+
+func _find_hostile_command_target(world_position: Vector2) -> Node2D:
+	var nearest_target: Node2D
+	var nearest_distance := INF
+	for candidate_node in get_tree().get_nodes_in_group(&"combat_targets"):
+		var candidate := candidate_node as Node2D
+		if candidate == null or not candidate.visible:
+			continue
+		var click_radius := _get_target_click_radius(candidate)
+		var distance := candidate.global_position.distance_to(world_position)
+		if (
+			distance <= click_radius
+			and distance < nearest_distance
+			and CombatRules.can_damage(selected_units[0], candidate)
+		):
+			nearest_target = candidate
+			nearest_distance = distance
+	return nearest_target
+
+
+func _get_target_click_radius(target: Node2D) -> float:
+	if target.has_method("get_selection_radius"):
+		return maxf(float(target.call("get_selection_radius")), 24.0)
+	var footprint := target.get_node_or_null("BuildingFootprint")
+	if footprint != null:
+		return maxf(float(footprint.get("radius")) + 10.0, 30.0)
+	return 30.0

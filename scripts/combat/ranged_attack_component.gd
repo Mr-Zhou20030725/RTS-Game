@@ -27,6 +27,7 @@ const DEFAULT_PROJECTILE_SCENE := preload(
 @export_enum("Nearest", "Units First", "Buildings First") var target_priority := 0
 
 var current_target: Node2D
+var command_target: Node2D
 var _attack_cooldown := 0.0
 
 @onready var actor := get_parent() as Node2D
@@ -46,6 +47,23 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
+	if command_target != null:
+		if not TargetSelector.is_valid_target(actor, command_target):
+			command_target = null
+			_set_target(null)
+		else:
+			_set_target(command_target)
+			if not _is_target_in_range(command_target):
+				if actor.has_method("move_to_combat_target"):
+					actor.call(
+						"move_to_combat_target", command_target.global_position
+					)
+				return
+			if actor.has_method("stop_moving"):
+				actor.call("stop_moving")
+			if is_zero_approx(_attack_cooldown):
+				fire_at(command_target)
+			return
 	if not _is_target_in_range(current_target):
 		_set_target(_find_best_hostile_target())
 	if current_target == null or not is_zero_approx(_attack_cooldown):
@@ -59,7 +77,22 @@ func get_current_target() -> Node2D:
 
 
 func clear_target() -> void:
+	command_target = null
 	_set_target(null)
+
+
+func set_command_target(target: Node2D) -> bool:
+	if not TargetSelector.is_valid_target(actor, target):
+		return false
+	command_target = target
+	_set_target(target)
+	return true
+
+
+func get_command_target() -> Node2D:
+	if not is_instance_valid(command_target):
+		command_target = null
+	return command_target
 
 
 func fire_at(target: Node2D) -> Node2D:
@@ -127,6 +160,8 @@ func _has_manual_move_order() -> bool:
 
 
 func _clear_freed_target() -> void:
+	if not is_instance_valid(command_target):
+		command_target = null
 	if is_instance_valid(current_target):
 		return
 	current_target = null

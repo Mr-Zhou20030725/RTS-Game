@@ -19,6 +19,7 @@ signal attack_performed(target: Node2D, applied_damage: float)
 @export_enum("Nearest", "Units First", "Buildings First") var target_priority := 0
 
 var current_target: Node2D
+var command_target: Node2D
 var _attack_cooldown := 0.0
 var _repath_cooldown := 0.0
 var _last_chase_position := Vector2.INF
@@ -43,7 +44,11 @@ func _physics_process(delta: float) -> void:
 	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
 	_repath_cooldown = maxf(_repath_cooldown - delta, 0.0)
 
+	if command_target != null and current_target != command_target:
+		_set_target(command_target)
 	if not _is_target_valid(current_target):
+		if current_target == command_target:
+			command_target = null
 		_set_target(_find_best_hostile_target())
 
 	if current_target == null:
@@ -52,7 +57,7 @@ func _physics_process(delta: float) -> void:
 	var distance_to_target := actor.global_position.distance_to(
 		current_target.global_position
 	)
-	if distance_to_target > chase_range:
+	if distance_to_target > chase_range and current_target != command_target:
 		_clear_target(true)
 		return
 
@@ -71,7 +76,22 @@ func get_current_target() -> Node2D:
 
 
 func clear_target() -> void:
+	command_target = null
 	_clear_target(true)
+
+
+func set_command_target(target: Node2D) -> bool:
+	if not _is_target_valid(target):
+		return false
+	command_target = target
+	_set_target(target)
+	return true
+
+
+func get_command_target() -> Node2D:
+	if not is_instance_valid(command_target):
+		command_target = null
+	return command_target
 
 
 func _find_best_hostile_target() -> Node2D:
@@ -112,6 +132,8 @@ func _perform_attack() -> void:
 		attack_performed.emit(attacked_target, applied_damage)
 
 	if not _is_target_valid(attacked_target):
+		if command_target == attacked_target:
+			command_target = null
 		_set_target(null)
 
 
@@ -148,6 +170,8 @@ func _has_manual_move_order() -> bool:
 
 
 func _clear_freed_target() -> void:
+	if not is_instance_valid(command_target):
+		command_target = null
 	if is_instance_valid(current_target):
 		return
 	current_target = null

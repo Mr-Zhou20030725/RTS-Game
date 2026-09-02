@@ -81,6 +81,42 @@ func move_to_combat_target(world_position: Vector2) -> void:
 	_set_move_target(world_position)
 
 
+func attack_target(target: Node2D) -> bool:
+	if target == null or not CombatRules.can_damage(self, target):
+		return false
+	_clear_combat_targets()
+	_manual_move_order_active = false
+	if (
+		melee_component != null
+		and melee_component.combat_enabled
+		and melee_component.has_method("set_command_target")
+	):
+		return melee_component.call("set_command_target", target)
+	if (
+		ranged_component != null
+		and bool(ranged_component.get("combat_enabled"))
+		and ranged_component.has_method("set_command_target")
+	):
+		return ranged_component.call("set_command_target", target)
+	return false
+
+
+func get_command_target() -> Node2D:
+	if (
+		melee_component != null
+		and melee_component.combat_enabled
+		and melee_component.has_method("get_command_target")
+	):
+		return melee_component.call("get_command_target") as Node2D
+	if (
+		ranged_component != null
+		and bool(ranged_component.get("combat_enabled"))
+		and ranged_component.has_method("get_command_target")
+	):
+		return ranged_component.call("get_command_target") as Node2D
+	return null
+
+
 func is_manual_move_order_active() -> bool:
 	return _manual_move_order_active
 

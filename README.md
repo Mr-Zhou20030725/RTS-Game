@@ -59,7 +59,7 @@ RTS-Game/
 │  ├─ combat/                    # 弹射物场景
 │  ├─ components/                # 生命、阵营、攻击与视野源组件
 │  ├─ economy/                   # 人类金币与怪物暗黑能量场景
-│  └─ units/                     # 测试编队、双阵营单位生产管理器
+│  └─ units/                     # 单位生产、招募与怪物军团管理器
 ├─ scripts/                      # 按职责拆分的 GDScript
 │  ├─ core/                      # GameManager 与统一绘制层级
 │  ├─ main/                      # 主菜单流程
@@ -69,8 +69,8 @@ RTS-Game/
 │  ├─ combat/                    # 伤害规则、索敌、近战、远程、弹射物
 │  ├─ building/                  # 建塔、塔数据、塔升级
 │  ├─ economy/                   # 双阵营资源收入、消费和击杀奖励
-│  ├─ input/                     # 单选、框选、编队移动
-│  ├─ units/                     # RTS 单位、双阵营数据与生产/招募逻辑
+│  ├─ input/                     # 阵营过滤选择、框选与上下文命令
+│  ├─ units/                     # RTS 单位、生产/招募与怪物军团逻辑
 │  ├─ visibility/                # 人类战争迷雾和局部视野
 │  └─ ui/                        # 主菜单和战斗 HUD
 ├─ ui/                           # Control/CanvasLayer 界面场景
@@ -78,7 +78,7 @@ RTS-Game/
 │  ├─ human/                     # 通用人类小队成员
 │  ├─ monster/                   # 六种怪物共用的 MonsterUnit 场景
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T20 无界面自动回归脚本
+└─ tests/                        # T01–T22 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -94,8 +94,8 @@ RTS-Game/
 - `HealthComponent`：最大生命、当前生命、受伤、治疗和一次性死亡事件。
 - `FactionComponent`：Human / Monster 阵营标识。
 - `CombatRules`：所有伤害行为共用的敌我合法性检查。
-- `MeleeAttackComponent`：近战索敌、追击、攻击和目标重选。
-- `RangedAttackComponent`：射程、攻速、弹速、伤害及弹射物生成。
+- `MeleeAttackComponent`：近战索敌、持续追击、显式攻击和目标重选。
+- `RangedAttackComponent`：射程、攻速、弹速、伤害、追击攻击及弹射物生成。
 - `CombatProjectile`：命中、目标失效处理、范围伤害和临时减速。
 - 玩家移动命令优先于自动追击；抵达后恢复索敌，攻击检查前会清除已释放目标。
 - `VisionSourceComponent`：基地、单位和塔共用的数据化局部视野源。
@@ -183,16 +183,24 @@ RTS-Game/
 - 视角只是显示层状态；切到怪物视角不会让人类单位获得额外侦测、锁敌或攻击权限。
 - 切回人类视角时会立即恢复局部迷雾，并关闭由怪物全局视野打开的隐藏巢穴生产面板。
 
+## 怪物军团指挥
+
+- 切换至怪物视角后，可单选或框选正式生产的怪物；人类视角不能选择怪物。
+- `CREATE NEXT LEGION` 会把当前选择保存到下一个空闲的 L1–L4 编组，怪物头顶显示军团编号。
+- `Ctrl+1` 至 `Ctrl+4` 创建或更新对应编组，直接按 `1` 至 `4` 或点击面板按钮可召回编组。
+- 右键空地会以紧凑分散位置移动/集结；右键人类塔或基地会下达持续追击的明确攻击命令。
+- 各军团保存独立命令；重新选中并指挥另一军团不会覆盖前一军团的行动。
+
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T21：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T22：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t21.gd
+godot --headless --path . --script res://tests/validate_t22.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
 
 ## 当前状态
 
-- T01–T21：已验收并推送至 `main`。
+- T01–T22：已验收并推送至 `main`。

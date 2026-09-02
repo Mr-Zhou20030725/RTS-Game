@@ -264,6 +264,24 @@ func _validate_shaman_aura(
 	):
 		_fail("Leaving the Shaman aura did not restore the ally's base stats.")
 		return false
+	shaman.global_position = goblin.global_position + Vector2(40.0, 0.0)
+	shaman._process(0.21)
+	await process_frame
+	if not goblin.is_aura_buffed() or not shaman.get_node("AuraRing").visible:
+		_fail("The Shaman aura was not active before the death cleanup check.")
+		return false
+	var shaman_health := shaman.get_node("HealthComponent") as HealthComponent
+	shaman_health.take_damage(shaman_health.current_health, goblin)
+	await process_frame
+	if (
+		shaman.get_node("AuraRing").visible
+		or goblin.is_aura_buffed()
+		or goblin.get_node("BuffIndicator").visible
+		or not is_equal_approx(melee.attack_damage, goblin_data.damage)
+		or not is_equal_approx(goblin.move_speed, goblin_data.move_speed)
+	):
+		_fail("A dead Shaman left its aura art or ally buff active.")
+		return false
 	return true
 
 

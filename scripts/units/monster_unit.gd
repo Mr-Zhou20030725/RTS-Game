@@ -14,6 +14,7 @@ signal aura_buff_changed(is_buffed: bool)
 @onready var aura_ring: Line2D = %AuraRing
 @onready var buff_indicator: Line2D = %BuffIndicator
 @onready var stealth_indicator: Line2D = %StealthIndicator
+@onready var legion_badge: Label = %LegionBadge
 
 var _base_move_speed := 0.0
 var _base_damage := 0.0
@@ -21,6 +22,7 @@ var _stealth_remaining := 0.0
 var _aura_update_elapsed := 0.0
 var _aura_targets: Dictionary[int, WeakRef] = {}
 var _aura_buffs: Dictionary[int, Vector2] = {}
+var _legion_slot := 0
 
 
 func _ready() -> void:
@@ -51,6 +53,17 @@ func configure_monster(data: MonsterProductionData) -> void:
 
 func get_monster_data() -> MonsterProductionData:
 	return monster_data
+
+
+func set_legion_slot(slot: int) -> void:
+	_legion_slot = maxi(slot, 0)
+	if is_node_ready():
+		legion_badge.text = "L%d" % _legion_slot if _legion_slot > 0 else ""
+		legion_badge.visible = _legion_slot > 0
+
+
+func get_legion_slot() -> int:
+	return _legion_slot
 
 
 func is_hidden_from_human() -> bool:
@@ -276,9 +289,11 @@ func _apply_aura_multipliers() -> void:
 func _on_monster_died(_source: Node) -> void:
 	_stealth_remaining = 0.0
 	stealth_indicator.visible = false
+	aura_ring.visible = false
 	_clear_aura_targets()
 	_aura_buffs.clear()
 	buff_indicator.visible = false
+	set_legion_slot(0)
 
 
 func _make_circle_points(radius: float, segments: int) -> PackedVector2Array:

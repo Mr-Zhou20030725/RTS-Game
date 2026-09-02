@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_legion_manager.gd" id="1_legion"]
+
+[node name="MonsterLegionManager" type="Node"]
+script = ExtResource("1_legion")

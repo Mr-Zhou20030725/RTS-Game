@@ -31,6 +31,9 @@ signal return_to_main_requested
 @onready var monster_type_five_button: Button = %MonsterTypeFiveButton
 @onready var monster_production_status_label: Label = %MonsterProductionStatusLabel
 @onready var nest_stage_label: Label = %NestStageLabel
+@onready var monster_command_panel: ColorRect = %MonsterCommandPanel
+@onready var create_legion_button: Button = %CreateLegionButton
+@onready var legion_status_label: Label = %LegionStatusLabel
 
 var human_economy: Node
 var monster_economy: Node
@@ -39,6 +42,7 @@ var human_squad_manager: Node
 var monster_production_manager: MonsterProductionManager
 var nest_strengthening_manager: NestStrengtheningManager
 var fog_of_war_manager: FogOfWarManager
+var monster_legion_manager: MonsterLegionManager
 
 
 func _ready() -> void:
@@ -60,6 +64,11 @@ func _ready() -> void:
 		_get_monster_production_buttons()[monster_index].pressed.connect(
 			_on_monster_production_button_pressed.bind(monster_index)
 		)
+	create_legion_button.pressed.connect(_on_create_legion_button_pressed)
+	for slot_index in _get_legion_buttons().size():
+		_get_legion_buttons()[slot_index].pressed.connect(
+			_on_legion_button_pressed.bind(slot_index + 1)
+		)
 	call_deferred("_bind_human_economy")
 	call_deferred("_bind_monster_economy")
 	call_deferred("_bind_building_placement_manager")
@@ -67,6 +76,7 @@ func _ready() -> void:
 	call_deferred("_bind_monster_production_manager")
 	call_deferred("_bind_nest_strengthening_manager")
 	call_deferred("_bind_fog_of_war_manager")
+	call_deferred("_bind_monster_legion_manager")
 
 
 func _on_return_button_pressed() -> void:
@@ -109,6 +119,88 @@ func _on_viewer_faction_changed(
 		if viewer_faction == FogOfWarManager.ViewerFaction.MONSTER
 		else "Human overview: local vision and fog of war"
 	)
+	monster_command_panel.visible = (
+		viewer_faction == FogOfWarManager.ViewerFaction.MONSTER
+	)
+
+
+func _bind_monster_legion_manager() -> void:
+	monster_legion_manager = get_tree().get_first_node_in_group(
+		&"monster_legion_manager"
+	) as MonsterLegionManager
+	if monster_legion_manager == null:
+		create_legion_button.disabled = true
+		legion_status_label.text = "Legion manager unavailable"
+		return
+	monster_legion_manager.legion_changed.connect(_on_legion_changed)
+	monster_legion_manager.active_legion_changed.connect(
+		_on_active_legion_changed
+	)
+	monster_legion_manager.legion_creation_failed.connect(
+		_on_legion_creation_failed
+	)
+	_refresh_legion_buttons()
+
+
+func _on_create_legion_button_pressed() -> void:
+	if monster_legion_manager == null:
+		return
+	var slot := monster_legion_manager.create_next_legion()
+	if slot > 0:
+		legion_status_label.text = "Legion %d created · Ctrl+%d to update" % [
+			slot, slot
+		]
+
+
+func _on_legion_button_pressed(slot: int) -> void:
+	if monster_legion_manager == null:
+		return
+	if monster_legion_manager.select_legion(slot):
+		legion_status_label.text = "Legion %d selected" % slot
+	else:
+		legion_status_label.text = "Legion %d is empty" % slot
+
+
+func _on_legion_changed(_slot: int, _units: Array[Node2D]) -> void:
+	_refresh_legion_buttons()
+
+
+func _on_active_legion_changed(slot: int) -> void:
+	_refresh_legion_buttons()
+	if slot > 0:
+		legion_status_label.text = "Legion %d active · RMB move / attack" % slot
+
+
+func _on_legion_creation_failed(reason: StringName) -> void:
+	legion_status_label.text = (
+		"Box-select Monster units first"
+		if reason == &"no_monsters_selected"
+		else "Unable to create legion"
+	)
+
+
+func _refresh_legion_buttons() -> void:
+	var buttons := _get_legion_buttons()
+	for index in buttons.size():
+		var slot := index + 1
+		var count := 0
+		if monster_legion_manager != null:
+			count = monster_legion_manager.get_legion_units(slot).size()
+		buttons[index].text = "L%d · %d" % [slot, count]
+		buttons[index].disabled = count == 0
+		buttons[index].button_pressed = (
+			monster_legion_manager != null
+			and monster_legion_manager.get_active_slot() == slot
+		)
+
+
+func _get_legion_buttons() -> Array[Button]:
+	return [
+		%LegionOneButton,
+		%LegionTwoButton,
+		%LegionThreeButton,
+		%LegionFourButton,
+	]
 
 
 func _bind_human_economy() -> void:

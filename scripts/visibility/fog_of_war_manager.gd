@@ -4,8 +4,15 @@ extends Node
 ## Human real-time fog: vision outside active sources returns to darkness.
 
 signal revealable_visibility_changed(target: Node2D, is_visible: bool)
+signal viewer_faction_changed(viewer_faction: ViewerFaction)
+
+enum ViewerFaction {
+	HUMAN,
+	MONSTER,
+}
 
 @export var human_fog_enabled := true
+@export var viewer_faction := ViewerFaction.HUMAN
 @export_range(0.02, 1.0, 0.01) var visibility_update_interval := 0.08
 @export var hidden_ambient_color := Color(0.025, 0.035, 0.055, 1.0)
 
@@ -18,12 +25,12 @@ var _visibility_cache: Dictionary[int, bool] = {}
 func _ready() -> void:
 	add_to_group(&"human_fog_manager")
 	canvas_modulate.color = hidden_ambient_color
-	canvas_modulate.visible = human_fog_enabled
+	_update_fog_presentation()
 	call_deferred("refresh_visibility")
 
 
 func _process(delta: float) -> void:
-	if not human_fog_enabled:
+	if not human_fog_enabled or viewer_faction == ViewerFaction.MONSTER:
 		return
 	_update_elapsed += delta
 	if _update_elapsed < visibility_update_interval:
@@ -35,12 +42,30 @@ func _process(delta: float) -> void:
 func set_human_fog_enabled(value: bool) -> void:
 	human_fog_enabled = value
 	if is_node_ready():
-		canvas_modulate.visible = value
+		_update_fog_presentation()
 	refresh_visibility()
 
 
 func is_human_fog_enabled() -> bool:
 	return human_fog_enabled
+
+
+func set_viewer_faction(value: ViewerFaction) -> void:
+	if value == viewer_faction:
+		return
+	viewer_faction = value
+	if is_node_ready():
+		_update_fog_presentation()
+	refresh_visibility()
+	viewer_faction_changed.emit(viewer_faction)
+
+
+func get_viewer_faction() -> ViewerFaction:
+	return viewer_faction
+
+
+func is_monster_view_active() -> bool:
+	return viewer_faction == ViewerFaction.MONSTER
 
 
 func is_position_visible_to_human(
@@ -104,14 +129,17 @@ func refresh_visibility() -> void:
 		if projectile_node is Node2D:
 			_set_canvas_item_visible(
 				projectile_node as Node2D,
-				not human_fog_enabled
+				viewer_faction == ViewerFaction.MONSTER
+				or not human_fog_enabled
 				or is_position_visible_to_human(projectile_node.global_position)
 			)
 
 
 func _apply_revealable_visibility(target: Node2D) -> void:
 	var should_be_visible := (
-		not human_fog_enabled or is_node_visible_to_human(target)
+		viewer_faction == ViewerFaction.MONSTER
+		or not human_fog_enabled
+		or is_node_visible_to_human(target)
 	)
 	_set_canvas_item_visible(target, should_be_visible)
 	var target_id := target.get_instance_id()
@@ -122,3 +150,9 @@ func _apply_revealable_visibility(target: Node2D) -> void:
 
 func _set_canvas_item_visible(item: CanvasItem, value: bool) -> void:
 	item.visible = value
+
+
+func _update_fog_presentation() -> void:
+	canvas_modulate.visible = (
+		human_fog_enabled and viewer_faction == ViewerFaction.HUMAN
+	)

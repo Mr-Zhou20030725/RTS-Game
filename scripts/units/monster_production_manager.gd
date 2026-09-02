@@ -20,6 +20,7 @@ signal production_costs_changed(multiplier: float)
 
 var monster_economy: MonsterEconomy
 var mvp_map: Node
+var fog_of_war_manager: FogOfWarManager
 var selected_nest: Node2D
 var _monster_serial := 0
 var _production_cost_multiplier := 1.0
@@ -179,10 +180,37 @@ func _bind_dependencies() -> void:
 			_on_nest_destroyed
 		):
 			mvp_map.nest_destroyed.connect(_on_nest_destroyed)
+	if fog_of_war_manager == null or not is_instance_valid(fog_of_war_manager):
+		fog_of_war_manager = get_tree().get_first_node_in_group(
+			&"human_fog_manager"
+		) as FogOfWarManager
+		if (
+			fog_of_war_manager != null
+			and not fog_of_war_manager.viewer_faction_changed.is_connected(
+				_on_viewer_faction_changed
+			)
+		):
+			fog_of_war_manager.viewer_faction_changed.connect(
+				_on_viewer_faction_changed
+			)
 
 
 func _on_nest_destroyed(nest: Node2D, _remaining_count: int) -> void:
 	if selected_nest == nest:
+		clear_selection()
+
+
+func _on_viewer_faction_changed(
+	viewer_faction: FogOfWarManager.ViewerFaction
+) -> void:
+	if viewer_faction != FogOfWarManager.ViewerFaction.HUMAN:
+		return
+	var nest := get_selected_nest()
+	if (
+		nest != null
+		and fog_of_war_manager != null
+		and not fog_of_war_manager.is_node_visible_to_human(nest)
+	):
 		clear_selection()
 
 

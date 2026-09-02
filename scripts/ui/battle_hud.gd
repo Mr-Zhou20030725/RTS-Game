@@ -7,6 +7,7 @@ signal return_to_main_requested
 @onready var dark_energy_label: Label = %DarkEnergyLabel
 @onready var dark_energy_rate_label: Label = %DarkEnergyRateLabel
 @onready var economy_status_label: Label = %EconomyStatusLabel
+@onready var view_mode_button: Button = %ViewModeButton
 @onready var spend_test_button: Button = %SpendTestButton
 @onready var build_tower_button: Button = %BuildTowerButton
 @onready var arrow_tower_button: Button = %ArrowTowerButton
@@ -37,10 +38,12 @@ var building_placement_manager: Node
 var human_squad_manager: Node
 var monster_production_manager: MonsterProductionManager
 var nest_strengthening_manager: NestStrengtheningManager
+var fog_of_war_manager: FogOfWarManager
 
 
 func _ready() -> void:
 	return_button.pressed.connect(_on_return_button_pressed)
+	view_mode_button.pressed.connect(_on_view_mode_button_pressed)
 	spend_test_button.pressed.connect(_on_spend_test_button_pressed)
 	build_tower_button.pressed.connect(_on_build_tower_button_pressed)
 	arrow_tower_button.pressed.connect(_on_tower_button_pressed.bind(0))
@@ -63,10 +66,49 @@ func _ready() -> void:
 	call_deferred("_bind_human_squad_manager")
 	call_deferred("_bind_monster_production_manager")
 	call_deferred("_bind_nest_strengthening_manager")
+	call_deferred("_bind_fog_of_war_manager")
 
 
 func _on_return_button_pressed() -> void:
 	return_to_main_requested.emit()
+
+
+func _on_view_mode_button_pressed() -> void:
+	if fog_of_war_manager == null:
+		return
+	var next_faction := FogOfWarManager.ViewerFaction.MONSTER
+	if fog_of_war_manager.is_monster_view_active():
+		next_faction = FogOfWarManager.ViewerFaction.HUMAN
+	fog_of_war_manager.set_viewer_faction(next_faction)
+
+
+func _bind_fog_of_war_manager() -> void:
+	fog_of_war_manager = get_tree().get_first_node_in_group(
+		&"human_fog_manager"
+	) as FogOfWarManager
+	if fog_of_war_manager == null:
+		view_mode_button.text = "VIEW UNAVAILABLE"
+		view_mode_button.disabled = true
+		return
+	fog_of_war_manager.viewer_faction_changed.connect(
+		_on_viewer_faction_changed
+	)
+	_on_viewer_faction_changed(fog_of_war_manager.get_viewer_faction())
+
+
+func _on_viewer_faction_changed(
+	viewer_faction: FogOfWarManager.ViewerFaction
+) -> void:
+	view_mode_button.text = (
+		"VIEW: MONSTER"
+		if viewer_faction == FogOfWarManager.ViewerFaction.MONSTER
+		else "VIEW: HUMAN"
+	)
+	view_mode_button.tooltip_text = (
+		"Monster overview: full map visibility"
+		if viewer_faction == FogOfWarManager.ViewerFaction.MONSTER
+		else "Human overview: local vision and fog of war"
+	)
 
 
 func _bind_human_economy() -> void:

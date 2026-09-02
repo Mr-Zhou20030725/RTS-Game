@@ -34,6 +34,8 @@ signal return_to_main_requested
 @onready var monster_command_panel: ColorRect = %MonsterCommandPanel
 @onready var create_legion_button: Button = %CreateLegionButton
 @onready var legion_status_label: Label = %LegionStatusLabel
+@onready var monster_ai_button: Button = %MonsterAIButton
+@onready var monster_ai_status_label: Label = %MonsterAIStatusLabel
 
 var human_economy: Node
 var monster_economy: Node
@@ -43,6 +45,7 @@ var monster_production_manager: MonsterProductionManager
 var nest_strengthening_manager: NestStrengtheningManager
 var fog_of_war_manager: FogOfWarManager
 var monster_legion_manager: MonsterLegionManager
+var monster_ai_controller: MonsterAIController
 
 
 func _ready() -> void:
@@ -65,6 +68,7 @@ func _ready() -> void:
 			_on_monster_production_button_pressed.bind(monster_index)
 		)
 	create_legion_button.pressed.connect(_on_create_legion_button_pressed)
+	monster_ai_button.pressed.connect(_on_monster_ai_button_pressed)
 	for slot_index in _get_legion_buttons().size():
 		_get_legion_buttons()[slot_index].pressed.connect(
 			_on_legion_button_pressed.bind(slot_index + 1)
@@ -77,6 +81,7 @@ func _ready() -> void:
 	call_deferred("_bind_nest_strengthening_manager")
 	call_deferred("_bind_fog_of_war_manager")
 	call_deferred("_bind_monster_legion_manager")
+	call_deferred("_bind_monster_ai_controller")
 
 
 func _on_return_button_pressed() -> void:
@@ -200,6 +205,68 @@ func _get_legion_buttons() -> Array[Button]:
 		%LegionTwoButton,
 		%LegionThreeButton,
 		%LegionFourButton,
+	]
+
+
+func _bind_monster_ai_controller() -> void:
+	monster_ai_controller = get_tree().get_first_node_in_group(
+		&"monster_ai_controller"
+	) as MonsterAIController
+	if monster_ai_controller == null:
+		monster_ai_button.disabled = true
+		monster_ai_status_label.text = "Monster AI unavailable"
+		return
+	monster_ai_controller.ai_enabled_changed.connect(_on_monster_ai_enabled_changed)
+	monster_ai_controller.defense_analysis_updated.connect(
+		_on_monster_ai_analysis_updated
+	)
+	monster_ai_controller.attack_wave_launched.connect(
+		_on_monster_ai_wave_launched
+	)
+	_on_monster_ai_enabled_changed(monster_ai_controller.is_ai_enabled())
+
+
+func _on_monster_ai_button_pressed() -> void:
+	if monster_ai_controller != null:
+		monster_ai_controller.set_ai_enabled(
+			not monster_ai_controller.is_ai_enabled()
+		)
+
+
+func _on_monster_ai_enabled_changed(is_enabled: bool) -> void:
+	monster_ai_button.text = "MONSTER AI: %s" % (
+		"ON" if is_enabled else "PAUSED"
+	)
+	monster_ai_status_label.text = (
+		"AI scanning four defense sectors"
+		if is_enabled
+		else "AI paused for manual control"
+	)
+
+
+func _on_monster_ai_analysis_updated(scores: Dictionary) -> void:
+	if monster_ai_controller == null or not monster_ai_controller.is_ai_enabled():
+		return
+	var weakest_direction := MonsterAIController.AttackDirection.NORTH
+	var weakest_score := INF
+	for direction in MonsterAIController.AttackDirection.values():
+		var score := float(scores.get(direction, 0.0))
+		if score < weakest_score:
+			weakest_direction = direction
+			weakest_score = score
+	monster_ai_status_label.text = "Weak sector: %s · defense %.1f" % [
+		monster_ai_controller.get_direction_name(weakest_direction),
+		weakest_score,
+	]
+
+
+func _on_monster_ai_wave_launched(
+	direction: MonsterAIController.AttackDirection,
+	units: Array[Node2D],
+	_target: Node2D
+) -> void:
+	monster_ai_status_label.text = "Wave ×%d attacking from %s" % [
+		units.size(), monster_ai_controller.get_direction_name(direction)
 	]
 
 

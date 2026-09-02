@@ -126,6 +126,14 @@ func produce(catalog_index: int) -> bool:
 		clear_selection()
 		production_failed.emit(&"no_nest_selected")
 		return false
+	return produce_from_nest(catalog_index, nest)
+
+
+func produce_from_nest(catalog_index: int, nest: Node2D) -> bool:
+	_bind_dependencies()
+	if not _is_active_nest(nest):
+		production_failed.emit(&"invalid_nest")
+		return false
 	if catalog_index < 0 or catalog_index >= production_catalog.size():
 		production_failed.emit(&"invalid_configuration")
 		return false

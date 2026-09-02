@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_unit.gd" id="1_unit"]
+[ext_resource type="PackedScene" path="res://scenes/components/health_component.tscn" id="2_health"]
+[ext_resource type="PackedScene" path="res://scenes/components/faction_component.tscn" id="3_faction"]
+[ext_resource type="PackedScene" path="res://scenes/components/melee_attack_component.tscn" id="4_melee"]
+[ext_resource type="PackedScene" path="res://scenes/components/ranged_attack_component.tscn" id="5_ranged"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_monster"]
+radius = 15.0
+
+[node name="MonsterUnit" type="CharacterBody2D" groups=["combat_targets", "combat_units", "moving_units", "monster_units"]]
+collision_layer = 1
+collision_mask = 1
+script = ExtResource("1_unit")
+
+[node name="Body" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+polygon = PackedVector2Array(0, -25, 22, -12, 20, 20, 0, 14, -20, 20, -22, -12)
+color = Color(0.38, 0.7, 0.25, 1)
+
+[node name="Accent" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(-14, 8, 0, -16, 14, 8)
+width = 3.0
+default_color = Color(0.75, 0.95, 0.45, 1)
+
+[node name="UnitLabel" type="Label" parent="."]
+unique_name_in_owner = true
+z_index = 2
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 12.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 8
+text = "GOBLIN"
+horizontal_alignment = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_health")]
+position = Vector2(0, -39)
+max_health = 70.0
+
+[node name="FactionComponent" parent="." instance=ExtResource("3_faction")]
+faction = 2
+
+[node name="MeleeAttackComponent" parent="." instance=ExtResource("4_melee")]
+combat_enabled = false
+
+[node name="RangedAttackComponent" parent="." instance=ExtResource("5_ranged")]
+combat_enabled = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_monster")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 6.0
+target_desired_distance = 10.0
+radius = 17.0
+neighbor_distance = 72.0
+
+[node name="AuraRing" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = -1
+width = 2.0
+default_color = Color(0.65, 0.25, 0.95, 0.45)
+
+[node name="BuffIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 3
+points = PackedVector2Array(22, 0, 15.56, 15.56, 0, 22, -15.56, 15.56, -22, 0, -15.56, -15.56, 0, -22, 15.56, -15.56, 22, 0)
+width = 2.0
+default_color = Color(0.8, 0.35, 1, 1)
+
+[node name="StealthIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 3
+points = PackedVector2Array(-20, 0, -10, -10, 0, -14, 10, -10, 20, 0, 10, 10, 0, 14, -10, 10, -20, 0)
+width = 2.0
+default_color = Color(0.55, 0.65, 1, 0.8)
+
+[node name="SelectionIndicator" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+points = PackedVector2Array(24, 0, 16.9706, 16.9706, 0, 24, -16.9706, 16.9706, -24, 0, -16.9706, -16.9706, 0, -24, 16.9706, -16.9706, 24, 0)
+width = 3.0
+default_color = Color(0.92, 0.82, 0.31, 1)

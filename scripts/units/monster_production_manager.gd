@@ -14,7 +14,6 @@ signal production_costs_changed(multiplier: float)
 @export var production_catalog: Array[Resource] = []
 @export var battlefield_bounds := Rect2(80.0, 96.0, 1120.0, 576.0)
 @export_range(0.0, 128.0, 1.0) var spawn_clearance := 16.0
-@export_range(1.0, 128.0, 1.0) var monster_radius := 17.0
 @export_range(1.0, 128.0, 1.0) var ring_spacing := 30.0
 
 @onready var spawned_monsters: Node2D = %SpawnedMonsters
@@ -141,7 +140,9 @@ func produce(catalog_index: int) -> bool:
 		production_failed.emit(&"not_enough_dark_energy")
 		return false
 
-	var spawn_position := _find_spawn_position(nest)
+	var spawn_position := _find_spawn_position(
+		nest, data.collision_radius
+	)
 	if not is_finite(spawn_position.x) or not is_finite(spawn_position.y):
 		production_failed.emit(&"no_safe_spawn_position")
 		return false
@@ -160,7 +161,7 @@ func produce(catalog_index: int) -> bool:
 	monster.name = "Produced_%03d_%s" % [_monster_serial, data.monster_id]
 	monster.set_meta(&"monster_type_id", data.monster_id)
 	monster.set_meta(&"production_nest_id", nest.get_instance_id())
-	_configure_placeholder_visual(monster, data)
+	_configure_monster(monster, data)
 	spawned_monsters.add_child(monster)
 	monster.global_position = spawn_position
 	monster_produced.emit(monster, nest, data, effective_cost)
@@ -191,12 +192,12 @@ func _is_active_nest(nest: Node2D) -> bool:
 	return nest in mvp_map.call("get_active_nests")
 
 
-func _find_spawn_position(nest: Node2D) -> Vector2:
+func _find_spawn_position(nest: Node2D, unit_radius: float) -> Vector2:
 	var inward := nest.global_position.direction_to(battlefield_bounds.get_center())
 	if inward.is_zero_approx():
 		inward = Vector2.RIGHT
 	var minimum_distance := (
-		_get_footprint_radius(nest) + monster_radius + spawn_clearance
+		_get_footprint_radius(nest) + unit_radius + spawn_clearance
 	)
 	var angle_offsets := [
 		0.0, 30.0, -30.0, 60.0, -60.0, 90.0, -90.0,
@@ -208,26 +209,26 @@ func _find_spawn_position(nest: Node2D) -> Vector2:
 			var candidate := nest.global_position + inward.rotated(
 				deg_to_rad(angle_degrees)
 			) * distance
-			if _is_spawn_position_clear(candidate):
+			if _is_spawn_position_clear(candidate, unit_radius):
 				return candidate
 	return Vector2(INF, INF)
 
 
-func _is_spawn_position_clear(candidate: Vector2) -> bool:
-	if not battlefield_bounds.grow(-monster_radius).has_point(candidate):
+func _is_spawn_position_clear(candidate: Vector2, unit_radius: float) -> bool:
+	if not battlefield_bounds.grow(-unit_radius).has_point(candidate):
 		return false
 	for blocker in get_tree().get_nodes_in_group(&"placement_blockers"):
 		if not blocker is Node2D or not is_instance_valid(blocker):
 			continue
 		var required_distance := (
-			_get_footprint_radius(blocker) + monster_radius + spawn_clearance
+			_get_footprint_radius(blocker) + unit_radius + spawn_clearance
 		)
 		if blocker.global_position.distance_to(candidate) < required_distance:
 			return false
 	for unit in get_tree().get_nodes_in_group(&"combat_units"):
 		if not unit is Node2D or not is_instance_valid(unit):
 			continue
-		if unit.global_position.distance_to(candidate) < monster_radius * 2.0:
+		if unit.global_position.distance_to(candidate) < unit_radius * 2.0:
 			return false
 	return true
 
@@ -241,9 +242,12 @@ func _get_footprint_radius(building: Node) -> float:
 	return float(footprint.get("radius"))
 
 
-func _configure_placeholder_visual(
+func _configure_monster(
 	monster: Node2D, data: MonsterProductionData
 ) -> void:
+	if monster.has_method("configure_monster"):
+		monster.call("configure_monster", data)
+		return
 	var body := monster.get_node_or_null("Body") as Polygon2D
 	if body != null:
 		body.color = data.body_color

@@ -122,8 +122,8 @@ visible = false
 layout_mode = 0
 offset_left = 470.0
 offset_top = 76.0
-offset_right = 810.0
-offset_bottom = 230.0
+offset_right = 850.0
+offset_bottom = 310.0
 mouse_filter = 1
 color = Color(0.0784314, 0.0352941, 0.101961, 0.96)
 
@@ -131,7 +131,7 @@ color = Color(0.0784314, 0.0352941, 0.101961, 0.96)
 layout_mode = 0
 offset_left = 14.0
 offset_top = 8.0
-offset_right = 326.0
+offset_right = 366.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(0.78, 0.45, 1, 1)
 theme_override_font_sizes/font_size = 11
@@ -140,9 +140,9 @@ text = "MONSTER PRODUCTION"
 [node name="NestStageLabel" type="Label" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 145.0
+offset_left = 180.0
 offset_top = 8.0
-offset_right = 326.0
+offset_right = 366.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(1, 0.55, 0.82, 1)
 theme_override_font_sizes/font_size = 10
@@ -154,7 +154,7 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_left = 14.0
 offset_top = 29.0
-offset_right = 326.0
+offset_right = 366.0
 offset_bottom = 51.0
 theme_override_colors/font_color = Color(1, 0.82, 0.88, 1)
 theme_override_font_sizes/font_size = 15
@@ -165,28 +165,68 @@ unique_name_in_owner = true
 layout_mode = 0
 offset_left = 14.0
 offset_top = 58.0
-offset_right = 164.0
-offset_bottom = 108.0
+offset_right = 181.0
+offset_bottom = 100.0
 mouse_filter = 0
-text = "GRUNT\n20 DARK"
+text = "GOBLIN\n15 DARK"
 
 [node name="MonsterTypeOneButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 176.0
+offset_left = 194.0
 offset_top = 58.0
-offset_right = 326.0
-offset_bottom = 108.0
+offset_right = 366.0
+offset_bottom = 100.0
 mouse_filter = 0
-text = "RAIDER\n35 DARK"
+text = "WOLF BEAST\n30 DARK"
+
+[node name="MonsterTypeTwoButton" type="Button" parent="MonsterProductionPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 14.0
+offset_top = 104.0
+offset_right = 181.0
+offset_bottom = 146.0
+mouse_filter = 0
+text = "TROLL\n65 DARK"
+
+[node name="MonsterTypeThreeButton" type="Button" parent="MonsterProductionPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 194.0
+offset_top = 104.0
+offset_right = 366.0
+offset_bottom = 146.0
+mouse_filter = 0
+text = "SKELETON ARCHER\n45 DARK"
+
+[node name="MonsterTypeFourButton" type="Button" parent="MonsterProductionPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 14.0
+offset_top = 150.0
+offset_right = 181.0
+offset_bottom = 192.0
+mouse_filter = 0
+text = "SHADOW STALKER\n55 DARK"
+
+[node name="MonsterTypeFiveButton" type="Button" parent="MonsterProductionPanel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 194.0
+offset_top = 150.0
+offset_right = 366.0
+offset_bottom = 192.0
+mouse_filter = 0
+text = "DARK SHAMAN\n60 DARK"
 
 [node name="MonsterProductionStatusLabel" type="Label" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 14.0
-offset_top = 116.0
-offset_right = 326.0
-offset_bottom = 143.0
+offset_top = 200.0
+offset_right = 366.0
+offset_bottom = 227.0
 theme_override_colors/font_color = Color(0.721569, 0.658824, 0.768627, 1)
 theme_override_font_sizes/font_size = 11
 text = "Choose a monster to produce"

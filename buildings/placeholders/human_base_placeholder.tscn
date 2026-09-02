@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="3_footprint"]
 [ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="4_vision"]
 
-[node name="HumanBase" type="Node2D" groups=["combat_buildings", "human_base_placeholder", "placement_blockers"]]
+[node name="HumanBase" type="Node2D" groups=["combat_buildings", "combat_targets", "human_base_placeholder", "placement_blockers"]]
 
 [node name="OuterGround" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-78, -62, -52, -82, 52, -82, 78, -62, 78, 62, 52, 82, -52, 82, -78, 62)

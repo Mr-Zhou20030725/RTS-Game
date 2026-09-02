@@ -45,6 +45,11 @@ static func _passes_human_visibility(attacker: Node, target: Node) -> bool:
 		or target_faction.faction != FactionComponent.Faction.MONSTER
 	):
 		return true
+	if (
+		target.has_method("is_hidden_from_human")
+		and target.call("is_hidden_from_human")
+	):
+		return false
 	if not attacker.is_inside_tree():
 		return true
 	var fog_manager := attacker.get_tree().get_first_node_in_group(

@@ -1,13 +1,17 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/units/monster_production_manager.gd" id="1_manager"]
-[ext_resource type="Resource" path="res://resources/monsters/grunt.tres" id="2_grunt"]
-[ext_resource type="Resource" path="res://resources/monsters/raider.tres" id="3_raider"]
+[ext_resource type="Resource" path="res://resources/monsters/goblin.tres" id="2_goblin"]
+[ext_resource type="Resource" path="res://resources/monsters/wolf_beast.tres" id="3_wolf"]
+[ext_resource type="Resource" path="res://resources/monsters/troll.tres" id="4_troll"]
+[ext_resource type="Resource" path="res://resources/monsters/skeleton_archer.tres" id="5_archer"]
+[ext_resource type="Resource" path="res://resources/monsters/shadow_stalker.tres" id="6_shadow"]
+[ext_resource type="Resource" path="res://resources/monsters/dark_shaman.tres" id="7_shaman"]
 
 [node name="MonsterProductionManager" type="Node2D" groups=["monster_production_manager"]]
 z_index = 10
 script = ExtResource("1_manager")
-production_catalog = Array[Resource]([ExtResource("2_grunt"), ExtResource("3_raider")])
+production_catalog = Array[Resource]([ExtResource("2_goblin"), ExtResource("3_wolf"), ExtResource("4_troll"), ExtResource("5_archer"), ExtResource("6_shadow"), ExtResource("7_shaman")])
 
 [node name="SpawnedMonsters" type="Node2D" parent="."]
 unique_name_in_owner = true

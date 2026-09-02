@@ -9,7 +9,7 @@ const EXPECTED_HEALTH_MULTIPLIERS := [1.0, 1.15, 1.5, 2.25]
 const EXPECTED_INCOME_MULTIPLIERS := [1.0, 1.25, 1.75, 3.0]
 const EXPECTED_COST_MULTIPLIERS := [1.0, 0.95, 0.85, 0.7]
 const EXPECTED_TOTAL_INCOME := [8, 8, 7, 6]
-const EXPECTED_GRUNT_COST := [20, 19, 17, 14]
+const EXPECTED_GOBLIN_COST := [15, 14, 13, 11]
 
 
 func _init() -> void:
@@ -79,7 +79,7 @@ func _run_validation() -> void:
 	if economy.get_income_per_interval() <= economy.energy_per_nest:
 		_fail("The final nest does not generate more energy than one initial nest.")
 		return
-	if production.get_effective_cost(0) >= 20:
+	if production.get_effective_cost(0) >= 15:
 		_fail("The final nest did not gain its configured production efficiency.")
 		return
 
@@ -88,7 +88,7 @@ func _run_validation() -> void:
 	if not production.produce(0):
 		_fail("The Dark Mother Nest could not produce a monster.")
 		return
-	if economy.get_dark_energy() != energy_before - 14:
+	if economy.get_dark_energy() != energy_before - 11:
 		_fail("Dark Mother production did not use its exact discounted cost.")
 		return
 	var panel := hud.get_node("MonsterProductionPanel") as ColorRect
@@ -97,7 +97,7 @@ func _run_validation() -> void:
 	if (
 		not panel.visible
 		or stage_label.text != "DARK MOTHER NEST"
-		or "14 DARK" not in grunt_button.text
+		or "11 DARK" not in grunt_button.text
 	):
 		_fail("The production HUD did not show the final stage and cost.")
 		return
@@ -148,7 +148,7 @@ func _validate_stage(
 		economy.get_income_per_interval()
 		!= EXPECTED_TOTAL_INCOME[stage_index]
 		or production.get_effective_cost(0)
-		!= EXPECTED_GRUNT_COST[stage_index]
+		!= EXPECTED_GOBLIN_COST[stage_index]
 	):
 		_fail("Economy or production did not apply the current stage multipliers.")
 		return false

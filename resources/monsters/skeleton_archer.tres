@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MonsterProductionData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_production_data.gd" id="1_data"]
+[ext_resource type="PackedScene" path="res://units/monster/monster_unit.tscn" id="2_unit"]
+
+[resource]
+script = ExtResource("1_data")
+monster_id = &"skeleton_archer"
+display_name = "Skeleton Archer"
+role_description = "Ranged attacker that prioritizes buildings"
+cost = 45
+monster_scene = ExtResource("2_unit")
+max_health = 90.0
+move_speed = 105.0
+collision_radius = 15.0
+visual_scale = 0.95
+attack_style = 1
+damage = 22.0
+attack_interval = 1.0
+attack_range = 330.0
+acquisition_range = 330.0
+chase_range = 450.0
+projectile_speed = 520.0
+target_priority = 2
+special_ability = 0
+body_color = Color(0.72, 0.73, 0.68, 1)
+accent_color = Color(0.92, 0.82, 0.55, 1)
+projectile_color = Color(0.95, 0.82, 0.5, 1)

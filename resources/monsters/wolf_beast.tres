@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MonsterProductionData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_production_data.gd" id="1_data"]
+[ext_resource type="PackedScene" path="res://units/monster/monster_unit.tscn" id="2_unit"]
+
+[resource]
+script = ExtResource("1_data")
+monster_id = &"wolf"
+display_name = "Wolf Beast"
+role_description = "Fast flanker that hunts exposed units"
+cost = 30
+monster_scene = ExtResource("2_unit")
+max_health = 100.0
+move_speed = 230.0
+collision_radius = 15.0
+visual_scale = 0.9
+attack_style = 0
+damage = 18.0
+attack_interval = 0.65
+attack_range = 38.0
+acquisition_range = 360.0
+chase_range = 520.0
+target_priority = 1
+special_ability = 0
+body_color = Color(0.68, 0.42, 0.18, 1)
+accent_color = Color(1, 0.75, 0.28, 1)

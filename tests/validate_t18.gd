@@ -44,8 +44,8 @@ func _validate_all_nests_and_safe_spawns() -> bool:
 	economy.set_process(false)
 
 	var catalog := manager.get_production_catalog()
-	if catalog.size() != 2:
-		_fail("The T18 production catalog must expose two selectable placeholders.")
+	if catalog.size() < 2:
+		_fail("The T18 production catalog must expose selectable monster types.")
 		return false
 	var expected_energy := economy.get_dark_energy()
 	var nests: Array[Node2D] = map.get_active_nests()
@@ -72,7 +72,11 @@ func _validate_all_nests_and_safe_spawns() -> bool:
 		if int(monster.get_meta(&"production_nest_id", 0)) != nest.get_instance_id():
 			_fail("A produced monster was not attributed to the selected nest.")
 			return false
-		if not _is_clear_of_all_buildings(monster.global_position):
+		if not _is_clear_of_all_buildings(
+			monster.global_position,
+			data.collision_radius,
+			manager.spawn_clearance
+		):
 			_fail("A produced monster overlapped a nest or building obstacle.")
 			return false
 
@@ -125,7 +129,12 @@ func _validate_battle_panel_and_fog_boundary() -> bool:
 	if not panel.visible or first_button.disabled or second_button.disabled:
 		_fail("Selecting a nest did not expose enabled production choices.")
 		return false
-	if "20 DARK" not in first_button.text or "35 DARK" not in second_button.text:
+	var first_cost := manager.get_effective_cost(0)
+	var second_cost := manager.get_effective_cost(1)
+	if (
+		str(first_cost) + " DARK" not in first_button.text
+		or str(second_cost) + " DARK" not in second_button.text
+	):
 		_fail("The production panel did not display both monster costs.")
 		return false
 	var before_count := manager.get_spawned_monsters().size()
@@ -136,7 +145,7 @@ func _validate_battle_panel_and_fog_boundary() -> bool:
 	if (
 		manager.get_spawned_monsters().size() != before_count + 1
 		or int(battle.get_node("MonsterEconomy").call("get_dark_energy"))
-		!= before_energy - 20
+		!= before_energy - first_cost
 	):
 		_fail("The production UI did not create and charge for its monster.")
 		return false
@@ -146,14 +155,18 @@ func _validate_battle_panel_and_fog_boundary() -> bool:
 	return true
 
 
-func _is_clear_of_all_buildings(position: Vector2) -> bool:
+func _is_clear_of_all_buildings(
+	position: Vector2, unit_radius: float, clearance: float
+) -> bool:
 	for blocker in get_nodes_in_group(&"placement_blockers"):
 		if not blocker is Node2D:
 			continue
 		var footprint := blocker.get_node_or_null("BuildingFootprint")
 		if footprint == null:
 			continue
-		var minimum_distance := float(footprint.get("radius")) + 33.0
+		var minimum_distance := (
+			float(footprint.get("radius")) + unit_radius + clearance
+		)
 		if blocker.global_position.distance_to(position) < minimum_distance:
 			return false
 	return true

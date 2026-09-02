@@ -24,6 +24,10 @@ signal return_to_main_requested
 @onready var selected_nest_label: Label = %SelectedNestLabel
 @onready var monster_type_zero_button: Button = %MonsterTypeZeroButton
 @onready var monster_type_one_button: Button = %MonsterTypeOneButton
+@onready var monster_type_two_button: Button = %MonsterTypeTwoButton
+@onready var monster_type_three_button: Button = %MonsterTypeThreeButton
+@onready var monster_type_four_button: Button = %MonsterTypeFourButton
+@onready var monster_type_five_button: Button = %MonsterTypeFiveButton
 @onready var monster_production_status_label: Label = %MonsterProductionStatusLabel
 @onready var nest_stage_label: Label = %NestStageLabel
 
@@ -49,12 +53,10 @@ func _ready() -> void:
 	archer_squad_button.pressed.connect(_on_squad_button_pressed.bind(1))
 	knight_squad_button.pressed.connect(_on_squad_button_pressed.bind(2))
 	mage_squad_button.pressed.connect(_on_squad_button_pressed.bind(3))
-	monster_type_zero_button.pressed.connect(
-		_on_monster_production_button_pressed.bind(0)
-	)
-	monster_type_one_button.pressed.connect(
-		_on_monster_production_button_pressed.bind(1)
-	)
+	for monster_index in _get_monster_production_buttons().size():
+		_get_monster_production_buttons()[monster_index].pressed.connect(
+			_on_monster_production_button_pressed.bind(monster_index)
+		)
 	call_deferred("_bind_human_economy")
 	call_deferred("_bind_monster_economy")
 	call_deferred("_bind_building_placement_manager")
@@ -239,7 +241,7 @@ func _on_nest_strengthening_stage_changed(
 
 
 func _refresh_monster_production_buttons() -> void:
-	var buttons := [monster_type_zero_button, monster_type_one_button]
+	var buttons := _get_monster_production_buttons()
 	if monster_production_manager == null:
 		for button in buttons:
 			button.disabled = true
@@ -259,11 +261,23 @@ func _refresh_monster_production_buttons() -> void:
 		button.text = "%s\n%d DARK" % [
 			data.display_name.to_upper(), effective_cost
 		]
+		button.tooltip_text = data.role_description
 		button.disabled = (
 			not has_nest
 			or monster_economy == null
 			or not monster_economy.can_afford(effective_cost)
 		)
+
+
+func _get_monster_production_buttons() -> Array[Button]:
+	return [
+		monster_type_zero_button,
+		monster_type_one_button,
+		monster_type_two_button,
+		monster_type_three_button,
+		monster_type_four_button,
+		monster_type_five_button,
+	]
 
 
 func _bind_human_squad_manager() -> void:

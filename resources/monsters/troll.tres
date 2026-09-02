@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MonsterProductionData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/units/monster_production_data.gd" id="1_data"]
+[ext_resource type="PackedScene" path="res://units/monster/monster_unit.tscn" id="2_unit"]
+
+[resource]
+script = ExtResource("1_data")
+monster_id = &"troll"
+display_name = "Troll"
+role_description = "Slow high-health frontline tank"
+cost = 65
+monster_scene = ExtResource("2_unit")
+max_health = 420.0
+move_speed = 72.0
+collision_radius = 22.0
+visual_scale = 1.35
+attack_style = 0
+damage = 42.0
+attack_interval = 1.2
+attack_range = 52.0
+acquisition_range = 220.0
+chase_range = 320.0
+target_priority = 0
+special_ability = 0
+body_color = Color(0.2, 0.42, 0.26, 1)
+accent_color = Color(0.55, 0.82, 0.45, 1)

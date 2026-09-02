@@ -67,6 +67,12 @@ func is_node_visible_to_human(target: Node2D) -> bool:
 	var faction := FactionComponent.find_on(target)
 	if faction != null and faction.faction == FactionComponent.Faction.HUMAN:
 		return true
+	if (
+		human_fog_enabled
+		and target.has_method("is_hidden_from_human")
+		and target.call("is_hidden_from_human")
+	):
+		return false
 	return is_position_visible_to_human(target.global_position)
 
 

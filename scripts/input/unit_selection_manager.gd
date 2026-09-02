@@ -51,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				queue_redraw()
 
 		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
-			issue_context_command(world_position)
+			issue_context_command(world_position, mouse_event.shift_pressed)
 
 	elif event is InputEventMouseMotion and _is_dragging:
 		var motion_event := event as InputEventMouseMotion
@@ -60,11 +60,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-	if not _is_dragging:
-		return
-	var selection_rect := _get_drag_rect()
-	draw_rect(selection_rect, Color(0.2, 0.65, 1.0, 0.16), true)
-	draw_rect(selection_rect, Color(0.35, 0.8, 1.0, 0.9), false, 2.0)
+	_draw_selected_route()
+	if _is_dragging:
+		var selection_rect := _get_drag_rect()
+		draw_rect(selection_rect, Color(0.2, 0.65, 1.0, 0.16), true)
+		draw_rect(selection_rect, Color(0.35, 0.8, 1.0, 0.9), false, 2.0)
+
+
+func _process(_delta: float) -> void:
+	if _get_route_preview_unit() != null:
+		queue_redraw()
 
 
 func select_at_point(world_position: Vector2) -> void:
@@ -110,6 +115,7 @@ func select_units(units: Array[Node2D]) -> void:
 func clear_selection() -> void:
 	_clear_selection_state()
 	selection_changed.emit([])
+	queue_redraw()
 
 
 func _clear_selection_state() -> void:
@@ -119,14 +125,22 @@ func _clear_selection_state() -> void:
 	selected_units.clear()
 
 
-func issue_context_command(world_position: Vector2) -> void:
+func issue_context_command(
+	world_position: Vector2, append_to_route := false
+) -> void:
 	_remove_invalid_selected_units()
 	if selected_units.is_empty():
 		return
 	if _get_selected_faction() == FactionComponent.Faction.MONSTER:
 		var target := _find_hostile_command_target(world_position)
 		if target != null:
-			issue_attack_command(target)
+			if append_to_route:
+				issue_route_attack_command(target)
+			else:
+				issue_attack_command(target)
+			return
+		if append_to_route:
+			issue_waypoint_command(world_position)
 			return
 	issue_move_command(world_position)
 
@@ -145,14 +159,12 @@ func issue_move_command(world_position: Vector2) -> void:
 	)
 
 	for unit_index in unit_count:
-		var column := unit_index % columns
-		var row := unit_index / columns
-		var offset := Vector2(
-			float(column) * formation_spacing,
-			float(row) * formation_spacing
-		) - formation_size * 0.5
+		var offset := _get_formation_offset(
+			unit_index, columns, formation_size
+		)
 		selected_units[unit_index].call("move_to", world_position + offset)
 	command_issued.emit(&"move", selected_units.duplicate(), world_position)
+	queue_redraw()
 
 
 func issue_rally_command(world_position: Vector2) -> void:
@@ -171,6 +183,54 @@ func issue_attack_command(target: Node2D) -> bool:
 	if commanded_units.is_empty():
 		return false
 	command_issued.emit(&"attack", commanded_units, target)
+	queue_redraw()
+	return true
+
+
+func issue_waypoint_command(world_position: Vector2) -> bool:
+	_remove_invalid_selected_units()
+	if selected_units.is_empty():
+		return false
+	var unit_count := selected_units.size()
+	var columns := int(ceil(sqrt(float(unit_count))))
+	var rows := int(ceil(float(unit_count) / float(columns)))
+	var formation_size := Vector2(
+		float(columns - 1) * formation_spacing,
+		float(rows - 1) * formation_spacing
+	)
+	var commanded_units: Array[Node2D] = []
+	for unit_index in unit_count:
+		var unit := selected_units[unit_index]
+		if not unit.has_method("append_waypoint"):
+			continue
+		var offset := _get_formation_offset(
+			unit_index, columns, formation_size
+		)
+		unit.call("append_waypoint", world_position + offset)
+		commanded_units.append(unit)
+	if commanded_units.is_empty():
+		return false
+	command_issued.emit(&"waypoint", commanded_units, world_position)
+	queue_redraw()
+	return true
+
+
+func issue_route_attack_command(target: Node2D) -> bool:
+	_remove_invalid_selected_units()
+	if selected_units.is_empty() or target == null:
+		return false
+	var commanded_units: Array[Node2D] = []
+	for unit in selected_units:
+		if (
+			CombatRules.can_damage(unit, target)
+			and unit.has_method("append_route_attack_target")
+			and unit.call("append_route_attack_target", target)
+		):
+			commanded_units.append(unit)
+	if commanded_units.is_empty():
+		return false
+	command_issued.emit(&"route_attack", commanded_units, target)
+	queue_redraw()
 	return true
 
 
@@ -187,6 +247,7 @@ func _set_selection(units: Array[Node2D]) -> void:
 		unit.call("set_selected", true)
 		selected_units.append(unit)
 	selection_changed.emit(selected_units.duplicate())
+	queue_redraw()
 
 
 func _expand_squad_members(units: Array[Node2D]) -> Array[Node2D]:
@@ -331,3 +392,71 @@ func _get_target_click_radius(target: Node2D) -> float:
 	if footprint != null:
 		return maxf(float(footprint.get("radius")) + 10.0, 30.0)
 	return 30.0
+
+
+func _get_formation_offset(
+	unit_index: int, columns: int, formation_size: Vector2
+) -> Vector2:
+	var column := unit_index % columns
+	var row := unit_index / columns
+	return Vector2(
+		float(column) * formation_spacing,
+		float(row) * formation_spacing
+	) - formation_size * 0.5
+
+
+func _get_route_preview_unit() -> Node2D:
+	for unit in selected_units:
+		if (
+			is_instance_valid(unit)
+			and unit.has_method("get_waypoint_route")
+			and (
+				not (unit.call("get_waypoint_route") as Array).is_empty()
+				or unit.call("get_route_attack_target") != null
+			)
+		):
+			return unit
+	return null
+
+
+func _draw_selected_route() -> void:
+	var unit := _get_route_preview_unit()
+	if unit == null:
+		return
+	var route: Array = unit.call("get_waypoint_route")
+	var points := PackedVector2Array([unit.global_position])
+	for route_point in route:
+		points.append(route_point as Vector2)
+	var attack_target := unit.call("get_route_attack_target") as Node2D
+	if attack_target != null:
+		points.append(attack_target.global_position)
+	if points.size() >= 2:
+		draw_polyline(points, Color(0.9, 0.35, 1.0, 0.9), 3.0, true)
+	for index in route.size():
+		var point := route[index] as Vector2
+		draw_circle(point, 10.0, Color(0.55, 0.15, 0.75, 0.9))
+		draw_circle(point, 10.0, Color(1.0, 0.65, 1.0, 1.0), false, 2.0)
+		draw_string(
+			ThemeDB.fallback_font,
+			point + Vector2(-4.0, 5.0),
+			str(index + 1),
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1.0,
+			12,
+			Color.WHITE
+		)
+	if attack_target != null:
+		var target_position := attack_target.global_position
+		draw_circle(target_position, 15.0, Color(1.0, 0.2, 0.35, 0.95), false, 3.0)
+		draw_line(
+			target_position + Vector2(-10.0, -10.0),
+			target_position + Vector2(10.0, 10.0),
+			Color(1.0, 0.2, 0.35, 0.95),
+			3.0
+		)
+		draw_line(
+			target_position + Vector2(10.0, -10.0),
+			target_position + Vector2(-10.0, 10.0),
+			Color(1.0, 0.2, 0.35, 0.95),
+			3.0
+		)

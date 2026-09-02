@@ -3,6 +3,9 @@ extends CharacterBody2D
 
 ## Minimal movable and selectable RTS unit used by T04.
 
+signal waypoint_reached(unit: Node2D, world_position: Vector2)
+signal waypoint_route_changed(unit: Node2D)
+
 @export var move_speed := 150.0
 @export var selection_radius := 24.0
 @export var arrival_distance := 10.0
@@ -26,6 +29,9 @@ var _move_target := Vector2.ZERO
 var _manual_move_order_active := false
 var _movement_slow_multiplier := 1.0
 var _movement_slow_remaining := 0.0
+var _waypoint_route_active := false
+var _waypoint_queue: Array[Vector2] = []
+var _route_attack_target: Node2D
 
 
 func _ready() -> void:
@@ -50,6 +56,8 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if global_position.distance_to(_move_target) <= arrival_distance:
+		if _complete_current_waypoint():
+			return
 		stop_moving()
 		return
 
@@ -71,6 +79,7 @@ func set_selected(value: bool) -> void:
 
 
 func move_to(world_position: Vector2) -> void:
+	_clear_waypoint_route()
 	_clear_combat_targets()
 	_manual_move_order_active = true
 	_set_move_target(world_position)
@@ -84,6 +93,7 @@ func move_to_combat_target(world_position: Vector2) -> void:
 func attack_target(target: Node2D) -> bool:
 	if target == null or not CombatRules.can_damage(self, target):
 		return false
+	_clear_waypoint_route()
 	_clear_combat_targets()
 	_manual_move_order_active = false
 	if (
@@ -117,6 +127,51 @@ func get_command_target() -> Node2D:
 	return null
 
 
+func append_waypoint(world_position: Vector2) -> void:
+	_clear_combat_targets()
+	_manual_move_order_active = true
+	_waypoint_route_active = true
+	if _has_move_target:
+		_waypoint_queue.append(world_position)
+	else:
+		_set_move_target(world_position)
+	waypoint_route_changed.emit(self)
+
+
+func append_route_attack_target(target: Node2D) -> bool:
+	if target == null or not CombatRules.can_damage(self, target):
+		return false
+	if not _has_move_target and _waypoint_queue.is_empty():
+		return attack_target(target)
+	_clear_combat_targets()
+	_manual_move_order_active = true
+	_waypoint_route_active = true
+	_route_attack_target = target
+	waypoint_route_changed.emit(self)
+	return true
+
+
+func get_waypoint_route() -> Array[Vector2]:
+	var result: Array[Vector2] = []
+	if _waypoint_route_active and _has_move_target:
+		result.append(_move_target)
+	result.append_array(_waypoint_queue)
+	return result
+
+
+func get_route_attack_target() -> Node2D:
+	if not is_instance_valid(_route_attack_target):
+		_route_attack_target = null
+	return _route_attack_target
+
+
+func has_waypoint_route() -> bool:
+	return (
+		_waypoint_route_active
+		and (_has_move_target or not _waypoint_queue.is_empty())
+	)
+
+
 func is_manual_move_order_active() -> bool:
 	return _manual_move_order_active
 
@@ -143,6 +198,7 @@ func stop_moving() -> void:
 	_has_move_target = false
 	_manual_move_order_active = false
 	velocity = Vector2.ZERO
+	_clear_waypoint_route()
 
 
 func _clear_combat_targets() -> void:
@@ -150,6 +206,38 @@ func _clear_combat_targets() -> void:
 		melee_component.clear_target()
 	if ranged_component != null and ranged_component.has_method("clear_target"):
 		ranged_component.call("clear_target")
+
+
+func _complete_current_waypoint() -> bool:
+	if not _waypoint_route_active:
+		return false
+	waypoint_reached.emit(self, _move_target)
+	if not _waypoint_queue.is_empty():
+		_set_move_target(_waypoint_queue.pop_front())
+		_manual_move_order_active = true
+		waypoint_route_changed.emit(self)
+		return true
+	var final_target := get_route_attack_target()
+	_waypoint_route_active = false
+	_route_attack_target = null
+	_has_move_target = false
+	waypoint_route_changed.emit(self)
+	if final_target != null and attack_target(final_target):
+		return true
+	return false
+
+
+func _clear_waypoint_route() -> void:
+	var had_route := (
+		_waypoint_route_active
+		or not _waypoint_queue.is_empty()
+		or _route_attack_target != null
+	)
+	_waypoint_route_active = false
+	_waypoint_queue.clear()
+	_route_attack_target = null
+	if had_route:
+		waypoint_route_changed.emit(self)
 
 
 func apply_movement_slow(multiplier: float, duration: float) -> bool:

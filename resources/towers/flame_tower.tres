@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_data")
 tower_id = &"flame"
-display_name = "Flame Tower"
+display_name = "火焰塔"
 cost = 80
 max_health = 280.0
 attack_style = 1
@@ -18,7 +18,7 @@ splash_radius = 82.0
 upgrade_cost = 110
 upgrade_damage_multiplier = 1.35
 upgrade_range_bonus = 45.0
-upgrade_description = "Damage +35%, range +45"
+upgrade_description = "伤害 +35%，射程 +45"
 foundation_color = Color(0.42, 0.18, 0.10, 1)
 tower_color = Color(0.95, 0.31, 0.10, 1)
 projectile_color = Color(1, 0.32, 0.08, 1)

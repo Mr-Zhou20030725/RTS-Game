@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"goblin"
-display_name = "Goblin"
-role_description = "Cheap expendable swarm fighter"
+display_name = "哥布林"
+role_description = "价格低廉、适合成群进攻的消耗型战士"
 cost = 15
 monster_scene = ExtResource("2_unit")
 max_health = 70.0
-move_speed = 145.0
+move_speed = 87.0
 collision_radius = 15.0
 visual_scale = 0.8
 attack_style = 0

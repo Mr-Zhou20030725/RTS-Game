@@ -32,7 +32,7 @@ const DIRECTION_VECTORS := [
 	Vector2.DOWN,
 	Vector2.LEFT,
 ]
-const DIRECTION_NAMES := ["NORTH", "EAST", "SOUTH", "WEST"]
+const DIRECTION_NAMES := ["北方", "东方", "南方", "西方"]
 const LATERAL_OFFSETS := [-64.0, 0.0, 64.0]
 
 @export var config: HumanAIConfig
@@ -253,6 +253,16 @@ func get_direction_name(direction: DefenseDirection) -> String:
 	return DIRECTION_NAMES[direction]
 
 
+func adopt_available_human_units() -> void:
+	for actor_node in get_tree().get_nodes_in_group(&"combat_units"):
+		var actor := actor_node as Node2D
+		if actor == null:
+			continue
+		var faction := FactionComponent.find_on(actor)
+		if faction != null and faction.faction == FactionComponent.Faction.HUMAN:
+			actor.set_meta(&"human_ai_controlled", true)
+
+
 func _run_due_cycles(
 	elapsed_property: StringName, interval: float, action: Callable
 ) -> void:
@@ -459,12 +469,15 @@ func _get_ai_squads() -> Array[Node2D]:
 
 func _get_ai_members() -> Array[Node2D]:
 	var result: Array[Node2D] = []
-	for member_node in get_tree().get_nodes_in_group(&"human_squad_members"):
+	for member_node in get_tree().get_nodes_in_group(&"combat_units"):
 		var member := member_node as Node2D
 		if (
 			member == null
 			or not member.get_meta(&"human_ai_controlled", false)
 		):
+			continue
+		var faction := FactionComponent.find_on(member)
+		if faction == null or faction.faction != FactionComponent.Faction.HUMAN:
 			continue
 		var health := member.get_node_or_null("HealthComponent") as HealthComponent
 		if health == null or not health.is_dead:
@@ -500,8 +513,8 @@ func _get_exploration_point(direction: DefenseDirection) -> Vector2:
 	var result: Vector2 = human_base.global_position + (
 		DIRECTION_VECTORS[direction] * config.exploration_radius
 	)
-	result.x = clampf(result.x, 100.0, 1180.0)
-	result.y = clampf(result.y, 110.0, 650.0)
+	result.x = clampf(result.x, 150.0, 3850.0)
+	result.y = clampf(result.y, 150.0, 3850.0)
 	return result
 
 

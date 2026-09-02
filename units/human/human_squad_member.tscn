@@ -13,6 +13,7 @@ radius = 14.0
 [node name="HumanSquadMember" type="CharacterBody2D" groups=["combat_targets", "combat_units", "moving_units", "selectable_units", "human_squad_members"]]
 collision_layer = 1
 collision_mask = 1
+scale = Vector2(0.975, 0.975)
 script = ExtResource("1_member")
 
 [node name="Body" type="Polygon2D" parent="."]
@@ -33,7 +34,7 @@ offset_top = -9.0
 offset_right = 42.0
 offset_bottom = 13.0
 theme_override_font_sizes/font_size = 9
-text = "SWORDSMAN"
+text = "剑士"
 horizontal_alignment = 1
 
 [node name="HealthComponent" parent="." instance=ExtResource("2_health")]
@@ -50,6 +51,7 @@ combat_enabled = false
 combat_enabled = false
 
 [node name="VisionSourceComponent" parent="." instance=ExtResource("6_vision")]
+scale = Vector2(1.02564, 1.02564)
 vision_radius = 155.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

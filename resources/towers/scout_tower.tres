@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_data")
 tower_id = &"scout"
-display_name = "Scout Tower"
+display_name = "侦察塔"
 cost = 65
 max_health = 170.0
 attack_style = 0
@@ -17,7 +17,7 @@ vision_radius = 480.0
 upgrade_cost = 85
 upgrade_damage_multiplier = 1.5
 upgrade_range_bonus = 20.0
-upgrade_description = "Damage +50%, range +20"
+upgrade_description = "伤害 +50%，射程 +20"
 foundation_color = Color(0.10, 0.34, 0.29, 1)
 tower_color = Color(0.31, 0.95, 0.67, 1)
 projectile_color = Color(0.72, 1, 0.81, 1)

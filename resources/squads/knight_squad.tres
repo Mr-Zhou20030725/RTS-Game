@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_data")
 squad_id = &"knight"
-display_name = "Knight Squad"
+display_name = "骑士"
 cost = 110
-member_count = 3
+member_count = 1
 formation_spacing = 48.0
 max_health = 220.0
-move_speed = 210.0
+move_speed = 126.0
 vision_radius = 175.0
 attack_style = 0
 damage = 34.0

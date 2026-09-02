@@ -109,10 +109,12 @@ func _validate_exploration_value() -> bool:
 
 	var base := map.human_base as Node2D
 	var target_nest := map.get_active_nests()[0] as Node2D
+	var direction := base.global_position.direction_to(target_nest.global_position)
+	target_nest.global_position = base.global_position + direction * 500.0
+	fog.refresh_visibility()
 	if target_nest.visible or fog.is_node_visible_to_human(target_nest):
 		_fail("Scout exploration target was already visible before construction.")
 		return false
-	var direction := base.global_position.direction_to(target_nest.global_position)
 	var build_position := base.global_position + direction * 180.0
 	if not placement.begin_tower_placement(4, build_position):
 		_fail("Could not begin Scout Tower placement inside existing vision.")

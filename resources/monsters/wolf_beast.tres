@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"wolf"
-display_name = "Wolf Beast"
-role_description = "Fast flanker that hunts exposed units"
+display_name = "狼兽"
+role_description = "高速侧翼单位，擅长猎杀暴露的敌人"
 cost = 30
 monster_scene = ExtResource("2_unit")
 max_health = 100.0
-move_speed = 230.0
+move_speed = 138.0
 collision_radius = 15.0
 visual_scale = 0.9
 attack_style = 0

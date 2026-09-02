@@ -50,7 +50,7 @@ func _apply_squad_data() -> void:
 	health_component.current_health = squad_data.max_health
 	body.color = squad_data.body_color
 	accent.default_color = squad_data.accent_color
-	unit_label.text = str(squad_data.squad_id).to_upper()
+	unit_label.text = squad_data.display_name
 
 	melee_component.combat_enabled = (
 		squad_data.attack_style == HumanSquadData.AttackStyle.MELEE

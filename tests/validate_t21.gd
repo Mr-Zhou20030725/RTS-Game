@@ -17,6 +17,9 @@ func _run_validation() -> void:
 	var production := battle.get_node(
 		"MonsterProductionManager"
 	) as MonsterProductionManager
+	var monster_economy := battle.get_node(
+		"MonsterEconomy"
+	) as MonsterEconomy
 	var hud := battle.get_node("HUDLayer/BattleHUD") as Control
 	var button := hud.get_node("TopBar/ViewModeButton") as Button
 	var panel := hud.get_node("MonsterProductionPanel") as ColorRect
@@ -26,16 +29,25 @@ func _run_validation() -> void:
 		or button == null
 		or fog.get_viewer_faction() != FogOfWarManager.ViewerFaction.HUMAN
 		or not fog.canvas_modulate.visible
-		or button.text != "VIEW: HUMAN"
+		or button.text != "视角：人类"
 	):
 		_fail("Battle did not start in the Human fog view.")
 		return
 
 	var hidden_nest := _find_hidden_nest(map, fog)
 	var human_unit := _find_faction_unit(FactionComponent.Faction.HUMAN)
-	var hidden_monster := _find_faction_unit(FactionComponent.Faction.MONSTER)
-	if hidden_nest == null or human_unit == null or hidden_monster == null:
-		_fail("Could not locate the hidden nest and faction units needed by T21.")
+	if hidden_nest == null or human_unit == null:
+		_fail("Could not locate the hidden nest and Human unit needed by T21.")
+		return
+	monster_economy.set_process(false)
+	monster_economy.add_dark_energy(100, &"t21_validation")
+	if not production.produce_from_nest(0, hidden_nest):
+		_fail("Could not produce the hidden Monster needed by T21.")
+		return
+	var produced := production.get_spawned_monsters()
+	var hidden_monster := produced[produced.size() - 1] as Node2D
+	if hidden_monster == null:
+		_fail("Produced Monster was not available for T21.")
 		return
 	hidden_monster.global_position = hidden_nest.global_position
 	fog.refresh_visibility()
@@ -54,7 +66,7 @@ func _run_validation() -> void:
 	if (
 		fog.get_viewer_faction() != FogOfWarManager.ViewerFaction.MONSTER
 		or fog.canvas_modulate.visible
-		or button.text != "VIEW: MONSTER"
+		or button.text != "视角：怪物"
 		or not hidden_nest.visible
 		or not hidden_monster.visible
 	):
@@ -78,7 +90,7 @@ func _run_validation() -> void:
 	if (
 		fog.get_viewer_faction() != FogOfWarManager.ViewerFaction.HUMAN
 		or not fog.canvas_modulate.visible
-		or button.text != "VIEW: HUMAN"
+		or button.text != "视角：人类"
 		or hidden_nest.visible
 		or hidden_monster.visible
 		or production.get_selected_nest() != null

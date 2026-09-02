@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_data")
 squad_id = &"mage"
-display_name = "Mage Squad"
+display_name = "法师"
 cost = 130
-member_count = 3
+member_count = 1
 formation_spacing = 46.0
 max_health = 70.0
-move_speed = 120.0
+move_speed = 72.0
 vision_radius = 160.0
 attack_style = 2
 damage = 28.0

@@ -16,6 +16,8 @@ var _drag_start := Vector2.ZERO
 var _drag_current := Vector2.ZERO
 var _is_dragging := false
 var _fog_of_war_manager: FogOfWarManager
+var _controlled_faction := FactionComponent.Faction.NEUTRAL
+var _player_input_enabled := true
 
 
 func _ready() -> void:
@@ -24,6 +26,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _player_input_enabled:
+		return
 	if _is_build_mode_active():
 		if _is_dragging:
 			_is_dragging = false
@@ -239,6 +243,21 @@ func get_selected_units() -> Array[Node2D]:
 	return selected_units.duplicate()
 
 
+func set_controlled_faction(faction: FactionComponent.Faction) -> void:
+	_controlled_faction = faction
+	clear_selection()
+
+
+func get_controlled_faction() -> FactionComponent.Faction:
+	return _get_controlled_faction()
+
+
+func set_player_input_enabled(value: bool) -> void:
+	_player_input_enabled = value
+	if not value:
+		clear_selection()
+
+
 func _set_selection(units: Array[Node2D]) -> void:
 	_clear_selection_state()
 	for unit in _expand_squad_members(units):
@@ -322,6 +341,8 @@ func _is_selectable_for_current_view(unit: Node2D) -> bool:
 
 
 func _get_controlled_faction() -> FactionComponent.Faction:
+	if _controlled_faction != FactionComponent.Faction.NEUTRAL:
+		return _controlled_faction as FactionComponent.Faction
 	var fog_manager := _fog_of_war_manager
 	if fog_manager == null or not is_instance_valid(fog_manager):
 		fog_manager = get_tree().get_first_node_in_group(&"human_fog_manager")

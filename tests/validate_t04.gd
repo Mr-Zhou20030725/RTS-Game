@@ -1,7 +1,7 @@
 extends SceneTree
 
 const BATTLE_SCENE := preload("res://scenes/battle/battle.tscn")
-const EXPECTED_UNIT_COUNT := 6
+const EXPECTED_UNIT_COUNT := 3
 
 
 func _init() -> void:
@@ -22,7 +22,7 @@ func _run_validation() -> void:
 
 	var units := get_nodes_in_group("selectable_units")
 	if units.size() != EXPECTED_UNIT_COUNT:
-		_fail("Battle scene does not contain the expected 6 selectable units.")
+		_fail("Battle scene does not contain the expected 3 selectable units.")
 		return
 
 	_simulate_left_click(selection_manager, units[0].global_position)
@@ -36,19 +36,19 @@ func _run_validation() -> void:
 
 	_simulate_box_selection(
 		selection_manager,
-		Vector2(430.0, 280.0),
-		Vector2(560.0, 450.0)
+		Vector2(1820.0, 1820.0),
+		Vector2(2180.0, 2180.0)
 	)
 	selected_units = selection_manager.call("get_selected_units")
 	if selected_units.size() != EXPECTED_UNIT_COUNT:
-		_fail("Mouse box selection did not select all 6 units.")
+		_fail("Mouse box selection did not select all 3 units.")
 		return
 
 	var starting_positions: Array[Vector2] = []
 	for unit in selected_units:
 		starting_positions.append(unit.global_position)
 
-	var first_destination := Vector2(930.0, 430.0)
+	var first_destination := Vector2(2400.0, 2200.0)
 	_simulate_right_click(selection_manager, first_destination)
 	if not _move_targets_are_unique(selected_units):
 		_fail("Formation command assigned overlapping target positions.")
@@ -82,12 +82,12 @@ func _run_validation() -> void:
 		selection_manager.call(
 			"issue_move_command",
 			Vector2(
-				700.0 + float(command_index % 10) * 12.0,
-				220.0 + float(command_index % 7) * 10.0
+				2300.0 + float(command_index % 10) * 12.0,
+				1900.0 + float(command_index % 7) * 10.0
 			)
 		)
 
-	var final_destination := Vector2(820.0, 250.0)
+	var final_destination := Vector2(2450.0, 1900.0)
 	selection_manager.call("issue_move_command", final_destination)
 	if not _move_targets_are_unique(selected_units):
 		_fail("Rapid commands left units with overlapping targets.")
@@ -105,15 +105,16 @@ func _run_validation() -> void:
 
 
 func _simulate_left_click(manager: Node, position: Vector2) -> void:
+	var screen_position: Vector2 = manager.get_canvas_transform() * position
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT
-	press.position = position
+	press.position = screen_position
 	press.pressed = true
 	manager.call("_unhandled_input", press)
 
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT
-	release.position = position
+	release.position = screen_position
 	release.pressed = false
 	manager.call("_unhandled_input", release)
 
@@ -121,19 +122,21 @@ func _simulate_left_click(manager: Node, position: Vector2) -> void:
 func _simulate_box_selection(
 	manager: Node, start_position: Vector2, end_position: Vector2
 ) -> void:
+	var screen_start: Vector2 = manager.get_canvas_transform() * start_position
+	var screen_end: Vector2 = manager.get_canvas_transform() * end_position
 	var press := InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT
-	press.position = start_position
+	press.position = screen_start
 	press.pressed = true
 	manager.call("_unhandled_input", press)
 
 	var motion := InputEventMouseMotion.new()
-	motion.position = end_position
+	motion.position = screen_end
 	manager.call("_unhandled_input", motion)
 
 	var release := InputEventMouseButton.new()
 	release.button_index = MOUSE_BUTTON_LEFT
-	release.position = end_position
+	release.position = screen_end
 	release.pressed = false
 	manager.call("_unhandled_input", release)
 

@@ -1,12 +1,10 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="1_battle"]
 [ext_resource type="PackedScene" path="res://ui/battle_hud/battle_hud.tscn" id="2_hud"]
 [ext_resource type="PackedScene" path="res://scenes/map/mvp_map.tscn" id="3_map"]
 [ext_resource type="Script" path="res://scripts/input/unit_selection_manager.gd" id="4_selection"]
 [ext_resource type="PackedScene" path="res://scenes/units/t04_test_squad.tscn" id="5_squad"]
-[ext_resource type="PackedScene" path="res://scenes/units/t06_monster_demo.tscn" id="6_monsters"]
-[ext_resource type="PackedScene" path="res://scenes/units/t07_archer_demo.tscn" id="7_archer"]
 [ext_resource type="PackedScene" path="res://scenes/economy/human_economy.tscn" id="8_economy"]
 [ext_resource type="PackedScene" path="res://scenes/building/building_placement_manager.tscn" id="9_placement"]
 [ext_resource type="PackedScene" path="res://scenes/units/human_squad_manager.tscn" id="10_squads"]
@@ -17,14 +15,15 @@
 [ext_resource type="PackedScene" path="res://scenes/units/monster_legion_manager.tscn" id="15_legions"]
 [ext_resource type="PackedScene" path="res://scenes/ai/monster_ai_controller.tscn" id="16_monster_ai"]
 [ext_resource type="PackedScene" path="res://scenes/ai/human_ai_controller.tscn" id="17_human_ai"]
+[ext_resource type="Script" path="res://scripts/camera/world_camera.gd" id="18_camera"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_battle")
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -100
-offset_right = 1280.0
-offset_bottom = 850.0
+offset_right = 4000.0
+offset_bottom = 4000.0
 mouse_filter = 2
 color = Color(0.054902, 0.0823529, 0.109804, 1)
 
@@ -48,6 +47,12 @@ z_index = 10
 
 [node name="MVPMap" parent="." instance=ExtResource("3_map")]
 
+[node name="WorldCamera" type="Camera2D" parent="."]
+position = Vector2(2000, 2000)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+script = ExtResource("18_camera")
+
 [node name="NestStrengtheningManager" parent="." instance=ExtResource("14_nest_strengthening")]
 
 [node name="FogOfWarManager" parent="." instance=ExtResource("11_fog")]
@@ -57,12 +62,6 @@ z_index = 30
 script = ExtResource("4_selection")
 
 [node name="T04TestSquad" parent="." instance=ExtResource("5_squad")]
-z_index = 10
-
-[node name="T06MonsterDemo" parent="." instance=ExtResource("6_monsters")]
-z_index = 10
-
-[node name="T07ArcherDemo" parent="." instance=ExtResource("7_archer")]
 z_index = 10
 
 [node name="HUDLayer" type="CanvasLayer" parent="."]

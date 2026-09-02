@@ -1,11 +1,11 @@
 extends SceneTree
 
 const MAP_SCENE := preload("res://scenes/map/mvp_map.tscn")
-const EXPECTED_BASE_POSITION := Vector2(640.0, 384.0)
+const EXPECTED_BASE_POSITION := Vector2(2000.0, 2000.0)
 const EXPECTED_NEST_COUNT := 4
 const MINIMUM_CANDIDATE_COUNT := 8
-const MINIMUM_BASE_DISTANCE := 350.0
-const MINIMUM_NEST_SEPARATION := 240.0
+const MINIMUM_BASE_DISTANCE := 1500.0
+const MINIMUM_NEST_SEPARATION := 500.0
 
 
 func _init() -> void:
@@ -24,6 +24,14 @@ func _run_validation() -> void:
 
 		if map.call("get_nest_candidate_count") < MINIMUM_CANDIDATE_COUNT:
 			_fail("Map has fewer than 8 nest candidates.")
+			return
+		var ground := map.get_node("Ground") as Polygon2D
+		if (
+			ground.polygon.size() != 4
+			or ground.polygon[0] != Vector2.ZERO
+			or ground.polygon[2] != Vector2(4000.0, 4000.0)
+		):
+			_fail("The playable map is not exactly 4000 by 4000.")
 			return
 
 		var human_base := map.get("human_base") as Node2D

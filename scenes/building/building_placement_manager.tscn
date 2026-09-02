@@ -16,6 +16,6 @@ default_building_scene = ExtResource("2_tower")
 tower_building_scene = ExtResource("3_defense")
 tower_data_catalog = Array[Resource]([ExtResource("4_arrow"), ExtResource("5_flame"), ExtResource("6_frost"), ExtResource("7_arcane"), ExtResource("8_scout")])
 default_building_cost = 50
-buildable_bounds = Rect2(80, 96, 1120, 576)
+buildable_bounds = Rect2(120, 120, 3760, 3760)
 overlap_padding = 8.0
 grid_size = 16.0

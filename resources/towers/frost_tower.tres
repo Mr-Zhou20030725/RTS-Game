@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_data")
 tower_id = &"frost"
-display_name = "Frost Tower"
+display_name = "冰霜塔"
 cost = 70
 max_health = 260.0
 attack_style = 2
@@ -18,7 +18,7 @@ slow_multiplier = 0.45
 slow_duration = 1.5
 upgrade_cost = 100
 upgrade_attack_interval_multiplier = 0.7
-upgrade_description = "Attack interval -30%"
+upgrade_description = "攻击间隔 -30%"
 foundation_color = Color(0.13, 0.34, 0.48, 1)
 tower_color = Color(0.31, 0.85, 1, 1)
 projectile_color = Color(0.45, 0.92, 1, 1)

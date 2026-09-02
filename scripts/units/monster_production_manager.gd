@@ -12,7 +12,7 @@ signal production_failed(reason: StringName)
 signal production_costs_changed(multiplier: float)
 
 @export var production_catalog: Array[Resource] = []
-@export var battlefield_bounds := Rect2(80.0, 96.0, 1120.0, 576.0)
+@export var battlefield_bounds := Rect2(120.0, 120.0, 3760.0, 3760.0)
 @export_range(0.0, 128.0, 1.0) var spawn_clearance := 16.0
 @export_range(1.0, 128.0, 1.0) var ring_spacing := 30.0
 
@@ -24,6 +24,7 @@ var fog_of_war_manager: FogOfWarManager
 var selected_nest: Node2D
 var _monster_serial := 0
 var _production_cost_multiplier := 1.0
+var _player_input_enabled := true
 
 
 func _ready() -> void:
@@ -31,6 +32,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _player_input_enabled:
+		return
 	if (
 		event is InputEventMouseButton
 		and event.button_index == MOUSE_BUTTON_LEFT
@@ -41,6 +44,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func get_production_catalog() -> Array[Resource]:
 	return production_catalog.duplicate()
+
+
+func set_player_input_enabled(value: bool) -> void:
+	_player_input_enabled = value
+	if not value:
+		clear_selection()
 
 
 func get_effective_cost(catalog_index: int) -> int:

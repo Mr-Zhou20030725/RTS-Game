@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"shaman"
-display_name = "Dark Shaman"
-role_description = "Support caster that boosts nearby Monster damage and speed"
+display_name = "黑暗萨满"
+role_description = "强化附近怪物伤害和速度的辅助施法者"
 cost = 60
 monster_scene = ExtResource("2_unit")
 max_health = 140.0
-move_speed = 105.0
+move_speed = 63.0
 collision_radius = 15.0
 visual_scale = 1.0
 attack_style = 1

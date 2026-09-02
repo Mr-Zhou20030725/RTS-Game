@@ -6,10 +6,10 @@
 script = ExtResource("1_data")
 active_nest_count = 1
 stage_id = &"dark_mother"
-display_name = "Dark Mother Nest"
+display_name = "黑暗母巢"
 max_health_multiplier = 2.25
 energy_per_nest_multiplier = 3.0
 production_cost_multiplier = 0.7
 outer_color = Color(0.18, 0.02, 0.25, 1)
 core_color = Color(0.82, 0.22, 1, 1)
-label_text = "DARK MOTHER"
+label_text = "黑暗母巢"

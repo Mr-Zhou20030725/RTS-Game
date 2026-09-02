@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_data")
 squad_id = &"archer"
-display_name = "Archer Squad"
+display_name = "弓箭手"
 cost = 80
-member_count = 3
+member_count = 1
 formation_spacing = 44.0
 max_health = 80.0
-move_speed = 140.0
+move_speed = 84.0
 vision_radius = 165.0
 attack_style = 1
 damage = 18.0

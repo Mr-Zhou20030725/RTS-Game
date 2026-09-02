@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"troll"
-display_name = "Troll"
-role_description = "Slow high-health frontline tank"
+display_name = "巨魔"
+role_description = "移动缓慢但生命极高的前排坦克"
 cost = 65
 monster_scene = ExtResource("2_unit")
 max_health = 420.0
-move_speed = 72.0
+move_speed = 43.0
 collision_radius = 22.0
 visual_scale = 1.35
 attack_style = 0

@@ -92,7 +92,7 @@ func _run_validation() -> void:
 	await process_frame
 	await process_frame
 	var gold_label := hud.get_node("TopBar/GoldLabel") as Label
-	if gold_label.text != "GOLD: %d" % economy.get_gold():
+	if gold_label.text != "金币：%d" % economy.get_gold():
 		_fail("Battle HUD did not display the current Human gold.")
 		return
 
@@ -101,7 +101,7 @@ func _run_validation() -> void:
 	if economy.get_gold() != before_hud_spend - 50:
 		_fail("T09 HUD test button did not use validated economy spending.")
 		return
-	if gold_label.text != "GOLD: %d" % economy.get_gold():
+	if gold_label.text != "金币：%d" % economy.get_gold():
 		_fail("HUD gold display did not update after spending.")
 		return
 

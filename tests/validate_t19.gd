@@ -96,8 +96,8 @@ func _run_validation() -> void:
 	var grunt_button := panel.get_node("MonsterTypeZeroButton") as Button
 	if (
 		not panel.visible
-		or stage_label.text != "DARK MOTHER NEST"
-		or "11 DARK" not in grunt_button.text
+		or stage_label.text != "黑暗母巢"
+		or "11 暗能量" not in grunt_button.text
 	):
 		_fail("The production HUD did not show the final stage and cost.")
 		return

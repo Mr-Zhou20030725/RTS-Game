@@ -25,6 +25,12 @@ func _run_validation() -> void:
 	) as MonsterAIController
 	var fog := battle.get_node("FogOfWarManager") as FogOfWarManager
 	var hud := battle.get_node("HUDLayer/BattleHUD") as Control
+	var monster_economy := battle.get_node(
+		"MonsterEconomy"
+	) as MonsterEconomy
+	var production := battle.get_node(
+		"MonsterProductionManager"
+	) as MonsterProductionManager
 	if ai == null or ai.config == null or not ai.is_ai_enabled():
 		_fail("Human AI v1 is missing, unconfigured, or disabled by default.")
 		return
@@ -32,6 +38,15 @@ func _run_validation() -> void:
 	monster_ai.set_ai_enabled(false)
 	economy.set_process(false)
 	economy.add_gold(2500, &"t25_validation")
+	monster_economy.set_process(false)
+	monster_economy.add_dark_energy(100, &"t25_validation")
+	var initial_nests: Array[Node2D] = map.call("get_active_nests")
+	if (
+		initial_nests.is_empty()
+		or not production.produce_from_nest(0, initial_nests[0])
+	):
+		_fail("Could not produce the isolated Monster threat.")
+		return
 	var human_base := map.get("human_base") as Node2D
 	var threat := _prepare_single_visible_threat(human_base)
 	if threat == null:
@@ -82,12 +97,16 @@ func _run_validation() -> void:
 		_fail("AI reused an occupied tower position instead of spreading defense.")
 		return
 
-	if not ai.run_recruit_cycle() or not ai.run_recruit_cycle():
-		_fail("Human AI did not recruit multiple squads.")
+	if (
+		not ai.run_recruit_cycle()
+		or not ai.run_recruit_cycle()
+		or not ai.run_recruit_cycle()
+	):
+		_fail("Human AI did not recruit its three-soldier expedition.")
 		return
 	var ai_squads := _get_ai_squads(squads)
-	if ai_squads.size() != 2:
-		_fail("Recruited squads were not marked as Human-AI controlled.")
+	if ai_squads.size() != 3:
+		_fail("Three recruited soldiers were not marked as Human-AI controlled.")
 		return
 	var recruited_types: Dictionary[StringName, bool] = {}
 	for squad in ai_squads:
@@ -172,11 +191,11 @@ func _run_validation() -> void:
 	var human_ai_button := hud.get_node(
 		"SquadRecruitBar/HumanAIButton"
 	) as Button
-	if human_ai_button == null or "ON" not in human_ai_button.text:
+	if human_ai_button == null or "开启" not in human_ai_button.text:
 		_fail("Human HUD does not expose the AI pause control.")
 		return
 	human_ai_button.pressed.emit()
-	if ai.is_ai_enabled() or "PAUSED" not in human_ai_button.text:
+	if ai.is_ai_enabled() or "已暂停" not in human_ai_button.text:
 		_fail("Human AI could not be paused for manual control.")
 		return
 	human_ai_button.pressed.emit()

@@ -23,7 +23,7 @@ const DIRECTION_VECTORS := [
 	Vector2.DOWN,
 	Vector2.LEFT,
 ]
-const DIRECTION_NAMES := ["NORTH", "EAST", "SOUTH", "WEST"]
+const DIRECTION_NAMES := ["北方", "东方", "南方", "西方"]
 
 @export var config: MonsterAIConfig
 @export var ai_enabled := true
@@ -196,8 +196,8 @@ func launch_attack_wave() -> bool:
 	var staging_center: Vector2 = human_base.global_position + (
 		DIRECTION_VECTORS[direction] * config.staging_distance
 	)
-	staging_center.x = clampf(staging_center.x, 100.0, 1180.0)
-	staging_center.y = clampf(staging_center.y, 110.0, 650.0)
+	staging_center.x = clampf(staging_center.x, 150.0, 3850.0)
+	staging_center.y = clampf(staging_center.y, 150.0, 3850.0)
 	var columns := int(ceil(sqrt(float(wave_units.size()))))
 	for index in wave_units.size():
 		var unit := wave_units[index]

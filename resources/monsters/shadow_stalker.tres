@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"shadow"
-display_name = "Shadow Stalker"
-role_description = "Fast raider hidden from Humans for four seconds"
+display_name = "暗影潜行者"
+role_description = "高速突袭单位，生成后可对人类隐藏四秒"
 cost = 55
 monster_scene = ExtResource("2_unit")
 max_health = 120.0
-move_speed = 180.0
+move_speed = 108.0
 collision_radius = 15.0
 visual_scale = 0.95
 attack_style = 0

@@ -5,19 +5,34 @@
 [node name="T04TestSquad" type="Node2D"]
 
 [node name="Unit01" parent="." instance=ExtResource("1_unit")]
-position = Vector2(470, 320)
+position = Vector2(1920, 1920)
+scale = Vector2(0.975, 0.975)
+move_speed = 75.0
+
+[node name="Label" parent="Unit01"]
+text = "剑士"
+
+[node name="VisionSourceComponent" parent="Unit01"]
+scale = Vector2(1.02564, 1.02564)
 
 [node name="Unit02" parent="." instance=ExtResource("1_unit")]
-position = Vector2(520, 320)
+position = Vector2(2080, 1920)
+scale = Vector2(0.975, 0.975)
+move_speed = 75.0
+
+[node name="Label" parent="Unit02"]
+text = "剑士"
+
+[node name="VisionSourceComponent" parent="Unit02"]
+scale = Vector2(1.02564, 1.02564)
 
 [node name="Unit03" parent="." instance=ExtResource("1_unit")]
-position = Vector2(470, 370)
+position = Vector2(2000, 2080)
+scale = Vector2(0.975, 0.975)
+move_speed = 75.0
 
-[node name="Unit04" parent="." instance=ExtResource("1_unit")]
-position = Vector2(520, 370)
+[node name="Label" parent="Unit03"]
+text = "剑士"
 
-[node name="Unit05" parent="." instance=ExtResource("1_unit")]
-position = Vector2(470, 420)
-
-[node name="Unit06" parent="." instance=ExtResource("1_unit")]
-position = Vector2(520, 420)
+[node name="VisionSourceComponent" parent="Unit03"]
+scale = Vector2(1.02564, 1.02564)

@@ -12,6 +12,7 @@ radius = 15.0
 [node name="MonsterUnit" type="CharacterBody2D" groups=["combat_targets", "combat_units", "moving_units", "monster_units", "selectable_units"]]
 collision_layer = 1
 collision_mask = 1
+scale = Vector2(0.975, 0.975)
 script = ExtResource("1_unit")
 
 [node name="Body" type="Polygon2D" parent="."]
@@ -34,7 +35,7 @@ offset_right = 48.0
 offset_bottom = 12.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 8
-text = "GOBLIN"
+text = "哥布林"
 horizontal_alignment = 1
 
 [node name="HealthComponent" parent="." instance=ExtResource("2_health")]
@@ -64,6 +65,7 @@ neighbor_distance = 72.0
 unique_name_in_owner = true
 visible = false
 z_index = -1
+scale = Vector2(1.02564, 1.02564)
 width = 2.0
 default_color = Color(0.65, 0.25, 0.95, 0.45)
 

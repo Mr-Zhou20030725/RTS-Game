@@ -12,7 +12,7 @@ enum AttackStyle {
 @export var squad_id: StringName = &"swordsman"
 @export var display_name := "Swordsman Squad"
 @export_range(0, 1000000, 1) var cost := 60
-@export_range(2, 12, 1) var member_count := 4
+@export_range(1, 12, 1) var member_count := 1
 @export_range(24.0, 128.0, 1.0) var formation_spacing := 42.0
 @export_range(1.0, 1000000.0, 1.0) var max_health := 140.0
 @export_range(1.0, 1000.0, 1.0) var move_speed := 125.0

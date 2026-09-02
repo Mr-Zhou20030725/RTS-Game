@@ -98,11 +98,11 @@ func _run_validation() -> void:
 	fog.set_viewer_faction(FogOfWarManager.ViewerFaction.MONSTER)
 	await process_frame
 	var ai_button := hud.get_node("MonsterCommandPanel/MonsterAIButton") as Button
-	if ai_button == null or "ON" not in ai_button.text:
+	if ai_button == null or "开启" not in ai_button.text:
 		_fail("Monster HUD does not expose the AI pause control.")
 		return
 	ai_button.pressed.emit()
-	if ai.is_ai_enabled() or "PAUSED" not in ai_button.text:
+	if ai.is_ai_enabled() or "已暂停" not in ai_button.text:
 		_fail("Monster AI could not be paused for manual legion control.")
 		return
 	ai_button.pressed.emit()

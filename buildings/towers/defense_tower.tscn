@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="7_vision"]
 
 [node name="DefenseTower" type="Node2D" groups=["combat_buildings", "combat_targets", "placement_blockers"]]
+scale = Vector2(0.975, 0.975)
 script = ExtResource("1_tower")
 tower_data = ExtResource("2_data")
 
@@ -29,7 +30,7 @@ offset_top = -8.0
 offset_right = 52.0
 offset_bottom = 16.0
 theme_override_font_sizes/font_size = 9
-text = "ARROW TOWER"
+text = "箭塔"
 horizontal_alignment = 1
 
 [node name="SelectionIndicator" type="Line2D" parent="."]
@@ -58,4 +59,5 @@ script = ExtResource("6_footprint")
 radius = 32.0
 
 [node name="VisionSourceComponent" parent="." instance=ExtResource("7_vision")]
+scale = Vector2(1.02564, 1.02564)
 vision_radius = 220.0

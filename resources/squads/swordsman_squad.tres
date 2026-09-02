@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_data")
 squad_id = &"swordsman"
-display_name = "Swordsman Squad"
+display_name = "剑士"
 cost = 60
-member_count = 4
+member_count = 1
 formation_spacing = 42.0
 max_health = 140.0
-move_speed = 125.0
+move_speed = 75.0
 vision_radius = 150.0
 attack_style = 0
 damage = 24.0

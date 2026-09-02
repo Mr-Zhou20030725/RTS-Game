@@ -6,10 +6,10 @@
 script = ExtResource("1_data")
 active_nest_count = 2
 stage_id = &"wrath_two"
-display_name = "Nest Wrath II"
+display_name = "巢穴狂怒 II"
 max_health_multiplier = 1.5
 energy_per_nest_multiplier = 1.75
 production_cost_multiplier = 0.85
 outer_color = Color(0.35, 0.07, 0.3, 1)
 core_color = Color(0.72, 0.19, 0.74, 1)
-label_text = "WRATH II"
+label_text = "狂怒 II"

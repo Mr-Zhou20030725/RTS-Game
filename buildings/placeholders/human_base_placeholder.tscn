@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/components/vision_source_component.tscn" id="4_vision"]
 
 [node name="HumanBase" type="Node2D" groups=["combat_buildings", "combat_targets", "human_base_placeholder", "placement_blockers"]]
+scale = Vector2(0.975, 0.975)
 
 [node name="OuterGround" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-78, -62, -52, -82, 52, -82, 78, -62, 78, 62, 52, 82, -52, 82, -78, 62)
@@ -22,7 +23,7 @@ offset_right = 60.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0.929412, 0.968627, 1, 1)
 theme_override_font_sizes/font_size = 16
-text = "HUMAN\nBASE"
+text = "人类\n基地"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -38,4 +39,5 @@ script = ExtResource("3_footprint")
 radius = 86.0
 
 [node name="VisionSourceComponent" parent="." instance=ExtResource("4_vision")]
+scale = Vector2(1.02564, 1.02564)
 vision_radius = 260.0

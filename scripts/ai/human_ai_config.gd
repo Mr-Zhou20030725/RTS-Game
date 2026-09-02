@@ -12,7 +12,7 @@ extends Resource
 @export_range(1, 40, 1) var maximum_towers := 14
 @export_range(1, 20, 1) var maximum_squads := 7
 @export_range(1, 20, 1) var minimum_defense_towers := 3
-@export_range(1, 30, 1) var minimum_expedition_members := 6
+@export_range(1, 30, 1) var minimum_expedition_members := 3
 @export_range(80.0, 800.0, 10.0) var threat_scan_radius := 520.0
 @export_range(0.0, 100.0, 0.1) var threat_response_threshold := 8.0
 @export_range(80.0, 400.0, 5.0) var inner_tower_radius := 175.0

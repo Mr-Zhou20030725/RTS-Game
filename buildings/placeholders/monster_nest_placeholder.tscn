@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/building/building_footprint.gd" id="3_footprint"]
 
 [node name="MonsterNest" type="Node2D" groups=["combat_buildings", "combat_targets", "fog_revealables", "monster_nest_placeholder", "placement_blockers"]]
+scale = Vector2(0.975, 0.975)
 
 [node name="OuterGround" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-52, -30, -28, -54, 18, -58, 50, -34, 58, 12, 32, 50, -12, 58, -50, 30)
@@ -21,7 +22,7 @@ offset_right = 52.0
 offset_bottom = 14.0
 theme_override_colors/font_color = Color(1, 0.870588, 0.85098, 1)
 theme_override_font_sizes/font_size = 13
-text = "NEST"
+text = "巢穴"
 horizontal_alignment = 1
 vertical_alignment = 1
 

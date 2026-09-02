@@ -15,7 +15,7 @@ signal tower_upgrade_failed(reason: StringName)
 @export var tower_building_scene: PackedScene
 @export var tower_data_catalog: Array[Resource] = []
 @export_range(0, 1000000, 1) var default_building_cost := 50
-@export var buildable_bounds := Rect2(80.0, 96.0, 1120.0, 576.0)
+@export var buildable_bounds := Rect2(120.0, 120.0, 3760.0, 3760.0)
 @export_range(0.0, 100.0, 1.0) var overlap_padding := 8.0
 @export_range(1.0, 128.0, 1.0) var grid_size := 16.0
 @export var valid_preview_color := Color(0.35, 1.0, 0.45, 0.68)
@@ -28,6 +28,7 @@ var _active_cost := 0
 var _placed_buildings: Array[Node2D] = []
 var _building_serial := 0
 var _selected_tower: Node2D
+var _player_input_enabled := true
 
 
 func _ready() -> void:
@@ -35,6 +36,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _player_input_enabled:
+		return
 	if not is_build_mode_active():
 		if (
 			event is InputEventMouseButton
@@ -236,6 +239,13 @@ func cancel_placement() -> void:
 
 func is_build_mode_active() -> bool:
 	return _preview != null and is_instance_valid(_preview)
+
+
+func set_player_input_enabled(value: bool) -> void:
+	_player_input_enabled = value
+	if not value:
+		cancel_placement()
+		select_tower(null)
 
 
 func is_preview_position_valid() -> bool:

@@ -130,7 +130,7 @@ func _apply_monster_data() -> void:
 	body.scale = Vector2.ONE * monster_data.visual_scale
 	accent.default_color = monster_data.accent_color
 	accent.scale = Vector2.ONE * monster_data.visual_scale
-	unit_label.text = str(monster_data.monster_id).to_upper()
+	unit_label.text = monster_data.display_name
 	_configure_collision()
 	_configure_combat()
 	_configure_special_ability()

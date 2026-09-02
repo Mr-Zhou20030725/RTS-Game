@@ -308,8 +308,8 @@ func _validate_hud(
 		if (
 			button == null
 			or not button.visible
-			or data.display_name.to_upper() not in button.text
-			or str(production.get_effective_cost(index)) + " DARK" not in button.text
+			or data.display_name not in button.text
+			or str(production.get_effective_cost(index)) + " 暗能量" not in button.text
 			or button.tooltip_text != data.role_description
 		):
 			_fail("The HUD did not expose one of the six data-driven monsters.")

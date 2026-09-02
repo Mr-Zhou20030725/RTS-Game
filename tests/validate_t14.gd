@@ -39,6 +39,7 @@ func _validate_realtime_human_fog() -> bool:
 	economy.passive_income_amount = 0
 	var placement = PLACEMENT_SCENE.instantiate()
 	var human := HUMAN_SCENE.instantiate()
+	human.move_speed = 1200.0
 	_disable_combat(human)
 	root.add_child(map)
 	root.add_child(fog)
@@ -81,7 +82,7 @@ func _validate_realtime_human_fog() -> bool:
 		_fail("Human combat could lock a nest hidden in fog.")
 		return false
 
-	var hidden_build_position := Vector2(1040, 520)
+	var hidden_build_position := Vector2(3700, 3100)
 	if not placement.begin_tower_placement(0, hidden_build_position):
 		_fail("Could not create a tower preview for the fog legality test.")
 		return false

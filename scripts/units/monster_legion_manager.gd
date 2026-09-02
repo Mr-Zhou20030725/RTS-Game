@@ -13,6 +13,7 @@ var selection_manager: UnitSelectionManager
 var fog_of_war_manager: FogOfWarManager
 var _legions: Dictionary[int, Array] = {}
 var _active_slot := 0
+var _player_input_enabled := true
 
 
 func _ready() -> void:
@@ -22,7 +23,8 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if (
-		not event is InputEventKey
+		not _player_input_enabled
+		or not event is InputEventKey
 		or not event.pressed
 		or event.echo
 		or not _is_monster_view_active()
@@ -106,6 +108,12 @@ func get_legion_units(slot: int) -> Array[Node2D]:
 
 func get_active_slot() -> int:
 	return _active_slot
+
+
+func set_player_input_enabled(value: bool) -> void:
+	_player_input_enabled = value
+	if not value and selection_manager != null:
+		selection_manager.clear_selection()
 
 
 func clear_legion(slot: int) -> void:

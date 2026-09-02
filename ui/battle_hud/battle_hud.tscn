@@ -28,7 +28,7 @@ offset_top = 17.0
 offset_right = 290.0
 offset_bottom = 47.0
 theme_override_font_sizes/font_size = 20
-text = "BATTLE — T01 SKELETON"
+text = "战场 — 非对称攻防"
 
 [node name="GoldLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
@@ -39,7 +39,7 @@ offset_right = 455.0
 offset_bottom = 34.0
 theme_override_colors/font_color = Color(1, 0.835294, 0.309804, 1)
 theme_override_font_sizes/font_size = 18
-text = "GOLD: 0"
+text = "金币：0"
 
 [node name="IncomeLabel" type="Label" parent="TopBar"]
 layout_mode = 0
@@ -49,7 +49,7 @@ offset_right = 455.0
 offset_bottom = 56.0
 theme_override_colors/font_color = Color(0.694118, 0.752941, 0.611765, 1)
 theme_override_font_sizes/font_size = 11
-text = "+5 every 2s"
+text = "每 2 秒 +5"
 
 [node name="DarkEnergyLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
@@ -60,7 +60,7 @@ offset_right = 655.0
 offset_bottom = 34.0
 theme_override_colors/font_color = Color(0.78, 0.45, 1, 1)
 theme_override_font_sizes/font_size = 18
-text = "DARK: 0"
+text = "暗能量：0"
 
 [node name="DarkEnergyRateLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
@@ -71,7 +71,7 @@ offset_right = 655.0
 offset_bottom = 56.0
 theme_override_colors/font_color = Color(0.68, 0.56, 0.78, 1)
 theme_override_font_sizes/font_size = 11
-text = "+8 every 2.0s · 4 nests"
+text = "每 2.0 秒 +8 · 4 个巢穴"
 
 [node name="SpendTestButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
@@ -82,7 +82,7 @@ offset_top = 10.0
 offset_right = 650.0
 offset_bottom = 54.0
 mouse_filter = 0
-text = "T09 TEST: SPEND 50"
+text = "T09 测试：花费 50"
 
 [node name="BuildTowerButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
@@ -93,7 +93,7 @@ offset_top = 10.0
 offset_right = 665.0
 offset_bottom = 54.0
 mouse_filter = 0
-text = "BUILD TEST TOWER — 50"
+text = "建造测试塔 — 50"
 
 [node name="EconomyStatusLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
@@ -103,7 +103,7 @@ offset_top = 20.0
 offset_right = 895.0
 offset_bottom = 44.0
 theme_override_colors/font_color = Color(0.752941, 0.819608, 0.87451, 1)
-text = "Economy ready"
+text = "经济系统就绪"
 horizontal_alignment = 1
 
 [node name="ViewModeButton" type="Button" parent="TopBar"]
@@ -115,8 +115,8 @@ offset_right = 1075.0
 offset_bottom = 54.0
 mouse_filter = 0
 theme_override_colors/font_color = Color(0.78, 0.45, 1, 1)
-text = "VIEW: HUMAN"
-tooltip_text = "Human overview: local vision and fog of war"
+text = "视角：人类"
+tooltip_text = "人类视角：局部视野与战争迷雾"
 
 [node name="ReturnButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
@@ -126,7 +126,7 @@ offset_top = 10.0
 offset_right = 1256.0
 offset_bottom = 54.0
 mouse_filter = 0
-text = "RETURN TO MAIN"
+text = "返回主菜单"
 
 [node name="MonsterProductionPanel" type="ColorRect" parent="."]
 unique_name_in_owner = true
@@ -158,7 +158,7 @@ offset_right = 295.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(0.86, 0.55, 1, 1)
 theme_override_font_sizes/font_size = 12
-text = "MONSTER LEGIONS · BOX SELECT UNITS"
+text = "怪物军团 · 框选单位"
 
 [node name="MonsterAIButton" type="Button" parent="MonsterCommandPanel"]
 unique_name_in_owner = true
@@ -170,8 +170,8 @@ offset_bottom = 30.0
 mouse_filter = 0
 theme_override_colors/font_color = Color(1, 0.55, 0.82, 1)
 theme_override_font_sizes/font_size = 10
-text = "MONSTER AI: ON"
-tooltip_text = "Pause AI while manually controlling Monster legions"
+text = "怪物 AI：开启"
+tooltip_text = "暂停 AI 后可手动指挥怪物军团"
 
 [node name="CreateLegionButton" type="Button" parent="MonsterCommandPanel"]
 unique_name_in_owner = true
@@ -181,8 +181,8 @@ offset_top = 34.0
 offset_right = 184.0
 offset_bottom = 76.0
 mouse_filter = 0
-text = "CREATE NEXT LEGION"
-tooltip_text = "Assign selected Monsters to the next empty legion"
+text = "创建下一军团"
+tooltip_text = "将选中的怪物编入下一个空闲军团"
 
 [node name="LegionOneButton" type="Button" parent="MonsterCommandPanel"]
 unique_name_in_owner = true
@@ -237,7 +237,7 @@ offset_right = 416.0
 offset_bottom = 140.0
 theme_override_colors/font_color = Color(0.76, 0.7, 0.82, 1)
 theme_override_font_sizes/font_size = 11
-text = "Ctrl+1..4 create/update · 1..4 select\nShift+RMB: add waypoint / final attack\nRMB: replace route with move / attack"
+text = "Ctrl+1..4 创建/更新 · 1..4 选择\nShift+右键：追加路径点/最终攻击\n右键：用移动/攻击替换路线"
 horizontal_alignment = 1
 
 [node name="MonsterAIStatusLabel" type="Label" parent="MonsterCommandPanel"]
@@ -249,7 +249,7 @@ offset_right = 416.0
 offset_bottom = 184.0
 theme_override_colors/font_color = Color(1, 0.55, 0.82, 1)
 theme_override_font_sizes/font_size = 10
-text = "AI scanning four defense sectors"
+text = "AI 正在扫描四个防御方向"
 horizontal_alignment = 1
 
 [node name="PanelTitle" type="Label" parent="MonsterProductionPanel"]
@@ -260,7 +260,7 @@ offset_right = 366.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(0.78, 0.45, 1, 1)
 theme_override_font_sizes/font_size = 11
-text = "MONSTER PRODUCTION"
+text = "怪物生产"
 
 [node name="NestStageLabel" type="Label" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -271,7 +271,7 @@ offset_right = 366.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(1, 0.55, 0.82, 1)
 theme_override_font_sizes/font_size = 10
-text = "NORMAL NESTS"
+text = "普通巢穴"
 horizontal_alignment = 2
 
 [node name="SelectedNestLabel" type="Label" parent="MonsterProductionPanel"]
@@ -283,7 +283,7 @@ offset_right = 366.0
 offset_bottom = 51.0
 theme_override_colors/font_color = Color(1, 0.82, 0.88, 1)
 theme_override_font_sizes/font_size = 15
-text = "NEST"
+text = "巢穴"
 
 [node name="MonsterTypeZeroButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -293,7 +293,7 @@ offset_top = 58.0
 offset_right = 181.0
 offset_bottom = 100.0
 mouse_filter = 0
-text = "GOBLIN\n15 DARK"
+text = "哥布林\n15 暗能量"
 
 [node name="MonsterTypeOneButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -303,7 +303,7 @@ offset_top = 58.0
 offset_right = 366.0
 offset_bottom = 100.0
 mouse_filter = 0
-text = "WOLF BEAST\n30 DARK"
+text = "狼兽\n30 暗能量"
 
 [node name="MonsterTypeTwoButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -313,7 +313,7 @@ offset_top = 104.0
 offset_right = 181.0
 offset_bottom = 146.0
 mouse_filter = 0
-text = "TROLL\n65 DARK"
+text = "巨魔\n65 暗能量"
 
 [node name="MonsterTypeThreeButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -323,7 +323,7 @@ offset_top = 104.0
 offset_right = 366.0
 offset_bottom = 146.0
 mouse_filter = 0
-text = "SKELETON ARCHER\n45 DARK"
+text = "骷髅弓箭手\n45 暗能量"
 
 [node name="MonsterTypeFourButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -333,7 +333,7 @@ offset_top = 150.0
 offset_right = 181.0
 offset_bottom = 192.0
 mouse_filter = 0
-text = "SHADOW STALKER\n55 DARK"
+text = "暗影潜行者\n55 暗能量"
 
 [node name="MonsterTypeFiveButton" type="Button" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -343,7 +343,7 @@ offset_top = 150.0
 offset_right = 366.0
 offset_bottom = 192.0
 mouse_filter = 0
-text = "DARK SHAMAN\n60 DARK"
+text = "黑暗萨满\n60 暗能量"
 
 [node name="MonsterProductionStatusLabel" type="Label" parent="MonsterProductionPanel"]
 unique_name_in_owner = true
@@ -354,10 +354,11 @@ offset_right = 366.0
 offset_bottom = 227.0
 theme_override_colors/font_color = Color(0.721569, 0.658824, 0.768627, 1)
 theme_override_font_sizes/font_size = 11
-text = "Choose a monster to produce"
+text = "选择要生产的怪物"
 horizontal_alignment = 1
 
 [node name="TowerBuildBar" type="ColorRect" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -370,6 +371,7 @@ mouse_filter = 1
 color = Color(0.0235294, 0.0352941, 0.054902, 0.94)
 
 [node name="SquadRecruitBar" type="ColorRect" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -390,7 +392,7 @@ offset_right = 150.0
 offset_bottom = 27.0
 theme_override_colors/font_color = Color(0.752941, 0.819608, 0.87451, 1)
 theme_override_font_sizes/font_size = 12
-text = "RECRUIT SQUADS"
+text = "招募士兵"
 
 [node name="RecruitHintLabel" type="Label" parent="SquadRecruitBar"]
 layout_mode = 0
@@ -400,7 +402,7 @@ offset_right = 150.0
 offset_bottom = 39.0
 theme_override_colors/font_color = Color(0.541176, 0.619608, 0.67451, 1)
 theme_override_font_sizes/font_size = 8
-text = "AI recruits its own squads"
+text = "AI 会自行招募士兵"
 
 [node name="HumanAIButton" type="Button" parent="SquadRecruitBar"]
 unique_name_in_owner = true
@@ -412,8 +414,8 @@ offset_bottom = 58.0
 mouse_filter = 0
 theme_override_colors/font_color = Color(0.42, 0.86, 1, 1)
 theme_override_font_sizes/font_size = 9
-text = "HUMAN AI: ON"
-tooltip_text = "Pause Human AI while manually controlling the Human faction"
+text = "人类 AI：开启"
+tooltip_text = "暂停人类 AI 后可手动控制人类阵营"
 
 [node name="SwordsmanSquadButton" type="Button" parent="SquadRecruitBar"]
 unique_name_in_owner = true
@@ -423,7 +425,7 @@ offset_top = 7.0
 offset_right = 425.0
 offset_bottom = 53.0
 mouse_filter = 0
-text = "SWORDSMEN ×4 — 60 GOLD"
+text = "剑士 ×1 — 60 金币"
 
 [node name="ArcherSquadButton" type="Button" parent="SquadRecruitBar"]
 unique_name_in_owner = true
@@ -433,7 +435,7 @@ offset_top = 7.0
 offset_right = 690.0
 offset_bottom = 53.0
 mouse_filter = 0
-text = "ARCHERS ×3 — 80 GOLD"
+text = "弓箭手 ×1 — 80 金币"
 
 [node name="KnightSquadButton" type="Button" parent="SquadRecruitBar"]
 unique_name_in_owner = true
@@ -443,7 +445,7 @@ offset_top = 7.0
 offset_right = 955.0
 offset_bottom = 53.0
 mouse_filter = 0
-text = "KNIGHTS ×3 — 110 GOLD"
+text = "骑士 ×1 — 110 金币"
 
 [node name="MageSquadButton" type="Button" parent="SquadRecruitBar"]
 unique_name_in_owner = true
@@ -453,7 +455,7 @@ offset_top = 7.0
 offset_right = 1262.0
 offset_bottom = 53.0
 mouse_filter = 0
-text = "MAGES ×3 AOE — 130 GOLD"
+text = "法师 ×1 范围 — 130 金币"
 
 [node name="BuildLabel" type="Label" parent="TowerBuildBar"]
 layout_mode = 0
@@ -463,7 +465,7 @@ offset_right = 135.0
 offset_bottom = 28.0
 theme_override_colors/font_color = Color(0.752941, 0.819608, 0.87451, 1)
 theme_override_font_sizes/font_size = 12
-text = "BUILD TOWERS"
+text = "建造防御塔"
 
 [node name="HintLabel" type="Label" parent="TowerBuildBar"]
 layout_mode = 0
@@ -473,7 +475,7 @@ offset_right = 150.0
 offset_bottom = 55.0
 theme_override_colors/font_color = Color(0.541176, 0.619608, 0.67451, 1)
 theme_override_font_sizes/font_size = 10
-text = "LMB place · RMB cancel"
+text = "左键放置 · 右键取消"
 
 [node name="ArrowTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -483,7 +485,7 @@ offset_top = 9.0
 offset_right = 326.0
 offset_bottom = 57.0
 mouse_filter = 0
-text = "ARROW\n50 GOLD"
+text = "箭塔\n50 金币"
 
 [node name="FlameTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -493,7 +495,7 @@ offset_top = 9.0
 offset_right = 492.0
 offset_bottom = 57.0
 mouse_filter = 0
-text = "FLAME AOE\n80 GOLD"
+text = "火焰范围塔\n80 金币"
 
 [node name="FrostTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -503,7 +505,7 @@ offset_top = 9.0
 offset_right = 658.0
 offset_bottom = 57.0
 mouse_filter = 0
-text = "FROST SLOW\n70 GOLD"
+text = "冰霜减速塔\n70 金币"
 
 [node name="ArcaneTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -513,7 +515,7 @@ offset_top = 9.0
 offset_right = 824.0
 offset_bottom = 57.0
 mouse_filter = 0
-text = "ARCANE HEAVY\n100 GOLD"
+text = "奥术重击塔\n100 金币"
 
 [node name="ScoutTowerButton" type="Button" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -523,7 +525,7 @@ offset_top = 9.0
 offset_right = 990.0
 offset_bottom = 57.0
 mouse_filter = 0
-text = "SCOUT VISION\n65 GOLD"
+text = "侦察视野塔\n65 金币"
 
 [node name="SelectedTowerLabel" type="Label" parent="TowerBuildBar"]
 unique_name_in_owner = true
@@ -534,7 +536,7 @@ offset_right = 1262.0
 offset_bottom = 25.0
 theme_override_colors/font_color = Color(1, 0.862745, 0.313726, 1)
 theme_override_font_sizes/font_size = 11
-text = "SELECT A TOWER"
+text = "请选择防御塔"
 horizontal_alignment = 1
 
 [node name="UpgradeTowerButton" type="Button" parent="TowerBuildBar"]
@@ -546,4 +548,4 @@ offset_right = 1262.0
 offset_bottom = 59.0
 mouse_filter = 0
 disabled = true
-text = "UPGRADE"
+text = "升级"

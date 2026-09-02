@@ -132,8 +132,8 @@ func _validate_battle_panel_and_fog_boundary() -> bool:
 	var first_cost := manager.get_effective_cost(0)
 	var second_cost := manager.get_effective_cost(1)
 	if (
-		str(first_cost) + " DARK" not in first_button.text
-		or str(second_cost) + " DARK" not in second_button.text
+		str(first_cost) + " 暗能量" not in first_button.text
+		or str(second_cost) + " 暗能量" not in second_button.text
 	):
 		_fail("The production panel did not display both monster costs.")
 		return false

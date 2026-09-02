@@ -37,8 +37,8 @@ func _validate_four_one_time_upgrades() -> bool:
 	await process_frame
 
 	var positions := [
-		Vector2(160, 160), Vector2(320, 160),
-		Vector2(480, 160), Vector2(640, 160),
+		Vector2(1000, 1000), Vector2(1160, 1000),
+		Vector2(1320, 1000), Vector2(1480, 1000),
 	]
 	var expected_total_upgrade_cost := 0
 	for index in 4:
@@ -118,7 +118,7 @@ func _validate_four_one_time_upgrades() -> bool:
 	if expected_total_upgrade_cost <= 0:
 		_fail("Tower upgrade costs are not data-configured.")
 		return false
-	if placement.select_tower_at(Vector2(1000, 600)):
+	if placement.select_tower_at(Vector2(2000, 2000)):
 		_fail("Clicking empty terrain retained a selected tower.")
 		return false
 	if not (hud.get_node("TowerBuildBar/UpgradeTowerButton") as Button).disabled:
@@ -139,7 +139,7 @@ func _validate_insufficient_gold_rejected() -> bool:
 	root.add_child(placement)
 	await process_frame
 
-	var position := Vector2(240, 240)
+	var position := Vector2(1000, 1000)
 	if not placement.begin_tower_placement(0, position):
 		_fail("Could not place the affordable setup tower.")
 		return false

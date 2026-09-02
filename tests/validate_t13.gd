@@ -22,9 +22,9 @@ func _run_validation() -> void:
 	if not await _validate_insufficient_gold():
 		return
 	print(
-		"T13 validation passed: all four data-driven squads recruit multiple "
-		+ "members at distinct costs, preserve clear combat roles, select as a "
-		+ "group, move in a compact formation, and reject unaffordable recruits."
+		"T13 validation passed: all four data-driven recruit actions spawn one "
+		+ "soldier at distinct costs, preserve clear combat roles, respond to "
+		+ "movement commands, and reject unaffordable recruits."
 	)
 	quit()
 
@@ -51,7 +51,8 @@ func _validate_recruitment_roles_and_group_movement() -> bool:
 		return false
 	var expected_ids := [&"swordsman", &"archer", &"knight", &"mage"]
 	var expected_costs := [60, 80, 110, 130]
-	var expected_members := [4, 3, 3, 3]
+	var expected_members := [1, 1, 1, 1]
+	var expected_speeds := [75.0, 84.0, 126.0, 72.0]
 	var starting_gold: int = economy.get_gold()
 
 	var sword_button := hud.get_node(
@@ -94,8 +95,11 @@ func _validate_recruitment_roles_and_group_movement() -> bool:
 		if int(data.get("cost")) != expected_costs[index]:
 			_fail("Squad index %d does not use its distinct data cost." % index)
 			return false
+		if not is_equal_approx(float(data.get("move_speed")), expected_speeds[index]):
+			_fail("Human movement speed does not use the reduced balance value.")
+			return false
 		if squads[index].get_child_count() != expected_members[index]:
-			_fail("Recruitment did not spawn the configured member count.")
+			_fail("One purchase did not spawn exactly one soldier.")
 			return false
 		var instance_ids: Dictionary[StringName, bool] = {}
 		for member in squads[index].get_children():
@@ -103,7 +107,10 @@ func _validate_recruitment_roles_and_group_movement() -> bool:
 			if not member.is_visible_in_tree():
 				_fail("A recruited squad member is hidden in the scene tree.")
 				return false
-			if member.global_position.y >= 688.0:
+			if member.scale != Vector2(0.975, 0.975):
+				_fail("A recruited soldier does not use the reduced art scale.")
+				return false
+			if member.global_position.y >= 3880.0:
 				_fail("A recruited member spawned inside the command dock.")
 				return false
 			_disable_combat(member)
@@ -138,12 +145,12 @@ func _validate_recruitment_roles_and_group_movement() -> bool:
 	selection.select_single(swordsman)
 	var selected: Array[Node2D] = selection.get_selected_units()
 	if selected.size() != expected_members[0]:
-		_fail("Selecting one recruited member did not select its entire squad.")
+		_fail("Selecting a recruited soldier did not select that soldier.")
 		return false
 	var start_centroid := _centroid(selected)
 	# Move away from the other freshly spawned squads so they cannot body-block
 	# this formation during the concentration check.
-	selection.issue_move_command(Vector2(180, 500))
+	selection.issue_move_command(Vector2(1600, 2400))
 	if not _move_targets_are_compact_and_unique(selected):
 		_fail("Squad move order did not create a compact unique formation.")
 		return false

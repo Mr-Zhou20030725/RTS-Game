@@ -133,7 +133,7 @@ func _validate_battle_hud() -> bool:
 	):
 		_fail("Battle did not expose the active MonsterEconomy HUD labels.")
 		return false
-	if energy_label.text != "DARK: 40" or "4 nests" not in rate_label.text:
+	if energy_label.text != "暗能量：40" or "4 个巢穴" not in rate_label.text:
 		_fail("Dark energy HUD did not show the starting balance and four-nest rate.")
 		return false
 	var viewport_rect := Rect2(Vector2.ZERO, hud.get_viewport_rect().size)
@@ -144,7 +144,7 @@ func _validate_battle_hud() -> bool:
 		_fail("Dark energy HUD labels are outside the visible viewport.")
 		return false
 	economy.add_dark_energy(5, &"test_reward")
-	if energy_label.text != "DARK: 45":
+	if energy_label.text != "暗能量：45":
 		_fail("Dark energy HUD did not follow balance changes.")
 		return false
 	var map := battle.get_node("MVPMap")
@@ -152,7 +152,7 @@ func _validate_battle_hud() -> bool:
 	var health := nest.get_node("HealthComponent") as HealthComponent
 	health.take_damage(health.max_health)
 	await process_frame
-	if "3 nests" not in rate_label.text:
+	if "3 个巢穴" not in rate_label.text:
 		_fail("Dark energy HUD rate did not follow the active nest count.")
 		return false
 

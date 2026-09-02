@@ -82,8 +82,8 @@ func _validate_data_driven_placement() -> bool:
 		return false
 	var expected_ids := [&"arrow", &"flame", &"frost", &"arcane"]
 	var positions := [
-		Vector2(160, 160), Vector2(320, 160),
-		Vector2(480, 160), Vector2(640, 160),
+		Vector2(1000, 1000), Vector2(1160, 1000),
+		Vector2(1320, 1000), Vector2(1480, 1000),
 	]
 	for index in 4:
 		if catalog[index].get("tower_id") != expected_ids[index]:

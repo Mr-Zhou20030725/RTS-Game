@@ -6,10 +6,10 @@
 script = ExtResource("1_data")
 active_nest_count = 4
 stage_id = &"normal"
-display_name = "Normal Nests"
+display_name = "普通巢穴"
 max_health_multiplier = 1.0
 energy_per_nest_multiplier = 1.0
 production_cost_multiplier = 1.0
 outer_color = Color(0.298, 0.086, 0.125, 1)
 core_color = Color(0.682, 0.173, 0.231, 1)
-label_text = "NEST"
+label_text = "巢穴"

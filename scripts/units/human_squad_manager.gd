@@ -8,7 +8,7 @@ signal recruitment_failed(reason: StringName)
 
 @export var member_scene: PackedScene
 @export var squad_catalog: Array[Resource] = []
-@export var spawn_origin := Vector2(640.0, 500.0)
+@export var spawn_origin := Vector2(2000.0, 2250.0)
 @export var squad_spawn_spacing := Vector2(130.0, 0.0)
 
 var human_economy: Node
@@ -29,7 +29,7 @@ func recruit_squad(catalog_index: int) -> bool:
 		recruitment_failed.emit(&"invalid_configuration")
 		return false
 	var data := squad_catalog[catalog_index] as HumanSquadData
-	if data == null or data.member_count < 2:
+	if data == null or data.member_count < 1:
 		recruitment_failed.emit(&"invalid_configuration")
 		return false
 	_bind_human_economy()

@@ -6,12 +6,12 @@
 [resource]
 script = ExtResource("1_data")
 monster_id = &"skeleton_archer"
-display_name = "Skeleton Archer"
-role_description = "Ranged attacker that prioritizes buildings"
+display_name = "骷髅弓箭手"
+role_description = "优先攻击建筑的远程单位"
 cost = 45
 monster_scene = ExtResource("2_unit")
 max_health = 90.0
-move_speed = 105.0
+move_speed = 63.0
 collision_radius = 15.0
 visual_scale = 0.95
 attack_style = 1

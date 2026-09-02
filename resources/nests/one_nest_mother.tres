@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NestStrengtheningData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/nest_strengthening_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+active_nest_count = 1
+stage_id = &"dark_mother"
+display_name = "Dark Mother Nest"
+max_health_multiplier = 2.25
+energy_per_nest_multiplier = 3.0
+production_cost_multiplier = 0.7
+outer_color = Color(0.18, 0.02, 0.25, 1)
+core_color = Color(0.82, 0.22, 1, 1)
+label_text = "DARK MOTHER"

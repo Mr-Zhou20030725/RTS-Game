@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NestStrengtheningData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/nest_strengthening_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+active_nest_count = 2
+stage_id = &"wrath_two"
+display_name = "Nest Wrath II"
+max_health_multiplier = 1.5
+energy_per_nest_multiplier = 1.75
+production_cost_multiplier = 0.85
+outer_color = Color(0.35, 0.07, 0.3, 1)
+core_color = Color(0.72, 0.19, 0.74, 1)
+label_text = "WRATH II"

@@ -25,12 +25,14 @@ signal return_to_main_requested
 @onready var monster_type_zero_button: Button = %MonsterTypeZeroButton
 @onready var monster_type_one_button: Button = %MonsterTypeOneButton
 @onready var monster_production_status_label: Label = %MonsterProductionStatusLabel
+@onready var nest_stage_label: Label = %NestStageLabel
 
 var human_economy: Node
 var monster_economy: Node
 var building_placement_manager: Node
 var human_squad_manager: Node
 var monster_production_manager: MonsterProductionManager
+var nest_strengthening_manager: NestStrengtheningManager
 
 
 func _ready() -> void:
@@ -58,6 +60,7 @@ func _ready() -> void:
 	call_deferred("_bind_building_placement_manager")
 	call_deferred("_bind_human_squad_manager")
 	call_deferred("_bind_monster_production_manager")
+	call_deferred("_bind_nest_strengthening_manager")
 
 
 func _on_return_button_pressed() -> void:
@@ -164,7 +167,27 @@ func _bind_monster_production_manager() -> void:
 	monster_production_manager.production_failed.connect(
 		_on_monster_production_failed
 	)
+	monster_production_manager.production_costs_changed.connect(
+		_on_monster_production_costs_changed
+	)
 	_refresh_monster_production_buttons()
+
+
+func _bind_nest_strengthening_manager() -> void:
+	nest_strengthening_manager = get_tree().get_first_node_in_group(
+		&"nest_strengthening_manager"
+	) as NestStrengtheningManager
+	if nest_strengthening_manager == null:
+		nest_stage_label.text = ""
+		return
+	nest_strengthening_manager.stage_changed.connect(
+		_on_nest_strengthening_stage_changed
+	)
+	var profile := nest_strengthening_manager.get_current_profile()
+	if profile != null:
+		_on_nest_strengthening_stage_changed(
+			profile, profile.active_nest_count
+		)
 
 
 func _on_monster_nest_selected(nest: Node2D) -> void:
@@ -204,6 +227,17 @@ func _on_monster_production_failed(reason: StringName) -> void:
 			monster_production_status_label.text = "Unable to produce monster"
 
 
+func _on_monster_production_costs_changed(_multiplier: float) -> void:
+	_refresh_monster_production_buttons()
+
+
+func _on_nest_strengthening_stage_changed(
+	profile: NestStrengtheningData, _active_nests: int
+) -> void:
+	nest_stage_label.text = profile.display_name.to_upper()
+	_refresh_monster_production_buttons()
+
+
 func _refresh_monster_production_buttons() -> void:
 	var buttons := [monster_type_zero_button, monster_type_one_button]
 	if monster_production_manager == null:
@@ -219,11 +253,16 @@ func _refresh_monster_production_buttons() -> void:
 			continue
 		var data := catalog[index] as MonsterProductionData
 		button.visible = true
-		button.text = "%s\n%d DARK" % [data.display_name.to_upper(), data.cost]
+		var effective_cost := monster_production_manager.get_effective_cost(
+			index
+		)
+		button.text = "%s\n%d DARK" % [
+			data.display_name.to_upper(), effective_cost
+		]
 		button.disabled = (
 			not has_nest
 			or monster_economy == null
-			or not monster_economy.can_afford(data.cost)
+			or not monster_economy.can_afford(effective_cost)
 		)
 
 

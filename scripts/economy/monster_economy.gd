@@ -19,6 +19,7 @@ signal kill_reward_granted(victim: Node, amount: int)
 var current_dark_energy := 0
 var _active_nest_count := 0
 var _income_elapsed := 0.0
+var _nest_income_multiplier := 1.0
 var _tracked_health_ids: Dictionary[int, bool] = {}
 var _mvp_map: Node
 
@@ -55,7 +56,23 @@ func get_active_nest_count() -> int:
 
 
 func get_income_per_interval() -> int:
-	return _active_nest_count * energy_per_nest
+	return roundi(
+		float(_active_nest_count)
+		* float(energy_per_nest)
+		* _nest_income_multiplier
+	)
+
+
+func get_nest_income_multiplier() -> float:
+	return _nest_income_multiplier
+
+
+func set_nest_income_multiplier(value: float) -> void:
+	var next_multiplier := maxf(value, 0.0)
+	if is_equal_approx(next_multiplier, _nest_income_multiplier):
+		return
+	_nest_income_multiplier = next_multiplier
+	income_rate_changed.emit(_active_nest_count, get_income_per_interval())
 
 
 func can_afford(cost: int) -> bool:

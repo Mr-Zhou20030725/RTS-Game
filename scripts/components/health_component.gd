@@ -65,6 +65,22 @@ func get_health_ratio() -> float:
 	return current_health / max_health
 
 
+func set_max_health(value: float, preserve_ratio := true) -> void:
+	var next_max_health := maxf(value, 1.0)
+	if is_equal_approx(next_max_health, max_health):
+		return
+	var previous_ratio := get_health_ratio()
+	max_health = next_max_health
+	if not is_dead:
+		current_health = (
+			max_health * previous_ratio
+			if preserve_ratio
+			else minf(current_health, max_health)
+		)
+	health_changed.emit(current_health, max_health)
+	_sync_debug_health_bar()
+
+
 func _sync_debug_health_bar() -> void:
 	if debug_health_bar == null:
 		return

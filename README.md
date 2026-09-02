@@ -49,11 +49,12 @@ RTS-Game/
 ├─ resources/                    # 可在 Inspector 中调整的平衡数据
 │  ├─ towers/                    # 四种输出塔与独立侦察塔配置
 │  ├─ squads/                    # 剑士、弓箭手、骑士、法师小队
-│  └─ monsters/                  # T18 怪物生产类型与暗能量费用
+│  ├─ monsters/                  # T18 怪物生产类型与暗能量费用
+│  └─ nests/                     # 4/3/2/1 巢穴强化阶段配置
 ├─ scenes/                       # 游戏流程与可复用场景
 │  ├─ main/                      # 主菜单入口场景
 │  ├─ battle/                    # 战斗场景及系统装配
-│  ├─ map/                       # 固定 MVP 地图和巢穴候选点
+│  ├─ map/                       # 固定地图、候选点和巢穴强化管理器
 │  ├─ building/                  # 建筑放置管理器
 │  ├─ combat/                    # 弹射物场景
 │  ├─ components/                # 生命、阵营、攻击与视野源组件
@@ -63,7 +64,7 @@ RTS-Game/
 │  ├─ core/                      # GameManager 与统一绘制层级
 │  ├─ main/                      # 主菜单流程
 │  ├─ battle/                    # 战斗场景协调
-│  ├─ map/                       # 地图生成和巢穴随机选择
+│  ├─ map/                       # 地图生成、巢穴随机选择与强化阶段
 │  ├─ components/                # 通用生命与阵营逻辑
 │  ├─ combat/                    # 伤害规则、索敌、近战、远程、弹射物
 │  ├─ building/                  # 建塔、塔数据、塔升级
@@ -76,7 +77,7 @@ RTS-Game/
 ├─ units/                        # 单位场景
 │  ├─ human/                     # 通用人类小队成员
 │  └─ placeholders/              # 测试剑士、弓箭手和怪物
-└─ tests/                        # T01–T18 无界面自动回归脚本
+└─ tests/                        # T01–T19 无界面自动回归脚本
 ```
 
 ## 核心模块
@@ -125,6 +126,17 @@ RTS-Game/
 
 T18 暂提供 Grunt 与 Raider 两种生产占位数据，用于验证类型选择、费用和巢穴出生链路；六种正式怪物及其属性、能力由 T20 接入。
 
+### 巢穴反雪球强化
+
+`NestStrengtheningManager` 根据当前存活巢穴数选择 `resources/nests/*.tres` 阶段数据，并同步更新剩余巢穴生命、单巢暗黑能量产能、怪物生产成本和外观。强化时保持当前生命百分比，不会借阶段切换无条件回满。
+
+| 存活巢穴 | 阶段 | 生命倍率 | 单巢产能倍率 | 生产成本倍率 |
+|---:|---|---:|---:|---:|
+| 4 | Normal Nests | 1.00 | 1.00 | 1.00 |
+| 3 | Nest Wrath I | 1.15 | 1.25 | 0.95 |
+| 2 | Nest Wrath II | 1.50 | 1.75 | 0.85 |
+| 1 | Dark Mother Nest | 2.25 | 3.00 | 0.70 |
+
 ## 绘制层级
 
 统一层级定义位于 `scripts/core/render_layers.gd`：
@@ -152,14 +164,14 @@ T18 暂提供 Grunt 与 Raider 两种生产占位数据，用于验证类型选�
 
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T18：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T19：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t18.gd
+godot --headless --path . --script res://tests/validate_t19.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
 
 ## 当前状态
 
-- T01–T18：已验收并推送至 `main`。
+- T01–T19：已验收并推送至 `main`。

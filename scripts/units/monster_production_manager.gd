@@ -9,6 +9,7 @@ signal monster_produced(
 	monster: Node2D, nest: Node2D, data: MonsterProductionData, cost: int
 )
 signal production_failed(reason: StringName)
+signal production_costs_changed(multiplier: float)
 
 @export var production_catalog: Array[Resource] = []
 @export var battlefield_bounds := Rect2(80.0, 96.0, 1120.0, 576.0)
@@ -22,6 +23,7 @@ var monster_economy: MonsterEconomy
 var mvp_map: Node
 var selected_nest: Node2D
 var _monster_serial := 0
+var _production_cost_multiplier := 1.0
 
 
 func _ready() -> void:
@@ -39,6 +41,27 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func get_production_catalog() -> Array[Resource]:
 	return production_catalog.duplicate()
+
+
+func get_effective_cost(catalog_index: int) -> int:
+	if catalog_index < 0 or catalog_index >= production_catalog.size():
+		return -1
+	var data := production_catalog[catalog_index] as MonsterProductionData
+	if data == null:
+		return -1
+	return maxi(roundi(float(data.cost) * _production_cost_multiplier), 0)
+
+
+func get_production_cost_multiplier() -> float:
+	return _production_cost_multiplier
+
+
+func set_production_cost_multiplier(value: float) -> void:
+	var next_multiplier := clampf(value, 0.1, 1.0)
+	if is_equal_approx(next_multiplier, _production_cost_multiplier):
+		return
+	_production_cost_multiplier = next_multiplier
+	production_costs_changed.emit(_production_cost_multiplier)
 
 
 func get_selected_nest() -> Node2D:
@@ -110,7 +133,11 @@ func produce(catalog_index: int) -> bool:
 	if data == null or data.monster_scene == null or data.cost < 0:
 		production_failed.emit(&"invalid_configuration")
 		return false
-	if monster_economy == null or not monster_economy.can_afford(data.cost):
+	var effective_cost := get_effective_cost(catalog_index)
+	if effective_cost < 0:
+		production_failed.emit(&"invalid_configuration")
+		return false
+	if monster_economy == null or not monster_economy.can_afford(effective_cost):
 		production_failed.emit(&"not_enough_dark_energy")
 		return false
 
@@ -122,7 +149,9 @@ func produce(catalog_index: int) -> bool:
 	if monster == null:
 		production_failed.emit(&"invalid_configuration")
 		return false
-	if not monster_economy.try_spend(data.cost, &"monster_production"):
+	if not monster_economy.try_spend(
+		effective_cost, &"monster_production"
+	):
 		monster.queue_free()
 		production_failed.emit(&"not_enough_dark_energy")
 		return false
@@ -134,7 +163,7 @@ func produce(catalog_index: int) -> bool:
 	_configure_placeholder_visual(monster, data)
 	spawned_monsters.add_child(monster)
 	monster.global_position = spawn_position
-	monster_produced.emit(monster, nest, data, data.cost)
+	monster_produced.emit(monster, nest, data, effective_cost)
 	return true
 
 

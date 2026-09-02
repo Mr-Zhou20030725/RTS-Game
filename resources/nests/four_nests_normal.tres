@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NestStrengtheningData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/nest_strengthening_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+active_nest_count = 4
+stage_id = &"normal"
+display_name = "Normal Nests"
+max_health_multiplier = 1.0
+energy_per_nest_multiplier = 1.0
+production_cost_multiplier = 1.0
+outer_color = Color(0.298, 0.086, 0.125, 1)
+core_color = Color(0.682, 0.173, 0.231, 1)
+label_text = "NEST"

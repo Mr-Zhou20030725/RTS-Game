@@ -1,0 +1,11 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/map/nest_strengthening_manager.gd" id="1_manager"]
+[ext_resource type="Resource" path="res://resources/nests/four_nests_normal.tres" id="2_four"]
+[ext_resource type="Resource" path="res://resources/nests/three_nests_wrath.tres" id="3_three"]
+[ext_resource type="Resource" path="res://resources/nests/two_nests_wrath.tres" id="4_two"]
+[ext_resource type="Resource" path="res://resources/nests/one_nest_mother.tres" id="5_one"]
+
+[node name="NestStrengtheningManager" type="Node" groups=["nest_strengthening_manager"]]
+script = ExtResource("1_manager")
+stage_profiles = Array[Resource]([ExtResource("2_four"), ExtResource("3_three"), ExtResource("4_two"), ExtResource("5_one")])

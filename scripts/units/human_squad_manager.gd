@@ -64,6 +64,11 @@ func get_recruited_squads() -> Array[Node2D]:
 	return _squads.duplicate()
 
 
+func get_latest_recruited_squad() -> Node2D:
+	var squads := get_recruited_squads()
+	return null if squads.is_empty() else squads[squads.size() - 1]
+
+
 func _spawn_members(
 	squad: Node2D, data: HumanSquadData, instance_id: StringName
 ) -> void:

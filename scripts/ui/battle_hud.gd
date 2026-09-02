@@ -36,6 +36,7 @@ signal return_to_main_requested
 @onready var legion_status_label: Label = %LegionStatusLabel
 @onready var monster_ai_button: Button = %MonsterAIButton
 @onready var monster_ai_status_label: Label = %MonsterAIStatusLabel
+@onready var human_ai_button: Button = %HumanAIButton
 
 var human_economy: Node
 var monster_economy: Node
@@ -46,6 +47,7 @@ var nest_strengthening_manager: NestStrengtheningManager
 var fog_of_war_manager: FogOfWarManager
 var monster_legion_manager: MonsterLegionManager
 var monster_ai_controller: MonsterAIController
+var human_ai_controller: HumanAIController
 
 
 func _ready() -> void:
@@ -69,6 +71,7 @@ func _ready() -> void:
 		)
 	create_legion_button.pressed.connect(_on_create_legion_button_pressed)
 	monster_ai_button.pressed.connect(_on_monster_ai_button_pressed)
+	human_ai_button.pressed.connect(_on_human_ai_button_pressed)
 	for slot_index in _get_legion_buttons().size():
 		_get_legion_buttons()[slot_index].pressed.connect(
 			_on_legion_button_pressed.bind(slot_index + 1)
@@ -82,6 +85,7 @@ func _ready() -> void:
 	call_deferred("_bind_fog_of_war_manager")
 	call_deferred("_bind_monster_legion_manager")
 	call_deferred("_bind_monster_ai_controller")
+	call_deferred("_bind_human_ai_controller")
 
 
 func _on_return_button_pressed() -> void:
@@ -268,6 +272,84 @@ func _on_monster_ai_wave_launched(
 	monster_ai_status_label.text = "Wave ×%d attacking from %s" % [
 		units.size(), monster_ai_controller.get_direction_name(direction)
 	]
+
+
+func _bind_human_ai_controller() -> void:
+	human_ai_controller = get_tree().get_first_node_in_group(
+		&"human_ai_controller"
+	) as HumanAIController
+	if human_ai_controller == null:
+		human_ai_button.disabled = true
+		human_ai_button.text = "HUMAN AI: N/A"
+		return
+	human_ai_controller.ai_enabled_changed.connect(_on_human_ai_enabled_changed)
+	human_ai_controller.ai_tower_built.connect(_on_human_ai_tower_built)
+	human_ai_controller.ai_squad_recruited.connect(_on_human_ai_squad_recruited)
+	human_ai_controller.defense_response_ordered.connect(
+		_on_human_ai_defense_response
+	)
+	human_ai_controller.expedition_dispatched.connect(
+		_on_human_ai_expedition_dispatched
+	)
+	_on_human_ai_enabled_changed(human_ai_controller.is_ai_enabled())
+
+
+func _on_human_ai_button_pressed() -> void:
+	if human_ai_controller != null:
+		human_ai_controller.set_ai_enabled(
+			not human_ai_controller.is_ai_enabled()
+		)
+
+
+func _on_human_ai_enabled_changed(is_enabled: bool) -> void:
+	human_ai_button.text = "HUMAN AI: %s" % (
+		"ON" if is_enabled else "PAUSED"
+	)
+	if not is_enabled:
+		economy_status_label.text = "Human AI paused for manual control"
+
+
+func _on_human_ai_tower_built(
+	_tower: Node2D,
+	direction: HumanAIController.DefenseDirection,
+	_catalog_index: int
+) -> void:
+	economy_status_label.text = "Human AI reinforced %s" % (
+		human_ai_controller.get_direction_name(direction)
+	)
+
+
+func _on_human_ai_squad_recruited(
+	_squad: Node2D, catalog_index: int
+) -> void:
+	economy_status_label.text = "Human AI recruited squad type %d" % (
+		catalog_index + 1
+	)
+
+
+func _on_human_ai_defense_response(
+	direction: HumanAIController.DefenseDirection,
+	units: Array[Node2D],
+	_target: Node2D
+) -> void:
+	economy_status_label.text = "Human AI sent ×%d to %s threat" % [
+		units.size(), human_ai_controller.get_direction_name(direction)
+	]
+
+
+func _on_human_ai_expedition_dispatched(
+	direction: HumanAIController.DefenseDirection,
+	units: Array[Node2D],
+	target: Node2D,
+	_destination: Vector2
+) -> void:
+	economy_status_label.text = (
+		"Human AI attacking visible nest with ×%d" % units.size()
+		if target != null
+		else "Human AI scouting %s with ×%d" % [
+			human_ai_controller.get_direction_name(direction), units.size()
+		]
+	)
 
 
 func _bind_human_economy() -> void:

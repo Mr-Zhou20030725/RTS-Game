@@ -104,6 +104,48 @@ func get_tower_data_catalog() -> Array[Resource]:
 	return tower_data_catalog.duplicate()
 
 
+func can_place_tower_at(tower_index: int, world_position: Vector2) -> bool:
+	var candidate := _create_tower_candidate(tower_index)
+	if candidate == null:
+		return false
+	add_child(candidate)
+	candidate.global_position = _snap_to_grid(world_position)
+	var is_valid := _is_building_position_valid(
+		candidate, candidate.global_position
+	)
+	remove_child(candidate)
+	candidate.queue_free()
+	return is_valid
+
+
+func place_tower_at(tower_index: int, world_position: Vector2) -> Node2D:
+	## Programmatic placement for rule AI; does not disturb player preview mode.
+	var tower := _create_tower_candidate(tower_index)
+	if tower == null:
+		placement_failed.emit(&"invalid_configuration")
+		return null
+	add_child(tower)
+	tower.global_position = _snap_to_grid(world_position)
+	if not _is_building_position_valid(tower, tower.global_position):
+		remove_child(tower)
+		tower.queue_free()
+		placement_failed.emit(&"invalid_position")
+		return null
+	var tower_data := tower_data_catalog[tower_index]
+	var cost := int(tower_data.get("cost"))
+	_bind_human_economy()
+	if (
+		human_economy == null
+		or not human_economy.call("try_spend", cost, &"tower_construction")
+	):
+		remove_child(tower)
+		tower.queue_free()
+		placement_failed.emit(&"not_enough_gold")
+		return null
+	_finalize_placed_building(tower, cost)
+	return tower
+
+
 func begin_placement(
 	building_scene: PackedScene, cost: int, world_position: Vector2
 ) -> bool:
@@ -173,15 +215,10 @@ func confirm_placement() -> bool:
 		placed_building.call("set_build_preview", false)
 	_preview = null
 	_preview_is_valid = false
-	_building_serial += 1
-	placed_building.name = "PlacedTower_%02d" % _building_serial
-	placed_building.modulate = Color.WHITE
-	placed_building.add_to_group(&"placed_towers")
-	_placed_buildings.append(placed_building)
 	var paid_cost := _active_cost
 	_active_cost = 0
 	build_mode_changed.emit(false)
-	building_placed.emit(placed_building, paid_cost)
+	_finalize_placed_building(placed_building, paid_cost)
 	return true
 
 
@@ -278,7 +315,15 @@ func _bind_human_economy() -> void:
 
 
 func _is_position_valid(world_position: Vector2) -> bool:
-	var preview_radius := _get_footprint_radius(_preview)
+	return _is_building_position_valid(_preview, world_position)
+
+
+func _is_building_position_valid(
+	building: Node2D, world_position: Vector2
+) -> bool:
+	if building == null:
+		return false
+	var preview_radius := _get_footprint_radius(building)
 	var inner_bounds := buildable_bounds.grow(-preview_radius)
 	if not inner_bounds.has_point(world_position):
 		return false
@@ -295,7 +340,7 @@ func _is_position_valid(world_position: Vector2) -> bool:
 		return false
 
 	for blocker_node in get_tree().get_nodes_in_group(&"placement_blockers"):
-		if blocker_node == _preview or not blocker_node is Node2D:
+		if blocker_node == building or not blocker_node is Node2D:
 			continue
 		var blocker := blocker_node as Node2D
 		if not is_instance_valid(blocker) or not blocker.is_inside_tree():
@@ -308,6 +353,33 @@ func _is_position_valid(world_position: Vector2) -> bool:
 		if world_position.distance_to(blocker.global_position) < required_distance:
 			return false
 	return true
+
+
+func _create_tower_candidate(tower_index: int) -> Node2D:
+	if (
+		tower_index < 0
+		or tower_index >= tower_data_catalog.size()
+		or tower_building_scene == null
+	):
+		return null
+	var tower_data := tower_data_catalog[tower_index]
+	if tower_data == null:
+		return null
+	var tower := tower_building_scene.instantiate() as Node2D
+	if tower != null and tower.has_method("configure_tower"):
+		tower.call("configure_tower", tower_data)
+	return tower
+
+
+func _finalize_placed_building(building: Node2D, cost: int) -> void:
+	if building.has_method("set_build_preview"):
+		building.call("set_build_preview", false)
+	_building_serial += 1
+	building.name = "PlacedTower_%02d" % _building_serial
+	building.modulate = Color.WHITE
+	building.add_to_group(&"placed_towers")
+	_placed_buildings.append(building)
+	building_placed.emit(building, cost)
 
 
 func _get_footprint_radius(building: Node2D) -> float:

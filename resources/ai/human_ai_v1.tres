@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="HumanAIConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ai/human_ai_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+analysis_interval = 2.0
+build_interval = 7.0
+recruit_interval = 10.0
+expedition_interval = 12.0
+midgame_start_time = 75.0
+gold_reserve = 70
+maximum_towers = 14
+maximum_squads = 7
+minimum_defense_towers = 3
+minimum_expedition_members = 6
+threat_scan_radius = 520.0
+threat_response_threshold = 8.0
+inner_tower_radius = 175.0
+outer_tower_radius = 245.0
+exploration_radius = 500.0
+tower_rotation = PackedInt32Array(0, 2, 1, 0, 3, 4)
+squad_rotation = PackedInt32Array(0, 1, 0, 2, 3)
+maximum_catch_up_cycles = 8

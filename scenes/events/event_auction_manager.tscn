@@ -1,0 +1,291 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/events/event_auction_manager.gd" id="1_manager"]
+[ext_resource type="Resource" path="res://resources/events/event_auction_v1.tres" id="2_config"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_panel"]
+bg_color = Color(0.025, 0.035, 0.06, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.7, 0.25, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_neutral"]
+bg_color = Color(0.19, 0.15, 0.055, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.78, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="EventAuctionManager" type="CanvasLayer"]
+process_mode = 3
+layer = 200
+script = ExtResource("1_manager")
+config = ExtResource("2_config")
+
+[node name="Overlay" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Backdrop" type="ColorRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.005, 0.008, 0.016, 0.86)
+
+[node name="AuctionPanel" type="PanelContainer" parent="Overlay"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 74.0
+offset_right = 1230.0
+offset_bottom = 785.0
+theme_override_styles/panel = SubResource("StyleBox_panel")
+
+[node name="Content" type="Control" parent="Overlay/AuctionPanel"]
+custom_minimum_size = Vector2(1180, 711)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 1156.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(1, 0.84, 0.32, 1)
+theme_override_font_sizes/font_size = 24
+text = "事件竞拍"
+horizontal_alignment = 1
+
+[node name="RoundLabel" type="Label" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 24.0
+offset_top = 52.0
+offset_right = 1156.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.78, 0.84, 0.92, 1)
+theme_override_font_sizes/font_size = 16
+text = "第 1 轮事件竞拍 · 5 分钟"
+horizontal_alignment = 1
+
+[node name="HumanCardOne" type="ColorRect" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 100.0
+offset_right = 238.0
+offset_bottom = 390.0
+color = Color(0.055, 0.22, 0.36, 1)
+
+[node name="CardLabel" type="Label" parent="Overlay/AuctionPanel/Content/HumanCardOne" groups=["event_auction_card"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.68, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "人类事件"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HumanCardTwo" type="ColorRect" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 252.0
+offset_top = 100.0
+offset_right = 460.0
+offset_bottom = 390.0
+color = Color(0.055, 0.22, 0.36, 1)
+
+[node name="CardLabel" type="Label" parent="Overlay/AuctionPanel/Content/HumanCardTwo" groups=["event_auction_card"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.68, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "人类事件"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="NeutralCard" type="PanelContainer" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 474.0
+offset_top = 90.0
+offset_right = 706.0
+offset_bottom = 400.0
+theme_override_styles/panel = SubResource("StyleBox_neutral")
+
+[node name="CardLabel" type="Label" parent="Overlay/AuctionPanel/Content/NeutralCard" groups=["event_auction_card"]]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.38, 1)
+theme_override_font_sizes/font_size = 17
+text = "中立争夺"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="MonsterCardOne" type="ColorRect" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 720.0
+offset_top = 100.0
+offset_right = 928.0
+offset_bottom = 390.0
+color = Color(0.27, 0.07, 0.29, 1)
+
+[node name="CardLabel" type="Label" parent="Overlay/AuctionPanel/Content/MonsterCardOne" groups=["event_auction_card"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.66, 0.9, 1)
+theme_override_font_sizes/font_size = 16
+text = "怪物事件"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="MonsterCardTwo" type="ColorRect" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 942.0
+offset_top = 100.0
+offset_right = 1150.0
+offset_bottom = 390.0
+color = Color(0.27, 0.07, 0.29, 1)
+
+[node name="CardLabel" type="Label" parent="Overlay/AuctionPanel/Content/MonsterCardTwo" groups=["event_auction_card"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.66, 0.9, 1)
+theme_override_font_sizes/font_size = 16
+text = "怪物事件"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="RuleLabel" type="Label" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 70.0
+offset_top = 416.0
+offset_right = 1110.0
+offset_bottom = 466.0
+theme_override_colors/font_color = Color(0.72, 0.76, 0.84, 1)
+theme_override_font_sizes/font_size = 13
+text = "第一价格竞拍：仅赢家支付出价；输家不扣费。
+平价：中立牌无人获得，双方均不扣费。"
+horizontal_alignment = 1
+
+[node name="ResourceLabel" type="Label" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 160.0
+offset_top = 480.0
+offset_right = 1020.0
+offset_bottom = 510.0
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "你的金币：100 · 对方已秘密出价"
+horizontal_alignment = 1
+
+[node name="BidPrompt" type="Label" parent="Overlay/AuctionPanel/Content"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 526.0
+offset_right = 475.0
+offset_bottom = 568.0
+theme_override_font_sizes/font_size = 16
+text = "秘密出价"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BidInput" type="SpinBox" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 490.0
+offset_top = 526.0
+offset_right = 670.0
+offset_bottom = 568.0
+min_value = 0.0
+max_value = 100.0
+step = 1.0
+value = 10.0
+allow_greater = false
+allow_lesser = false
+
+[node name="SubmitBidButton" type="Button" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 690.0
+offset_top = 526.0
+offset_right = 880.0
+offset_bottom = 568.0
+text = "确认并同时揭晓"
+
+[node name="ResultLabel" type="Label" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 100.0
+offset_top = 584.0
+offset_right = 1080.0
+offset_bottom = 642.0
+theme_override_colors/font_color = Color(1, 0.83, 0.36, 1)
+theme_override_font_sizes/font_size = 16
+text = "输入对中立牌的秘密出价，然后同时揭晓。"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ContinueButton" type="Button" parent="Overlay/AuctionPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 490.0
+offset_top = 650.0
+offset_right = 690.0
+offset_bottom = 694.0
+text = "继续战斗"

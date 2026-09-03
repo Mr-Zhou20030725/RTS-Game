@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="EventAuctionConfig" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/events/event_auction_config.gd" id="1_config"]
+[ext_resource type="Script" path="res://scripts/events/auction_event_card_data.gd" id="2_card"]
+
+[sub_resource type="Resource" id="Card_human_defense"]
+script = ExtResource("2_card")
+event_id = &"human_defense_preview"
+title = "城防动员"
+description = "人类阵营事件牌"
+alignment = 0
+effect_summary = "T29 接入正式效果"
+
+[sub_resource type="Resource" id="Card_human_march"]
+script = ExtResource("2_card")
+event_id = &"human_march_preview"
+title = "远征号角"
+description = "人类阵营事件牌"
+alignment = 0
+effect_summary = "T29 接入正式效果"
+
+[sub_resource type="Resource" id="Card_monster_bloodmoon"]
+script = ExtResource("2_card")
+event_id = &"monster_bloodmoon_preview"
+title = "血月征召"
+description = "怪物阵营事件牌"
+alignment = 1
+effect_summary = "T29 接入正式效果"
+
+[sub_resource type="Resource" id="Card_monster_tide"]
+script = ExtResource("2_card")
+event_id = &"monster_tide_preview"
+title = "暗潮涌动"
+description = "怪物阵营事件牌"
+alignment = 1
+effect_summary = "T29 接入正式效果"
+
+[sub_resource type="Resource" id="Card_neutral_relic"]
+script = ExtResource("2_card")
+event_id = &"neutral_ancient_relic"
+title = "远古遗产"
+description = "双方使用各自资源秘密出价"
+alignment = 2
+effect_summary = "立即获得 10 点本阵营资源"
+resource_reward = 10
+
+[resource]
+script = ExtResource("1_config")
+cards = Array[ExtResource("2_card")]([SubResource("Card_human_defense"), SubResource("Card_human_march"), SubResource("Card_monster_bloodmoon"), SubResource("Card_monster_tide"), SubResource("Card_neutral_relic")])

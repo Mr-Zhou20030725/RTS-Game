@@ -1,5 +1,6 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
+[ext_resource type="PackedScene" path="res://scenes/time/game_time_manager.tscn" id="19_game_time"]
 [ext_resource type="Script" path="res://scripts/battle/battle_manager.gd" id="1_battle"]
 [ext_resource type="PackedScene" path="res://ui/battle_hud/battle_hud.tscn" id="2_hud"]
 [ext_resource type="PackedScene" path="res://scenes/map/mvp_map.tscn" id="3_map"]
@@ -19,6 +20,8 @@
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_battle")
+
+[node name="GameTimeManager" parent="." instance=ExtResource("19_game_time")]
 
 [node name="Background" type="ColorRect" parent="."]
 z_index = -100

@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/events/event_effect_manager.gd" id="1_manager"]
+[ext_resource type="Resource" path="res://resources/events/event_auction_v1.tres" id="2_config"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_status"]
+bg_color = Color(0.025, 0.035, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.7, 0.25, 0.75)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="EventEffectManager" type="Node"]
+script = ExtResource("1_manager")
+config = ExtResource("2_config")
+
+[node name="StatusLayer" type="CanvasLayer" parent="."]
+layer = 102
+
+[node name="StatusPanel" type="PanelContainer" parent="StatusLayer"]
+visible = false
+offset_left = 960.0
+offset_top = 72.0
+offset_right = 1260.0
+offset_bottom = 236.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_status")
+
+[node name="StatusLabel" type="Label" parent="StatusLayer/StatusPanel"]
+custom_minimum_size = Vector2(300, 164)
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "当前事件效果"
+horizontal_alignment = 1
+vertical_alignment = 1

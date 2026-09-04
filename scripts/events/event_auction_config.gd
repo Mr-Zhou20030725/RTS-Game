@@ -8,8 +8,16 @@ extends Resource
 @export_multiline var tie_rule_text := "平价：中立牌无人获得，双方均不扣费。"
 
 
-func get_neutral_card() -> AuctionEventCardData:
+func get_cards_for_round(round_index: int) -> Array[AuctionEventCardData]:
+	var result: Array[AuctionEventCardData] = []
 	for card in cards:
+		if card != null and card.round_index == round_index:
+			result.append(card)
+	return result
+
+
+func get_neutral_card(round_index: int = 1) -> AuctionEventCardData:
+	for card in get_cards_for_round(round_index):
 		if card != null and card.alignment == AuctionEventCardData.Alignment.NEUTRAL:
 			return card
 	return null

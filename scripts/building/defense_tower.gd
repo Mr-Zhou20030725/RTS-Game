@@ -18,6 +18,7 @@ signal upgraded(tower: DefenseTower)
 var _is_preview := false
 var _is_upgraded := false
 var _is_selected := false
+var _event_combat_modifiers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -75,6 +76,25 @@ func set_selected(value: bool) -> void:
 	selection_indicator.visible = _is_selected
 
 
+func set_event_combat_modifier(
+	effect_id: StringName,
+	damage_multiplier: float,
+	interval_multiplier: float,
+	range_multiplier: float
+) -> void:
+	_event_combat_modifiers[effect_id] = Vector3(
+		maxf(damage_multiplier, 0.01),
+		maxf(interval_multiplier, 0.01),
+		maxf(range_multiplier, 0.01)
+	)
+	_apply_combat_stats()
+
+
+func remove_event_combat_modifier(effect_id: StringName) -> void:
+	if _event_combat_modifiers.erase(effect_id):
+		_apply_combat_stats()
+
+
 func _apply_tower_data() -> void:
 	if tower_data == null:
 		return
@@ -104,6 +124,11 @@ func _apply_combat_stats() -> void:
 		ranged_component.attack_interval *= (
 			tower_data.upgrade_attack_interval_multiplier
 		)
+	for modifier_value in _event_combat_modifiers.values():
+		var modifier := modifier_value as Vector3
+		ranged_component.attack_damage *= modifier.x
+		ranged_component.attack_interval *= modifier.y
+		ranged_component.attack_range *= modifier.z
 
 
 func _apply_preview_state() -> void:

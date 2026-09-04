@@ -24,6 +24,8 @@ var fog_of_war_manager: FogOfWarManager
 var selected_nest: Node2D
 var _monster_serial := 0
 var _production_cost_multiplier := 1.0
+var _event_cost_modifiers: Dictionary = {}
+var _event_type_cost_modifiers: Dictionary = {}
 var _player_input_enabled := true
 
 
@@ -58,11 +60,19 @@ func get_effective_cost(catalog_index: int) -> int:
 	var data := production_catalog[catalog_index] as MonsterProductionData
 	if data == null:
 		return -1
-	return maxi(roundi(float(data.cost) * _production_cost_multiplier), 0)
+	var multiplier := get_production_cost_multiplier()
+	for modifier_value in _event_type_cost_modifiers.values():
+		var modifier := modifier_value as Dictionary
+		if modifier.get("target_id", &"") == data.monster_id:
+			multiplier *= float(modifier.get("multiplier", 1.0))
+	return maxi(roundi(float(data.cost) * multiplier), 0)
 
 
 func get_production_cost_multiplier() -> float:
-	return _production_cost_multiplier
+	var multiplier := _production_cost_multiplier
+	for value in _event_cost_modifiers.values():
+		multiplier *= float(value)
+	return multiplier
 
 
 func set_production_cost_multiplier(value: float) -> void:
@@ -70,7 +80,34 @@ func set_production_cost_multiplier(value: float) -> void:
 	if is_equal_approx(next_multiplier, _production_cost_multiplier):
 		return
 	_production_cost_multiplier = next_multiplier
-	production_costs_changed.emit(_production_cost_multiplier)
+	production_costs_changed.emit(get_production_cost_multiplier())
+
+
+func set_event_cost_multiplier(
+	effect_id: StringName, multiplier: float
+) -> void:
+	_event_cost_modifiers[effect_id] = clampf(multiplier, 0.1, 2.0)
+	production_costs_changed.emit(get_production_cost_multiplier())
+
+
+func remove_event_cost_multiplier(effect_id: StringName) -> void:
+	if _event_cost_modifiers.erase(effect_id):
+		production_costs_changed.emit(get_production_cost_multiplier())
+
+
+func set_event_type_cost_multiplier(
+	effect_id: StringName, monster_id: StringName, multiplier: float
+) -> void:
+	_event_type_cost_modifiers[effect_id] = {
+		"target_id": monster_id,
+		"multiplier": clampf(multiplier, 0.1, 2.0),
+	}
+	production_costs_changed.emit(get_production_cost_multiplier())
+
+
+func remove_event_type_cost_multiplier(effect_id: StringName) -> void:
+	if _event_type_cost_modifiers.erase(effect_id):
+		production_costs_changed.emit(get_production_cost_multiplier())
 
 
 func get_selected_nest() -> Node2D:

@@ -32,6 +32,10 @@ var _movement_slow_remaining := 0.0
 var _waypoint_route_active := false
 var _waypoint_queue: Array[Vector2] = []
 var _route_attack_target: Node2D
+var _event_combat_modifiers: Dictionary = {}
+var _event_base_move_speed := 0.0
+var _event_base_melee_damage := 0.0
+var _event_base_ranged_damage := 0.0
 
 
 func _ready() -> void:
@@ -254,6 +258,54 @@ func apply_movement_slow(multiplier: float, duration: float) -> bool:
 
 func get_effective_move_speed() -> float:
 	return move_speed * _movement_slow_multiplier
+
+
+func set_event_combat_modifier(
+	effect_id: StringName,
+	damage_multiplier: float,
+	speed_multiplier: float
+) -> void:
+	if _event_combat_modifiers.is_empty():
+		_event_base_move_speed = move_speed
+		_event_base_melee_damage = (
+			melee_component.attack_damage if melee_component != null else 0.0
+		)
+		_event_base_ranged_damage = (
+			ranged_component.attack_damage if ranged_component != null else 0.0
+		)
+	_event_combat_modifiers[effect_id] = Vector2(
+		maxf(damage_multiplier, 0.01),
+		maxf(speed_multiplier, 0.01)
+	)
+	_apply_event_combat_modifiers()
+
+
+func remove_event_combat_modifier(effect_id: StringName) -> void:
+	if not _event_combat_modifiers.erase(effect_id):
+		return
+	_apply_event_combat_modifiers()
+	if _event_combat_modifiers.is_empty():
+		_event_base_move_speed = 0.0
+		_event_base_melee_damage = 0.0
+		_event_base_ranged_damage = 0.0
+
+
+func _apply_event_combat_modifiers() -> void:
+	var damage_multiplier := 1.0
+	var speed_multiplier := 1.0
+	for modifier_value in _event_combat_modifiers.values():
+		var modifier := modifier_value as Vector2
+		damage_multiplier *= modifier.x
+		speed_multiplier *= modifier.y
+	move_speed = _event_base_move_speed * speed_multiplier
+	if melee_component != null:
+		melee_component.attack_damage = (
+			_event_base_melee_damage * damage_multiplier
+		)
+	if ranged_component != null:
+		ranged_component.attack_damage = (
+			_event_base_ranged_damage * damage_multiplier
+		)
 
 
 func get_movement_slow_remaining() -> float:

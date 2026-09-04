@@ -1,49 +1,131 @@
-[gd_resource type="Resource" script_class="EventAuctionConfig" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="EventAuctionConfig" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/events/event_auction_config.gd" id="1_config"]
 [ext_resource type="Script" path="res://scripts/events/auction_event_card_data.gd" id="2_card"]
 
-[sub_resource type="Resource" id="Card_human_defense"]
+[sub_resource type="Resource" id="Card_r1_human_overload"]
 script = ExtResource("2_card")
-event_id = &"human_defense_preview"
-title = "城防动员"
-description = "人类阵营事件牌"
+event_id = &"human_arcane_overload"
+round_index = 1
+title = "魔力过载"
+description = "45 秒内所有人类防御塔攻击速度提高 40%"
 alignment = 0
-effect_summary = "T29 接入正式效果"
+effect_summary = "防御塔攻速提高 40%，持续 45 秒"
+effect_kind = 1
+duration = 45.0
+primary_value = 0.6
 
-[sub_resource type="Resource" id="Card_human_march"]
+[sub_resource type="Resource" id="Card_r1_human_rally"]
 script = ExtResource("2_card")
-event_id = &"human_march_preview"
-title = "远征号角"
-description = "人类阵营事件牌"
+event_id = &"human_battle_rally"
+round_index = 1
+title = "战地号角"
+description = "45 秒内人类部队伤害提高 30%、移动速度提高 15%"
 alignment = 0
-effect_summary = "T29 接入正式效果"
+effect_summary = "人类部队短期强化"
+effect_kind = 2
+duration = 45.0
+primary_value = 1.3
+secondary_value = 1.15
 
-[sub_resource type="Resource" id="Card_monster_bloodmoon"]
+[sub_resource type="Resource" id="Card_r1_monster_bloodmoon"]
 script = ExtResource("2_card")
-event_id = &"monster_bloodmoon_preview"
-title = "血月征召"
-description = "怪物阵营事件牌"
+event_id = &"monster_bloodmoon"
+round_index = 1
+title = "血月"
+description = "45 秒内所有怪物生产成本降低 35%"
 alignment = 1
-effect_summary = "T29 接入正式效果"
+effect_summary = "怪物生产成本降低 35%，持续 45 秒"
+effect_kind = 4
+duration = 45.0
+primary_value = 0.65
 
-[sub_resource type="Resource" id="Card_monster_tide"]
+[sub_resource type="Resource" id="Card_r1_monster_frenzy"]
 script = ExtResource("2_card")
-event_id = &"monster_tide_preview"
-title = "暗潮涌动"
-description = "怪物阵营事件牌"
+event_id = &"monster_war_drums"
+round_index = 1
+title = "狂暴战鼓"
+description = "45 秒内怪物伤害提高 30%、移动速度提高 20%"
 alignment = 1
-effect_summary = "T29 接入正式效果"
+effect_summary = "怪物军团短期狂暴"
+effect_kind = 3
+duration = 45.0
+primary_value = 1.3
+secondary_value = 1.2
 
-[sub_resource type="Resource" id="Card_neutral_relic"]
+[sub_resource type="Resource" id="Card_r1_neutral_eclipse"]
 script = ExtResource("2_card")
 event_id = &"neutral_ancient_relic"
-title = "远古遗产"
-description = "双方使用各自资源秘密出价"
+round_index = 1
+title = "日蚀"
+description = "人类获胜：35 秒全图视野；怪物获胜：35 秒内人类塔射程降低 30%"
 alignment = 2
-effect_summary = "立即获得 10 点本阵营资源"
+effect_summary = "日蚀阵营效果，持续 35 秒"
 resource_reward = 10
+effect_kind = 9
+duration = 35.0
+primary_value = 0.7
+
+[sub_resource type="Resource" id="Card_r2_human_repair"]
+script = ExtResource("2_card")
+event_id = &"human_emergency_repair"
+round_index = 2
+title = "紧急修复"
+description = "立即恢复人类基地与防御塔 35% 最大生命"
+alignment = 0
+effect_summary = "人类建筑获得紧急修复"
+effect_kind = 8
+primary_value = 0.35
+
+[sub_resource type="Resource" id="Card_r2_human_vision"]
+script = ExtResource("2_card")
+event_id = &"human_eagle_eye"
+round_index = 2
+title = "鹰眼远征"
+description = "60 秒内人类所有视野范围提高 50%"
+alignment = 0
+effect_summary = "人类视野范围提高 50%，持续 60 秒"
+effect_kind = 6
+duration = 60.0
+primary_value = 1.5
+
+[sub_resource type="Resource" id="Card_r2_monster_surge"]
+script = ExtResource("2_card")
+event_id = &"monster_dark_surge"
+round_index = 2
+title = "暗潮喷涌"
+description = "60 秒内巢穴暗能量收入提高 60%"
+alignment = 1
+effect_summary = "暗能量收入提高 60%，持续 60 秒"
+effect_kind = 7
+duration = 60.0
+primary_value = 1.6
+
+[sub_resource type="Resource" id="Card_r2_monster_raid"]
+script = ExtResource("2_card")
+event_id = &"monster_goblin_raid"
+round_index = 2
+title = "哥布林突袭"
+description = "60 秒内哥布林生产成本降低 55%"
+alignment = 1
+effect_summary = "哥布林成本降低 55%，持续 60 秒"
+effect_kind = 5
+duration = 60.0
+primary_value = 0.45
+target_id = &"goblin"
+
+[sub_resource type="Resource" id="Card_r2_neutral_storm"]
+script = ExtResource("2_card")
+event_id = &"neutral_magic_storm"
+round_index = 2
+title = "魔力风暴"
+description = "人类获胜：免费升级 2 座塔；怪物获胜：立即获得 120 暗能量"
+alignment = 2
+effect_summary = "人类强化防线，或怪物获得能量洪流"
+effect_kind = 10
+primary_value = 2.0
+secondary_value = 120.0
 
 [resource]
 script = ExtResource("1_config")
-cards = Array[ExtResource("2_card")]([SubResource("Card_human_defense"), SubResource("Card_human_march"), SubResource("Card_monster_bloodmoon"), SubResource("Card_monster_tide"), SubResource("Card_neutral_relic")])
+cards = Array[ExtResource("2_card")]([SubResource("Card_r1_human_overload"), SubResource("Card_r1_human_rally"), SubResource("Card_r1_monster_bloodmoon"), SubResource("Card_r1_monster_frenzy"), SubResource("Card_r1_neutral_eclipse"), SubResource("Card_r2_human_repair"), SubResource("Card_r2_human_vision"), SubResource("Card_r2_monster_surge"), SubResource("Card_r2_monster_raid"), SubResource("Card_r2_neutral_storm")])

@@ -20,6 +20,7 @@ var current_dark_energy := 0
 var _active_nest_count := 0
 var _income_elapsed := 0.0
 var _nest_income_multiplier := 1.0
+var _event_income_modifiers: Dictionary = {}
 var _tracked_health_ids: Dictionary[int, bool] = {}
 var _mvp_map: Node
 
@@ -59,12 +60,15 @@ func get_income_per_interval() -> int:
 	return roundi(
 		float(_active_nest_count)
 		* float(energy_per_nest)
-		* _nest_income_multiplier
+		* get_nest_income_multiplier()
 	)
 
 
 func get_nest_income_multiplier() -> float:
-	return _nest_income_multiplier
+	var multiplier := _nest_income_multiplier
+	for value in _event_income_modifiers.values():
+		multiplier *= float(value)
+	return multiplier
 
 
 func set_nest_income_multiplier(value: float) -> void:
@@ -73,6 +77,18 @@ func set_nest_income_multiplier(value: float) -> void:
 		return
 	_nest_income_multiplier = next_multiplier
 	income_rate_changed.emit(_active_nest_count, get_income_per_interval())
+
+
+func set_event_income_multiplier(
+	effect_id: StringName, multiplier: float
+) -> void:
+	_event_income_modifiers[effect_id] = maxf(multiplier, 0.0)
+	income_rate_changed.emit(_active_nest_count, get_income_per_interval())
+
+
+func remove_event_income_multiplier(effect_id: StringName) -> void:
+	if _event_income_modifiers.erase(effect_id):
+		income_rate_changed.emit(_active_nest_count, get_income_per_interval())
 
 
 func can_afford(cost: int) -> bool:

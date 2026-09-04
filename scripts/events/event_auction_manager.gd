@@ -27,6 +27,7 @@ enum Outcome {
 var game_time_manager: GameTimeManager
 var human_economy: HumanEconomy
 var monster_economy: MonsterEconomy
+var effect_manager: EventEffectManager
 var player_faction := GameManager.PlayerFaction.HUMAN
 var _active_round := 0
 var _active := false
@@ -60,7 +61,8 @@ func configure_dependencies(
 	time_manager: GameTimeManager,
 	human: HumanEconomy,
 	monster: MonsterEconomy,
-	selected_player_faction: int
+	selected_player_faction: int,
+	effects: EventEffectManager = null
 ) -> void:
 	if game_time_manager != null and game_time_manager.milestone_reached.is_connected(
 		_on_milestone_reached
@@ -69,6 +71,7 @@ func configure_dependencies(
 	game_time_manager = time_manager
 	human_economy = human
 	monster_economy = monster
+	effect_manager = effects
 	if selected_player_faction in [
 		GameManager.PlayerFaction.HUMAN,
 		GameManager.PlayerFaction.MONSTER,
@@ -183,7 +186,8 @@ func _bind_battle_dependencies() -> void:
 		battle.get_node_or_null("GameTimeManager") as GameTimeManager,
 		battle.get_node_or_null("HumanEconomy") as HumanEconomy,
 		battle.get_node_or_null("MonsterEconomy") as MonsterEconomy,
-		selected_faction
+		selected_faction,
+		battle.get_node_or_null("EventEffectManager") as EventEffectManager
 	)
 
 
@@ -230,6 +234,7 @@ func _prepare_bid_controls() -> void:
 		"第一价格竞拍：仅赢家支付出价；输家不扣费。\n"
 		+ config.tie_rule_text
 	)
+	_refresh_card_display(_active_round)
 
 
 func _resolve_auction() -> void:
@@ -255,7 +260,11 @@ func _resolve_auction() -> void:
 	submit_button.disabled = true
 	continue_button.show()
 	result_label.text = _build_result_text()
-	var neutral_card := config.get_neutral_card()
+	if effect_manager != null:
+		effect_manager.activate_round_events(
+			config.get_cards_for_round(_active_round), _last_outcome
+		)
+	var neutral_card := config.get_neutral_card(_active_round)
 	var event_id := neutral_card.event_id if neutral_card != null else &""
 	auction_resolved.emit(
 		_last_outcome,
@@ -274,7 +283,7 @@ func _abort_resolution() -> void:
 
 
 func _award_neutral_effect(faction: FactionComponent.Faction) -> void:
-	var neutral_card := config.get_neutral_card()
+	var neutral_card := config.get_neutral_card(_active_round)
 	if neutral_card == null:
 		return
 	_awarded_effects.append({
@@ -302,7 +311,7 @@ func _build_result_text() -> String:
 	if _last_outcome == Outcome.TIE:
 		return bids + "平价：中立牌无人获得，双方均未扣费。"
 	var winner := "人类" if _last_outcome == Outcome.HUMAN else "怪物"
-	var neutral_card := config.get_neutral_card()
+	var neutral_card := config.get_neutral_card(_active_round)
 	var effect_text := (
 		neutral_card.effect_summary
 		if neutral_card != null
@@ -327,7 +336,7 @@ func _get_player_resource_name() -> String:
 	)
 
 
-func _refresh_card_display() -> void:
+func _refresh_card_display(round_index: int = 1) -> void:
 	if config == null:
 		return
 	var labels: Array[Label] = [
@@ -337,9 +346,10 @@ func _refresh_card_display() -> void:
 		$Overlay/AuctionPanel/Content/MonsterCardTwo/CardLabel,
 		$Overlay/AuctionPanel/Content/NeutralCard/CardLabel,
 	]
-	for index in mini(labels.size(), config.cards.size()):
+	var round_cards := config.get_cards_for_round(round_index)
+	for index in mini(labels.size(), round_cards.size()):
 		var label := labels[index]
-		var card := config.cards[index]
+		var card := round_cards[index]
 		if label == null or card == null:
 			continue
 		var alignment_text := "中立争夺"

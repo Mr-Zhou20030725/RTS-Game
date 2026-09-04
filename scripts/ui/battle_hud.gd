@@ -39,6 +39,9 @@ signal return_to_main_requested
 @onready var human_ai_button: Button = %HumanAIButton
 @onready var tower_build_bar: ColorRect = %TowerBuildBar
 @onready var squad_recruit_bar: ColorRect = %SquadRecruitBar
+@onready var base_health_label: Label = %BaseHealthLabel
+@onready var nest_count_label: Label = %NestCountLabel
+@onready var selected_units_label: Label = %SelectedUnitsLabel
 
 var human_economy: Node
 var monster_economy: Node
@@ -50,8 +53,13 @@ var fog_of_war_manager: FogOfWarManager
 var monster_legion_manager: MonsterLegionManager
 var monster_ai_controller: MonsterAIController
 var human_ai_controller: HumanAIController
+var selection_manager: Node
+var mvp_map: Node2D
+var human_base_health: HealthComponent
 var _player_faction := GameManager.PlayerFaction.NONE
 var _faction_locked := false
+var _selected_units: Array[Node2D] = []
+var _selected_health_components: Array[HealthComponent] = []
 
 
 func _ready() -> void:
@@ -90,6 +98,7 @@ func _ready() -> void:
 	call_deferred("_bind_monster_legion_manager")
 	call_deferred("_bind_monster_ai_controller")
 	call_deferred("_bind_human_ai_controller")
+	call_deferred("_bind_situation_overview")
 
 
 func _on_return_button_pressed() -> void:
@@ -159,6 +168,181 @@ func get_player_faction() -> int:
 
 func is_faction_locked() -> bool:
 	return _faction_locked
+
+
+func _bind_situation_overview() -> void:
+	var battle := get_parent().get_parent()
+	if battle == null:
+		return
+	mvp_map = battle.get_node_or_null("MVPMap") as Node2D
+	selection_manager = battle.get_node_or_null("SelectionManager")
+	if mvp_map == null:
+		base_health_label.text = "人类基地 HP：--"
+		nest_count_label.text = "存活巢穴：--"
+	else:
+		if not mvp_map.active_nest_count_changed.is_connected(
+			_on_hud_nest_count_changed
+		):
+			mvp_map.active_nest_count_changed.connect(
+				_on_hud_nest_count_changed
+			)
+		_on_hud_nest_count_changed(int(mvp_map.call("get_active_nest_count")))
+		var human_base := mvp_map.get("human_base") as Node2D
+		if human_base != null and is_instance_valid(human_base):
+			human_base_health = human_base.get_node_or_null(
+				"HealthComponent"
+			) as HealthComponent
+		if human_base_health != null:
+			if not human_base_health.health_changed.is_connected(
+				_on_human_base_health_changed
+			):
+				human_base_health.health_changed.connect(
+					_on_human_base_health_changed
+				)
+			_on_human_base_health_changed(
+				human_base_health.current_health,
+				human_base_health.max_health
+			)
+		else:
+			base_health_label.text = "人类基地 HP：--"
+	if selection_manager == null:
+		selected_units_label.text = "选中单位：选择管理器不可用"
+		return
+	if not selection_manager.selection_changed.is_connected(
+		_on_hud_selection_changed
+	):
+		selection_manager.selection_changed.connect(_on_hud_selection_changed)
+	_on_hud_selection_changed(selection_manager.call("get_selected_units"))
+
+
+func _on_human_base_health_changed(
+	current_health: float, max_health: float
+) -> void:
+	base_health_label.text = "人类基地 HP：%d / %d" % [
+		roundi(current_health),
+		roundi(max_health),
+	]
+	var ratio := current_health / maxf(max_health, 1.0)
+	base_health_label.modulate = (
+		Color(1.0, 0.42, 0.35)
+		if ratio <= 0.3
+		else Color(0.48, 0.88, 1.0)
+	)
+
+
+func _on_hud_nest_count_changed(current_count: int) -> void:
+	nest_count_label.text = "存活巢穴：%d / 4" % maxi(current_count, 0)
+	nest_count_label.modulate = (
+		Color(1.0, 0.46, 0.72)
+		if current_count <= 1
+		else Color(0.82, 0.58, 1.0)
+	)
+
+
+func _on_hud_selection_changed(units: Array) -> void:
+	_disconnect_selected_health_components()
+	_selected_units.clear()
+	for unit_value in units:
+		var unit := unit_value as Node2D
+		if unit == null or not is_instance_valid(unit):
+			continue
+		_selected_units.append(unit)
+		var health := unit.get_node_or_null("HealthComponent") as HealthComponent
+		if health == null:
+			continue
+		_selected_health_components.append(health)
+		if not health.health_changed.is_connected(_on_selected_health_changed):
+			health.health_changed.connect(_on_selected_health_changed)
+		if not health.died.is_connected(_on_selected_unit_died):
+			health.died.connect(_on_selected_unit_died)
+	_refresh_selected_units_label()
+
+
+func _disconnect_selected_health_components() -> void:
+	for health in _selected_health_components:
+		if health == null or not is_instance_valid(health):
+			continue
+		if health.health_changed.is_connected(_on_selected_health_changed):
+			health.health_changed.disconnect(_on_selected_health_changed)
+		if health.died.is_connected(_on_selected_unit_died):
+			health.died.disconnect(_on_selected_unit_died)
+	_selected_health_components.clear()
+
+
+func _on_selected_health_changed(
+	_current_health: float, _max_health: float
+) -> void:
+	_refresh_selected_units_label()
+
+
+func _on_selected_unit_died(_source: Node) -> void:
+	call_deferred("_refresh_selection_from_manager")
+
+
+func _refresh_selection_from_manager() -> void:
+	if selection_manager == null:
+		return
+	_on_hud_selection_changed(selection_manager.call("get_selected_units"))
+
+
+func _refresh_selected_units_label() -> void:
+	var valid_units: Array[Node2D] = []
+	var current_health := 0.0
+	var max_health := 0.0
+	var unit_counts: Dictionary[String, int] = {}
+	for unit in _selected_units:
+		if unit == null or not is_instance_valid(unit):
+			continue
+		valid_units.append(unit)
+		var display_name := _get_unit_display_name(unit)
+		unit_counts[display_name] = unit_counts.get(display_name, 0) + 1
+		var health := unit.get_node_or_null("HealthComponent") as HealthComponent
+		if health != null:
+			current_health += health.current_health
+			max_health += health.max_health
+	_selected_units = valid_units
+	if _selected_units.is_empty():
+		selected_units_label.text = "选中单位：无 · 左键单选 / 拖拽框选"
+		return
+	var composition: Array[String] = []
+	var names := unit_counts.keys()
+	names.sort()
+	for unit_name in names:
+		composition.append("%s×%d" % [unit_name, unit_counts[unit_name]])
+	var health_text := "%d / %d" % [roundi(current_health), roundi(max_health)]
+	if _selected_units.size() == 1:
+		selected_units_label.text = "选中单位：%s · HP %s" % [
+			composition[0].trim_suffix("×1"),
+			health_text,
+		]
+	else:
+		selected_units_label.text = "选中单位：%d · %s · 总 HP %s" % [
+			_selected_units.size(),
+			" / ".join(composition),
+			health_text,
+		]
+
+
+func _get_unit_display_name(unit: Node2D) -> String:
+	if unit.has_method("get_squad_data"):
+		var squad_data := unit.call("get_squad_data") as HumanSquadData
+		if squad_data != null:
+			return squad_data.display_name
+	if unit.has_method("get_monster_data"):
+		var monster_data := unit.call(
+			"get_monster_data"
+		) as MonsterProductionData
+		if monster_data != null:
+			return monster_data.display_name
+	var faction_component := FactionComponent.find_on(unit)
+	return (
+		"人类士兵"
+		if (
+			faction_component != null
+			and faction_component.faction == FactionComponent.Faction.HUMAN
+		)
+		else "怪物单位"
+	)
 
 
 func _apply_locked_faction_presentation() -> void:

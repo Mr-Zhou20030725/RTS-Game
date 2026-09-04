@@ -25,10 +25,10 @@ color = Color(0.0235294, 0.0352941, 0.054902, 0.94)
 layout_mode = 0
 offset_left = 24.0
 offset_top = 17.0
-offset_right = 290.0
+offset_right = 205.0
 offset_bottom = 47.0
-theme_override_font_sizes/font_size = 20
-text = "战场 — 非对称攻防"
+theme_override_font_sizes/font_size = 16
+text = "非对称攻防 RTS"
 
 [node name="GoldLabel" type="Label" parent="TopBar"]
 unique_name_in_owner = true
@@ -128,14 +128,79 @@ offset_bottom = 54.0
 mouse_filter = 0
 text = "返回主菜单"
 
+[node name="SituationBar" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 64.0
+offset_bottom = 108.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(0.0352941, 0.054902, 0.0784314, 0.96)
+
+[node name="BaseHealthLabel" type="Label" parent="SituationBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 18.0
+offset_top = 9.0
+offset_right = 294.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(0.48, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "人类基地 HP：1000 / 1000"
+vertical_alignment = 1
+
+[node name="BaseDivider" type="ColorRect" parent="SituationBar"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 8.0
+offset_right = 301.0
+offset_bottom = 36.0
+mouse_filter = 2
+color = Color(0.28, 0.38, 0.5, 0.75)
+
+[node name="NestCountLabel" type="Label" parent="SituationBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 316.0
+offset_top = 9.0
+offset_right = 474.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(0.82, 0.58, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "存活巢穴：4 / 4"
+vertical_alignment = 1
+
+[node name="NestDivider" type="ColorRect" parent="SituationBar"]
+layout_mode = 0
+offset_left = 480.0
+offset_top = 8.0
+offset_right = 481.0
+offset_bottom = 36.0
+mouse_filter = 2
+color = Color(0.28, 0.38, 0.5, 0.75)
+
+[node name="SelectedUnitsLabel" type="Label" parent="SituationBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 496.0
+offset_top = 9.0
+offset_right = 1260.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(0.82, 0.87, 0.94, 1)
+theme_override_font_sizes/font_size = 13
+text = "选中单位：无 · 左键单选 / 拖拽框选"
+vertical_alignment = 1
+text_overrun_behavior = 3
+
 [node name="MonsterProductionPanel" type="ColorRect" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 470.0
-offset_top = 76.0
+offset_top = 120.0
 offset_right = 850.0
-offset_bottom = 310.0
+offset_bottom = 354.0
 mouse_filter = 1
 color = Color(0.0784314, 0.0352941, 0.101961, 0.96)
 
@@ -144,9 +209,9 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 0
 offset_left = 18.0
-offset_top = 76.0
+offset_top = 120.0
 offset_right = 448.0
-offset_bottom = 272.0
+offset_bottom = 316.0
 mouse_filter = 1
 color = Color(0.0784314, 0.0352941, 0.101961, 0.96)
 

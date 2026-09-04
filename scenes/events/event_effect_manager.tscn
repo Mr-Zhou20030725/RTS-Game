@@ -25,9 +25,9 @@ layer = 102
 [node name="StatusPanel" type="PanelContainer" parent="StatusLayer"]
 visible = false
 offset_left = 960.0
-offset_top = 72.0
+offset_top = 116.0
 offset_right = 1260.0
-offset_bottom = 236.0
+offset_bottom = 280.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_status")
 

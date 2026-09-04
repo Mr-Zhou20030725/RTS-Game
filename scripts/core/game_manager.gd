@@ -28,10 +28,23 @@ func start_battle(
 		push_error("A valid player faction is required to start battle.")
 		return
 	selected_player_faction = player_faction
+	get_tree().paused = false
+	_change_screen(BATTLE_SCENE, Screen.BATTLE)
+
+
+func restart_battle() -> void:
+	if selected_player_faction not in [
+		PlayerFaction.HUMAN,
+		PlayerFaction.MONSTER,
+	]:
+		push_error("Cannot restart battle without a selected player faction.")
+		return
+	get_tree().paused = false
 	_change_screen(BATTLE_SCENE, Screen.BATTLE)
 
 
 func return_to_main() -> void:
+	get_tree().paused = false
 	_change_screen(MAIN_SCENE, Screen.MAIN)
 
 

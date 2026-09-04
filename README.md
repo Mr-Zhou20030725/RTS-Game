@@ -54,7 +54,7 @@ RTS-Game/
 │  └─ ai/                        # 人类/怪物规则 AI 的节奏、预算与评分参数
 ├─ scenes/                       # 游戏流程与可复用场景
 │  ├─ main/                      # 主菜单入口场景
-│  ├─ battle/                    # 战斗场景及系统装配
+│  ├─ battle/                    # 战斗场景、系统装配与胜负结果界面
 │  ├─ map/                       # 固定地图、候选点和巢穴强化管理器
 │  ├─ building/                  # 建筑放置管理器
 │  ├─ combat/                    # 弹射物场景
@@ -65,7 +65,7 @@ RTS-Game/
 ├─ scripts/                      # 按职责拆分的 GDScript
 │  ├─ core/                      # GameManager 与统一绘制层级
 │  ├─ main/                      # 主菜单流程
-│  ├─ battle/                    # 战斗场景协调
+│  ├─ battle/                    # 战斗场景协调与胜负结算
 │  ├─ map/                       # 地图生成、巢穴随机选择与强化阶段
 │  ├─ components/                # 通用生命与阵营逻辑
 │  ├─ combat/                    # 伤害规则、索敌、近战、远程、弹射物
@@ -81,14 +81,14 @@ RTS-Game/
 │  ├─ human/                     # 通用人类小队成员
 │  ├─ monster/                   # 六种怪物共用的 MonsterUnit 场景
 │  └─ placeholders/              # 初始人类士兵及独立回归测试占位单位
-└─ tests/                        # T01–T26 无界面自动回归脚本
+└─ tests/                        # T01–T30 无界面自动回归脚本
 ```
 
 ## 核心模块
 
 ### 场景流程
 
-- `GameManager` 只负责 Main 与 Battle 的场景切换。
+- `GameManager` 只负责 Main 与 Battle 的场景切换，并保留当前阵营用于安全重开。
 - `BattleManager` 负责战斗场景初始化和统一绘制层级，不承载具体战斗规则。
 - `MVPMap` 使用 4000×4000 世界坐标生成中央人类基地，并从东、西、南、北 8 个边缘候选点中随机选择 4 个怪物巢穴。
 - 游戏窗口固定为 1280×850；`WorldCamera` 使用 WASD/方向键平移、中键拖拽，鼠标滚轮缩放，并始终限制在地图边界内。
@@ -173,6 +173,7 @@ RTS-Game/
 | 8 | CanvasLayer 101 | 对局时间与开发调试提示 |
 | 9 | CanvasLayer 102 | 当前事件效果与剩余时间 |
 | 10 | CanvasLayer 200 | 暂停战场的事件竞拍界面 |
+| 11 | CanvasLayer 300 | 胜负结果与重新开始界面 |
 
 地图可玩区域与底部命令区相互独立，动态生成单位不会被地表或 HUD 覆盖。
 
@@ -274,16 +275,24 @@ RTS-Game/
 
 持续效果由 `EventEffectManager` 按事件 ID 管理。重复激活同一事件只刷新持续时间，不会重复乘算；到期后恢复事件开始前的系统数值。
 
+## 胜利与失败
+
+- 全部怪物巢穴被摧毁时，人类阵营获胜；人类基地被摧毁时，怪物阵营获胜。
+- `BattleResultManager` 统一监听两条胜负信号并只结算一次，按玩家所选阵营显示“胜利”或“失败”及具体原因。
+- 结果出现后暂停整棵战斗场景树，单位、攻击、AI、经济和计时立即停止；结果界面自身始终处理输入。
+- “重新开始”会保留当前玩家阵营并加载一局全新战斗；“返回主菜单”会先解除暂停再切换场景。
+
 ## 自动验证
 
-每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T29：
+每个已实现任务都有对应的 `tests/validate_tXX.gd`。例如运行 T30：
 
 ```powershell
-godot --headless --path . --script res://tests/validate_t29.gd
+godot --headless --path . --script res://tests/validate_t30.gd
 ```
 
 提交任务前应运行当前任务专项测试、T01 至当前任务的全量回归以及主场景冒烟测试。
 
 ## 当前状态
 
-- T01–T29：已验收，准备推送至 `main`。
+- T01–T30：已验收，准备推送至 `main`。
+- T31：按当前开发安排暂时搁置，尚未开发。
